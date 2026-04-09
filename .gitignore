@@ -1,0 +1,23 @@
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+
+# .NET
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+
+# Node
+node_modules/
+.next/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Kiro
+.kiro/

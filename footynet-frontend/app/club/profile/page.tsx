@@ -1,0 +1,134 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { clubService } from '@/lib/club';
+import { lookupService, County, League } from '@/lib/lookup';
+import { ClubProfileDto } from '@/types';
+import UnifiedNavBar from '@/components/UnifiedNavBar';
+import PageHeader from '@/components/PageHeader';
+import Card from '@/components/Card';
+import Button from '@/components/Button';
+
+export default function ClubProfilePage() {
+  const [profile, setProfile] = useState<ClubProfileDto | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [city, setCity] = useState('');
+  const [leagueId, setLeagueId] = useState('');
+  const [countyId, setCountyId] = useState('');
+  const [leagues, setLeagues] = useState<League[]>([]);
+  const [counties, setCounties] = useState<County[]>([]);
+
+  useEffect(() => {
+    loadProfile();
+    loadLookups();
+  }, []);
+
+  const loadProfile = async () => {
+    const data = await clubService.getProfile();
+    setProfile(data);
+    setName(data.name);
+    setDescription(data.description);
+    setCity(data.city || '');
+    setLeagueId(data.leagueId || '');
+    setCountyId(data.countyId || '');
+  };
+
+  const loadLookups = async () => {
+    const [lea, cou] = await Promise.all([
+      lookupService.getLeagues(),
+      lookupService.getCounties()
+    ]);
+    setLeagues(lea);
+    setCounties(cou);
+  };
+
+  const handleSave = async () => {
+    await clubService.updateProfile({ name, description, city, leagueId, countyId });
+    setEditing(false);
+    loadProfile();
+  };
+
+  if (!profile) return <div className="p-8 text-sm text-neutral-400">Loading...</div>;
+
+  return (
+    <div className="min-h-screen bg-neutral-50">
+      <UnifiedNavBar />
+
+      <div className="max-w-2xl mx-auto px-8 py-12">
+        <PageHeader title="Club Profile" subtitle="Club Information" />
+
+        <Card>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Profile Details</h3>
+            <Button onClick={() => editing ? handleSave() : setEditing(true)}>
+              {editing ? 'Save' : 'Edit'}
+            </Button>
+          </div>
+
+          {editing ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Club Name</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">City</label>
+                <input type="text" value={city} onChange={(e) => setCity(e.target.value)}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">League</label>
+                <select value={leagueId} onChange={(e) => setLeagueId(e.target.value)}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
+                  <option value="">Select League</option>
+                  {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">County</label>
+                <select value={countyId} onChange={(e) => setCountyId(e.target.value)}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
+                  <option value="">Select County</option>
+                  {counties.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-1">Description</label>
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)}
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" rows={4} />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs text-neutral-400 mb-0.5">Club Name</p>
+                <h3 className="text-2xl font-bold tracking-tight text-neutral-900">{profile.name}</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-neutral-100">
+                <div>
+                  <p className="text-xs text-neutral-400 mb-0.5">City</p>
+                  <p className="text-sm font-medium text-neutral-900">{profile.city}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-400 mb-0.5">League</p>
+                  <p className="text-sm font-medium text-neutral-900">{profile.leagueName}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-400 mb-0.5">County</p>
+                  <p className="text-sm font-medium text-neutral-900">{profile.countyName}</p>
+                </div>
+              </div>
+              <div className="pt-4 border-t border-neutral-100">
+                <p className="text-xs text-neutral-400 mb-1">About</p>
+                <p className="text-sm text-neutral-600 leading-relaxed">{profile.description}</p>
+              </div>
+            </div>
+          )}
+        </Card>
+      </div>
+    </div>
+  );
+}
