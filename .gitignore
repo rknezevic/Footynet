@@ -21,3 +21,10 @@ Thumbs.db
 
 # Kiro
 .kiro/
+
+# Secrets
+appsettings.json
+appsettings.Development.json
+
+# Logs
+Footynet/Footynet/Logs/

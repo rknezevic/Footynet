@@ -20,7 +20,7 @@ public class RegisterDto
     public int? Age { get; set; }
     public string? Description { get; set; }
     public string? City { get; set; }
-    public Guid? CountyId { get; set; }
+    public string? County { get; set; }
     public PrefeeredFootType? PrefeeredFootType { get; set; }
 
     // Club fields

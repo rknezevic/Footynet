@@ -70,9 +70,9 @@ namespace Footynet.Service
             await _jobAdRepository.UpdateAsync(jobAd);
         }
 
-        public async Task<IEnumerable<JobAdDto>> GetAllAsync(int page = 1, int pageSize = 10, PositionType? position = null, Guid? leagueId = null, Guid? countyId = null, string? searchTerm = null, Guid? excludePlayerId = null, bool sortDescending = true)
+        public async Task<IEnumerable<JobAdDto>> GetAllAsync(int page = 1, int pageSize = 10, PositionType? position = null, Guid? leagueId = null, string? searchTerm = null, Guid? excludePlayerId = null, bool sortDescending = true)
         {
-            return await _jobAdRepository.GetAllAsync(page, pageSize, position, leagueId, countyId, searchTerm, excludePlayerId, sortDescending);
+            return await _jobAdRepository.GetAllAsync(page, pageSize, position, leagueId, searchTerm, excludePlayerId, sortDescending);
         }
 
         public async Task<JobAd?> GetByIdAsync(Guid id)

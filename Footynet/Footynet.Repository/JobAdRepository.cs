@@ -53,7 +53,7 @@ public class JobAdRepository : IJobAdRepository
         return jobAd;
     }
 
-    public async Task<IEnumerable<JobAdDto>> GetAllAsync(int page, int pageSize, PositionType? position, Guid? leagueId, Guid? countyId, string? searchTerm, Guid? excludePlayerId = null, bool sortDescending = true)
+    public async Task<IEnumerable<JobAdDto>> GetAllAsync(int page, int pageSize, PositionType? position, Guid? leagueId, string? searchTerm, Guid? excludePlayerId = null, bool sortDescending = true)
     {
         var offset = (page - 1) * pageSize;
         var orderBy = sortDescending ? "DESC" : "ASC";
@@ -71,12 +71,11 @@ public class JobAdRepository : IJobAdRepository
             AND (@excludePlayerId IS NULL OR app.""Id"" IS NULL)
             AND (@position IS NULL OR ja.""RequiredPosition"" = @position)
             AND (@leagueId IS NULL OR l.""Id"" = @leagueId)
-            AND (@countyId IS NULL OR c.""CountyId"" = @countyId)
             AND (@searchTerm IS NULL OR ja.""Title"" LIKE '%' || @searchTerm || '%' OR ja.""Description"" LIKE '%' || @searchTerm || '%')
             ORDER BY ja.""CreatedAt"" {orderBy}
             OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY";
 
-        return await _connection.QueryAsync<JobAdDto>(sql, new { offset, pageSize, position, leagueId, countyId, searchTerm, excludePlayerId });
+        return await _connection.QueryAsync<JobAdDto>(sql, new { offset, pageSize, position, leagueId, searchTerm, excludePlayerId });
     }
 
     public async Task<IEnumerable<JobAdDto>> GetAdsByPlayerAsync(Guid playerId)

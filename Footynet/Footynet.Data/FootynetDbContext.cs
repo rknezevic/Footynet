@@ -41,6 +41,16 @@ public class FootynetDbContext : DbContext
             .HasIndex(ja => new { ja.PlayerId, ja.JobAdId })
             .IsUnique();
 
+        // Map CountyName string property to "County" column in database
+        modelBuilder.Entity<Player>(e =>
+        {
+            e.Property(p => p.CountyName).HasColumnName("County");
+        });
+        modelBuilder.Entity<Club>(e =>
+        {
+            e.Property(c => c.CountyName).HasColumnName("County");
+        });
+
         // Global query filters — exclude deactivated users and their content
         modelBuilder.Entity<User>().HasQueryFilter(u => u.IsActive);
         modelBuilder.Entity<JobAd>().HasQueryFilter(j => j.Club.IsActive);

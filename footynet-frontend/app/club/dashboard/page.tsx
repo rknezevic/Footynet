@@ -101,7 +101,7 @@ export default function ClubDashboard() {
                 </div>
                 <div>
                   <p className="text-xs text-neutral-400 mb-0.5">County</p>
-                  <p className="text-sm font-medium text-neutral-900">{profile.countyName}</p>
+                  <p className="text-sm font-medium text-neutral-900">{profile.county}</p>
                 </div>
               </div>
             </Card>

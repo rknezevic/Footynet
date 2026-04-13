@@ -53,8 +53,7 @@ public class PlayerService : IPlayerService
             Description = player.Description ?? "",
             PrefeeredFootType = player.PrefeeredFootType,
             City = player.City,
-            CountyName = player.County?.Name ?? "",
-            CountyId = player.CountyId
+            County = player.CountyName
         };
     }
 
@@ -69,8 +68,8 @@ public class PlayerService : IPlayerService
         player.Age = dto.Age;
         player.Description = dto.Description;
         player.PrefeeredFootType = dto.PrefeeredFootType;
-        player.CountyId = dto.CountyId;
         player.City = dto.City;
+        player.CountyName = dto.County;
 
         await _playerRepository.UpdateAsync(player);
 
@@ -82,9 +81,8 @@ public class PlayerService : IPlayerService
             Age = player.Age,
             Description = player.Description ?? "",
             PrefeeredFootType = player.PrefeeredFootType,
-            CountyName = player.County?.Name ?? "",
-            CountyId = player.CountyId,
-            City = player.City
+            City = player.City,
+            County = player.CountyName
         };
     }
 

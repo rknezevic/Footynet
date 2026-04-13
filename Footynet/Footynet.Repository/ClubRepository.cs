@@ -18,7 +18,6 @@ public class ClubRepository : IClubRepository
     {
         return await _context.Users.OfType<Club>()
             .Include(c => c.League)
-            .Include(c => c.County)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
 

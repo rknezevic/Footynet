@@ -25,27 +25,24 @@ public class JobApplicationRepository : IJobApplicationRepository
         
         var sql = $@"
             SELECT ja.*, 
-                   p.""Id"", p.""Email"", p.""FirstName"", p.""LastName"", p.""Age"", p.""City"", p.""Description"", p.""PrefeeredFootType"", p.""CountyId"",
-                   c.""Id"", c.""Name""
+                   p.""Id"", p.""Email"", p.""FirstName"", p.""LastName"", p.""Age"", p.""City"", p.""County"", p.""Description"", p.""PrefeeredFootType""
             FROM ""JobApplications"" ja
             JOIN ""Users"" p ON ja.""PlayerId"" = p.""Id""
-            LEFT JOIN ""Counties"" c ON p.""CountyId"" = c.""Id""
             WHERE ja.""JobAdId"" = @jobAdId
             AND p.""IsActive"" = true
             AND (@status IS NULL OR ja.""Status"" = @status)
             ORDER BY ja.""AppliedAt"" {orderBy}
             LIMIT @pageSize OFFSET @offset";
 
-        var applications = await _connection.QueryAsync<JobApplication, Player, County, JobApplication>(
+        var applications = await _connection.QueryAsync<JobApplication, Player, JobApplication>(
             sql,
-            (application, player, county) =>
+            (application, player) =>
             {
-                player.County = county;
                 application.Player = player;
                 return application;
             },
             new { jobAdId, status, pageSize, offset },
-            splitOn: "Id,Id"
+            splitOn: "Id"
         );
 
         return applications;

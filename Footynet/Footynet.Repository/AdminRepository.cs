@@ -35,7 +35,6 @@ public class AdminRepository : IAdminRepository
     {
         var query = _context.Users.OfType<Club>()
             .Include(c => c.League)
-            .Include(c => c.County)
             .Where(c => c.IsActive && !c.IsApproved);
 
         var totalCount = await query.CountAsync();

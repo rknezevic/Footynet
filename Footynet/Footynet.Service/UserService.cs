@@ -21,7 +21,7 @@ public class UserService : IUserService
     {
         var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
         if (existingUser != null)
-            throw new InvalidOperationException("Korisnik s ovom email adresom već postoji.");
+            throw new InvalidOperationException("User with this email already exists!");
 
         User user = dto.Role switch
         {
@@ -35,7 +35,7 @@ public class UserService : IUserService
                 Age = dto.Age ?? 0,
                 Description = dto.Description ?? string.Empty,
                 City = dto.City ?? string.Empty,
-                CountyId = dto.CountyId,
+                CountyName = dto.County ?? string.Empty,
                 PrefeeredFootType = dto.PrefeeredFootType ?? PrefeeredFootType.Right
             },
             RoleType.Club => new Club
@@ -46,8 +46,8 @@ public class UserService : IUserService
                 Name = dto.Name ?? string.Empty,
                 Description = dto.Description ?? string.Empty,
                 City = dto.City ?? string.Empty,
+                CountyName = dto.County ?? string.Empty,
                 LeagueId = dto.LeagueId ?? Guid.Empty,
-                CountyId = dto.CountyId ?? Guid.Empty,
                 IsApproved = false
             },
             RoleType.Admin => throw new InvalidOperationException("Admin registration not allowed"),

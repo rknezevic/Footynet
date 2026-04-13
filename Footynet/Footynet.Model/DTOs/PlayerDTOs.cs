@@ -15,10 +15,9 @@ public class PlayerProfileDto
     public string LastName { get; set; } = string.Empty;
     public int Age { get; set; }
     public string City { get; set; } = string.Empty;
+    public string County { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public PrefeeredFootType PrefeeredFootType { get; set; }
-    public Guid? CountyId { get; set; }
-    public string CountyName { get; set; } = string.Empty;
 }
 
 public class UpdatePlayerProfileDto
@@ -28,6 +27,6 @@ public class UpdatePlayerProfileDto
     public int Age { get; set; }
     public string Description { get; set; } = string.Empty;
     public PrefeeredFootType PrefeeredFootType { get; set; }
-    public Guid CountyId { get; set; }
     public string City { get; set; } = string.Empty;
+    public string County { get; set; } = string.Empty;
 }

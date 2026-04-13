@@ -56,7 +56,7 @@ export default function PlayerDashboard() {
                 </div>
                 <div>
                   <p className="text-xs text-neutral-400 mb-0.5">Location</p>
-                  <p className="text-sm text-neutral-900">{profile.city}, {profile.countyName}</p>
+                  <p className="text-sm text-neutral-900">{profile.city}, {profile.county}</p>
                 </div>
                 {profile.description && (
                   <div className="pt-3 border-t border-neutral-100">

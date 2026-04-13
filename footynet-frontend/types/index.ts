@@ -29,7 +29,7 @@ export interface RegisterDto {
   age?: number;
   description?: string;
   city?: string;
-  countyId?: string;
+  county?: string;
   prefeeredFootType?: PreferredFootType;
   name?: string;
   leagueId?: string;
@@ -48,10 +48,9 @@ export interface PlayerProfileDto {
   lastName: string;
   age: number;
   city: string;
+  county: string;
   description: string;
   prefeeredFootType: PreferredFootType;
-  countyName: string;
-  countyId: string;
 }
 
 export interface UpdatePlayerProfileDto {
@@ -60,8 +59,8 @@ export interface UpdatePlayerProfileDto {
   age: number;
   description: string;
   prefeeredFootType: PreferredFootType;
-  countyId: string;
   city: string;
+  county: string;
 }
 
 export interface ClubProfileDto {
@@ -69,18 +68,17 @@ export interface ClubProfileDto {
   name: string;
   description: string;
   city: string;
+  county: string;
   leagueName: string;
-  countyName: string;
   leagueId: string;
-  countyId: string;
 }
 
 export interface UpdateClubProfileDto {
   name: string;
   description: string;
   city: string;
+  county: string;
   leagueId: string;
-  countyId: string;
 }
 
 export interface JobAdDto {

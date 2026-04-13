@@ -88,10 +88,9 @@ public class ClubService : IClubService
             Name = club.Name,
             Description = club.Description ?? "",
             City = club.City,
+            County = club.CountyName,
             LeagueName = club.League?.Name ?? "",
-            CountyName = club.County?.Name ?? "",
-            LeagueId = club.LeagueId,
-            CountyId = club.CountyId
+            LeagueId = club.LeagueId
         };
     }
 
@@ -104,8 +103,8 @@ public class ClubService : IClubService
         club.Name = dto.Name;
         club.Description = dto.Description;
         club.City = dto.City;
+        club.CountyName = dto.County;
         club.LeagueId = dto.LeagueId;
-        club.CountyId = dto.CountyId;
 
         await _clubRepository.UpdateAsync(club);
     }

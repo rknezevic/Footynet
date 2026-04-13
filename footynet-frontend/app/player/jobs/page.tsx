@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { jobAdService } from '@/lib/jobAds';
-import { lookupService, County, League, Position } from '@/lib/lookup';
+import { lookupService, League, Position } from '@/lib/lookup';
 import { JobAdDto } from '@/types';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
 
@@ -12,14 +12,12 @@ export default function PlayerJobsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [positionId, setPositionId] = useState('');
   const [leagueId, setLeagueId] = useState('');
-  const [countyId, setCountyId] = useState('');
   const [positions, setPositions] = useState<Position[]>([]);
   const [leagues, setLeagues] = useState<League[]>([]);
-  const [counties, setCounties] = useState<County[]>([]);
 
   useEffect(() => {
-    Promise.all([lookupService.getPositions(), lookupService.getLeagues(), lookupService.getCounties()])
-      .then(([pos, lea, cou]) => { setPositions(pos); setLeagues(lea); setCounties(cou); })
+    Promise.all([lookupService.getPositions(), lookupService.getLeagues()])
+      .then(([pos, lea]) => { setPositions(pos); setLeagues(lea); })
       .catch(console.error);
     loadJobs();
   }, []);
@@ -29,13 +27,12 @@ export default function PlayerJobsPage() {
       page: 1, pageSize: 50, searchTerm,
       position: positionId || undefined,
       leagueId: leagueId || undefined,
-      countyId: countyId || undefined
     });
     setJobs(data);
   };
 
   const handleSearch = (e: React.FormEvent) => { e.preventDefault(); loadJobs(); };
-  const clearFilters = () => { setSearchTerm(''); setPositionId(''); setLeagueId(''); setCountyId(''); };
+  const clearFilters = () => { setSearchTerm(''); setPositionId(''); setLeagueId(''); };
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -50,25 +47,18 @@ export default function PlayerJobsPage() {
               <label className="block text-sm font-medium text-neutral-700 mb-1">Search</label>
               <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search by title or description..." className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
             </div>
-            <div className="col-span-12 md:col-span-4">
+            <div className="col-span-12 md:col-span-6">
               <label className="block text-sm font-medium text-neutral-700 mb-1">Position</label>
               <select value={positionId} onChange={(e) => setPositionId(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
                 <option value="">All Positions</option>
                 {positions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </div>
-            <div className="col-span-12 md:col-span-4">
+            <div className="col-span-12 md:col-span-6">
               <label className="block text-sm font-medium text-neutral-700 mb-1">League</label>
               <select value={leagueId} onChange={(e) => setLeagueId(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
                 <option value="">All Leagues</option>
                 {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-              </select>
-            </div>
-            <div className="col-span-12 md:col-span-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">County</label>
-              <select value={countyId} onChange={(e) => setCountyId(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
-                <option value="">All Counties</option>
-                {counties.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
           </div>

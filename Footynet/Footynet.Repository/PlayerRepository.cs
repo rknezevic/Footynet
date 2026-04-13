@@ -22,7 +22,6 @@ public class PlayerRepository : IPlayerRepository
     public async Task<Player?> GetByIdAsync(Guid id)
     {
         return await _context.Users.OfType<Player>()
-            .Include(p => p.County)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 

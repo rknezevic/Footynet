@@ -28,4 +28,12 @@ public class AuthController : ControllerBase
         var response = await _userService.LoginAsync(dto);
         return Ok(response);
     }
+
+    [HttpGet("check-email")]
+    [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+    public async Task<IActionResult> CheckEmail([FromQuery] string email)
+    {
+        var user = await _userService.GetUserByEmailAsync(email);
+        return Ok(new { exists = user != null });
+    }
 }

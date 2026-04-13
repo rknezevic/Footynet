@@ -1,10 +1,5 @@
 import { api } from './api';
 
-export interface County {
-  id: string;
-  name: string;
-}
-
 export interface League {
   id: string;
   name: string;
@@ -16,11 +11,6 @@ export interface Position {
 }
 
 export const lookupService = {
-  async getCounties(): Promise<County[]> {
-    const response = await api.get<County[]>('/Lookup/counties');
-    return response.data;
-  },
-
   async getLeagues(): Promise<League[]> {
     const response = await api.get<League[]>('Lookup/leagues');
     return response.data;

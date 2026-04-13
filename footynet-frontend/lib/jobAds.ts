@@ -7,7 +7,6 @@ export const jobAdService = {
     pageSize?: number;
     position?: string;
     leagueId?: string;
-    countyId?: string;
     searchTerm?: string;
     sortDescending?: boolean;
   }): Promise<JobAdDto[]> {

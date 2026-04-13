@@ -25,12 +25,11 @@ public class JobAdsController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] PositionType? position = null, 
         [FromQuery] Guid? leagueId = null, 
-        [FromQuery] Guid? countyId = null, 
         [FromQuery] string? searchTerm = null,
         [FromQuery] bool sortDescending = true)
     {
         var excludePlayerId = User.IsInRole("Player") ? Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value) : (Guid?)null;
-        var ads = await _jobAdService.GetAllAsync(page, pageSize, position, leagueId, countyId, searchTerm, excludePlayerId, sortDescending);
+        var ads = await _jobAdService.GetAllAsync(page, pageSize, position, leagueId, searchTerm, excludePlayerId, sortDescending);
         return Ok(ads);
     }
 

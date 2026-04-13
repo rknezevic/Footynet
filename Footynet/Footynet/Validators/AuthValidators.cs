@@ -49,10 +49,6 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
 
             RuleFor(x => x.City)
                 .NotEmpty().WithMessage("City is required");
-
-            RuleFor(x => x.CountyId)
-                .NotNull().WithMessage("County is required")
-                .NotEqual(Guid.Empty).WithMessage("County is required");
         });
 
         // Club-specific rules
@@ -65,10 +61,6 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
             RuleFor(x => x.LeagueId)
                 .NotNull().WithMessage("League is required")
                 .NotEqual(Guid.Empty).WithMessage("League is required");
-
-            RuleFor(x => x.CountyId)
-                .NotNull().WithMessage("County is required")
-                .NotEqual(Guid.Empty).WithMessage("County is required");
         });
     }
 }

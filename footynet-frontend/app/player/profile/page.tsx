@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { playerService } from '@/lib/player';
-import { lookupService, County } from '@/lib/lookup';
 import { PlayerProfileDto, PreferredFootType } from '@/types';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
+import CityAutocomplete from '@/components/CityAutocomplete';
 
 export default function PlayerProfilePage() {
   const [profile, setProfile] = useState<PlayerProfileDto | null>(null);
@@ -17,16 +17,12 @@ export default function PlayerProfilePage() {
   const [lastName, setLastName] = useState('');
   const [age, setAge] = useState(18);
   const [city, setCity] = useState('');
+  const [county, setCounty] = useState('');
   const [description, setDescription] = useState('');
   const [preferredFootType, setPreferredFootType] = useState<PreferredFootType>(PreferredFootType.Right);
-  const [countyId, setCountyId] = useState('');
-  const [counties, setCounties] = useState<County[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
-    loadProfile();
-    lookupService.getCounties().then(setCounties);
-  }, []);
+  useEffect(() => { loadProfile(); }, []);
 
   const loadProfile = async () => {
     const data = await playerService.getProfile();
@@ -35,27 +31,20 @@ export default function PlayerProfilePage() {
     setLastName(data.lastName);
     setAge(data.age);
     setCity(data.city);
+    setCounty(data.county);
     setDescription(data.description);
-    setCountyId(data.countyId);
     setPreferredFootType(data.prefeeredFootType);
   };
 
   const handleSave = async () => {
     try {
       await playerService.updateProfile({
-        firstName,
-        lastName,
-        age,
-        city,
-        description,
+        firstName, lastName, age, city, county, description,
         prefeeredFootType: preferredFootType,
-        countyId: countyId
       });
       setEditing(false);
       loadProfile();
-    } catch (err: any) {
-      alert(err.message);
-    }
+    } catch (err: any) { alert(err.message); }
   };
 
   if (!profile) return <div className="p-8 text-sm text-neutral-400">Loading...</div>;
@@ -63,10 +52,8 @@ export default function PlayerProfilePage() {
   return (
     <div className="min-h-screen bg-neutral-50">
       <UnifiedNavBar />
-
       <div className="max-w-2xl mx-auto px-8 py-12">
         <PageHeader title="My Profile" subtitle="Player Information" />
-
         <Card>
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Profile Details</h3>
@@ -96,16 +83,7 @@ export default function PlayerProfilePage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">City</label>
-                <input type="text" value={city} onChange={(e) => setCity(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">County</label>
-                <select value={countyId} onChange={(e) => setCountyId(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
-                  <option value="">Select County</option>
-                  {counties.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                <CityAutocomplete value={city} county={county} onSelect={(c, co) => { setCity(c); setCounty(co); }} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">Preferred Foot</label>
@@ -138,7 +116,7 @@ export default function PlayerProfilePage() {
                 </div>
                 <div>
                   <p className="text-xs text-neutral-400 mb-0.5">County</p>
-                  <p className="text-sm font-medium text-neutral-900">{profile.countyName}</p>
+                  <p className="text-sm font-medium text-neutral-900">{profile.county}</p>
                 </div>
                 <div>
                   <p className="text-xs text-neutral-400 mb-0.5">Preferred Foot</p>

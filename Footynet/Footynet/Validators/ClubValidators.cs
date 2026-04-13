@@ -13,8 +13,5 @@ public class UpdateClubProfileDtoValidator : AbstractValidator<UpdateClubProfile
 
         RuleFor(x => x.LeagueId)
             .NotEqual(Guid.Empty).WithMessage("League is required");
-
-        RuleFor(x => x.CountyId)
-            .NotEqual(Guid.Empty).WithMessage("County is required");
     }
 }

@@ -16,15 +16,6 @@ public class LookupController : ControllerBase
         _context = context;
     }
 
-    [HttpGet("counties")]
-    public async Task<ActionResult<IEnumerable<object>>> GetCounties()
-    {
-        var counties = await _context.Counties
-            .Select(c => new { c.Id, c.Name })
-            .ToListAsync();
-        return Ok(counties);
-    }
-
     [HttpGet("leagues")]
     public async Task<ActionResult<IEnumerable<object>>> GetLeagues()
     {

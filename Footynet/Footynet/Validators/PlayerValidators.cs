@@ -22,9 +22,6 @@ public class UpdatePlayerProfileDtoValidator : AbstractValidator<UpdatePlayerPro
             .NotEmpty().WithMessage("City is required")
             .MaximumLength(100).WithMessage("City must be under 100 characters");
 
-        RuleFor(x => x.CountyId)
-            .NotEqual(Guid.Empty).WithMessage("County is required");
-
         RuleFor(x => x.PrefeeredFootType)
             .IsInEnum().WithMessage("Invalid preferred foot type");
     }
