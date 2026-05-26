@@ -16,7 +16,7 @@ public class PlayerService : IPlayerService
         _jobAdRepository = jobAdRepository;
     }
 
-    public async Task<JobApplication> ApplyToJobAsync(Guid playerId, CreateApplicationDto dto)
+    public async Task<JobApplicationResponseDto> ApplyToJobAsync(Guid playerId, CreateApplicationDto dto)
     {
         var jobAd = await _jobAdRepository.GetByIdAsync(dto.JobAdId);
         if (jobAd == null)
@@ -35,7 +35,16 @@ public class PlayerService : IPlayerService
             Status = StatusType.Pending
         };
 
-        return await _playerRepository.CreateApplicationAsync(application);
+        var created = await _playerRepository.CreateApplicationAsync(application);
+
+        return new JobApplicationResponseDto
+        {
+            Id = created.Id,
+            PlayerId = created.PlayerId,
+            JobAdId = created.JobAdId,
+            AppliedAt = created.AppliedAt,
+            Status = created.Status.ToString()
+        };
     }
 
     public async Task<PlayerProfileDto?> GetPlayerProfileAsync(Guid userId)

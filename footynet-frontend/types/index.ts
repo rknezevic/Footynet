@@ -88,6 +88,7 @@ export interface JobAdDto {
   clubName: string;
   leagueName: string;
   requiredPosition: string;
+  requiredPositionName: string;
   applicationStatus: StatusType;
   createdAt: string;
 }

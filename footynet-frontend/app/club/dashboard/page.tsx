@@ -37,7 +37,7 @@ export default function ClubDashboard() {
       } catch (err: any) {
         const status = err?.response?.status ?? err?.status;
         if (status === 401 || status === 403) router.push('/login');
-        else router.push('/club/profile/setup');
+        else router.push('/pending-approval');
       }
     };
     loadData();

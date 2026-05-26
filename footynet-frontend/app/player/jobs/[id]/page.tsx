@@ -7,6 +7,7 @@ import { playerService } from '@/lib/player';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
+import FormTextarea from '@/components/FormTextarea';
 
 export default function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -59,16 +60,13 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-5">Apply for this position</h2>
             {error && <div className="bg-red-50 border border-red-200 rounded-md px-4 py-3 mb-4 text-sm text-red-700">{error}</div>}
             <form onSubmit={handleApply}>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Cover Letter (Optional)</label>
-                <textarea
-                  value={coverLetter}
-                  onChange={(e) => setCoverLetter(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
-                  rows={6}
-                  placeholder="Tell the club why you're a great fit..."
-                />
-              </div>
+              <FormTextarea
+                label="Cover Letter (Optional)"
+                value={coverLetter}
+                onChange={(e) => setCoverLetter(e.target.value)}
+                rows={6}
+                placeholder="Tell the club why you're a great fit..."
+              />
               <Button type="submit" className="w-full mt-4">Submit Application</Button>
             </form>
           </Card>

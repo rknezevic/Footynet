@@ -8,6 +8,9 @@ import UnifiedNavBar from '@/components/UnifiedNavBar';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
+import FormInput from '@/components/FormInput';
+import FormSelect from '@/components/FormSelect';
+import FormTextarea from '@/components/FormTextarea';
 import CityAutocomplete from '@/components/CityAutocomplete';
 
 export default function ClubProfilePage() {
@@ -57,28 +60,16 @@ export default function ClubProfilePage() {
           </div>
           {editing ? (
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Club Name</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
-              </div>
+              <FormInput label="Club Name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">City</label>
                 <CityAutocomplete value={city} county={county} onSelect={(c, co) => { setCity(c); setCounty(co); }} />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">League</label>
-                <select value={leagueId} onChange={(e) => setLeagueId(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
-                  <option value="">Select League</option>
-                  {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Description</label>
-                <textarea value={description} onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" rows={4} />
-              </div>
+              <FormSelect label="League" value={leagueId} onChange={(e) => setLeagueId(e.target.value)} required>
+                <option value="">Select League</option>
+                {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+              </FormSelect>
+              <FormTextarea label="Description" value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
             </div>
           ) : (
             <div className="space-y-4">

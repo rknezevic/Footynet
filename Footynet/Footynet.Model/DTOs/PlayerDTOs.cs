@@ -30,3 +30,12 @@ public class UpdatePlayerProfileDto
     public string City { get; set; } = string.Empty;
     public string County { get; set; } = string.Empty;
 }
+
+public class JobApplicationResponseDto
+{
+    public Guid Id { get; set; }
+    public Guid PlayerId { get; set; }
+    public Guid JobAdId { get; set; }
+    public DateTime AppliedAt { get; set; }
+    public string Status { get; set; } = string.Empty;
+}

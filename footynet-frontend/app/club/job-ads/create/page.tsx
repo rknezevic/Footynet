@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation';
 import { clubService } from '@/lib/club';
 import { lookupService, Position } from '@/lib/lookup';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
+import FormInput from '@/components/FormInput';
+import FormSelect from '@/components/FormSelect';
+import FormTextarea from '@/components/FormTextarea';
+import Button from '@/components/Button';
 
 export default function CreateJobAdPage() {
   const [title, setTitle] = useState('');
@@ -37,22 +41,13 @@ export default function CreateJobAdPage() {
         <p className="text-sm text-neutral-500 mb-8">New advertisement</p>
         {error && <div className="bg-red-50 border-l-2 border-red-500 px-4 py-2 mb-6 text-sm text-red-700 rounded-r">{error}</div>}
         <form onSubmit={handleSubmit} className="bg-white border border-neutral-200 rounded-lg p-6 space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">Title</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">Position</label>
-            <select value={positionId} onChange={(e) => setPositionId(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" required>
-              <option value="">Select Position</option>
-              {positions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">Description</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" rows={5} required />
-          </div>
-          <button type="submit" className="w-full bg-neutral-900 text-white py-2.5 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">Create Job Ad</button>
+          <FormInput label="Title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+          <FormSelect label="Position" value={positionId} onChange={(e) => setPositionId(e.target.value)} required>
+            <option value="">Select Position</option>
+            {positions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </FormSelect>
+          <FormTextarea label="Description" value={description} onChange={(e) => setDescription(e.target.value)} rows={5} required />
+          <Button type="submit" className="w-full">Create Job Ad</Button>
         </form>
       </div>
     </div>

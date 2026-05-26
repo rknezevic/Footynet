@@ -9,6 +9,9 @@ import { lookupService, League } from '@/lib/lookup';
 import { RoleType, PreferredFootType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/Button';
+import FormInput from '@/components/FormInput';
+import FormSelect from '@/components/FormSelect';
+import FormTextarea from '@/components/FormTextarea';
 import CityAutocomplete from '@/components/CityAutocomplete';
 
 export default function RegisterPage() {
@@ -114,14 +117,8 @@ export default function RegisterPage() {
             </div>
             {role !== null && (
               <form onSubmit={handleStep2Submit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Email</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inputClass} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Password</label>
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={inputClass} />
-                </div>
+                <FormInput label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <FormInput label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 <Button type="submit" className="w-full">Continue</Button>
               </form>
             )}
@@ -133,57 +130,32 @@ export default function RegisterPage() {
             {role === RoleType.Player ? (
               <>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1">First Name</label>
-                    <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className={inputClass} />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1">Last Name</label>
-                    <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required className={inputClass} />
-                  </div>
+                  <FormInput label="First Name" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+                  <FormInput label="Last Name" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Age</label>
-                  <input type="number" value={age} onChange={(e) => setAge(parseInt(e.target.value))} min={16} max={50} required className={inputClass} />
-                </div>
+                <FormInput label="Age" type="number" value={age} onChange={(e) => setAge(parseInt(e.target.value))} min={16} max={50} required />
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">City</label>
                   <CityAutocomplete value={city} county={county} onSelect={(c, co) => { setCity(c); setCounty(co); }} className={inputClass} />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Preferred Foot</label>
-                  <select value={preferredFootType} onChange={(e) => setPreferredFootType(parseInt(e.target.value) as PreferredFootType)}
-                    className={`${inputClass} bg-white`}>
-                    <option value={PreferredFootType.Right}>Right</option>
-                    <option value={PreferredFootType.Left}>Left</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Description</label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} className={inputClass} rows={3} />
-                </div>
+                <FormSelect label="Preferred Foot" value={preferredFootType} onChange={(e) => setPreferredFootType(parseInt(e.target.value) as PreferredFootType)}>
+                  <option value={PreferredFootType.Right}>Right</option>
+                  <option value={PreferredFootType.Left}>Left</option>
+                </FormSelect>
+                <FormTextarea label="Description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
               </>
             ) : (
               <>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Club Name</label>
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className={inputClass} />
-                </div>
+                <FormInput label="Club Name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-1">City</label>
                   <CityAutocomplete value={city} county={county} onSelect={(c, co) => { setCity(c); setCounty(co); }} className={inputClass} />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">League</label>
-                  <select value={leagueId} onChange={(e) => setLeagueId(e.target.value)} required className={`${inputClass} bg-white`}>
-                    <option value="">Select League</option>
-                    {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Description</label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Tell players about your club..." className={inputClass} rows={3} />
-                </div>
+                <FormSelect label="League" value={leagueId} onChange={(e) => setLeagueId(e.target.value)} required>
+                  <option value="">Select League</option>
+                  {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </FormSelect>
+                <FormTextarea label="Description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Tell players about your club..." rows={3} />
               </>
             )}
             <div className="flex gap-3 pt-2">

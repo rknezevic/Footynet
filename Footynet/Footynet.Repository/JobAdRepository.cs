@@ -53,7 +53,8 @@ public class JobAdRepository : IJobAdRepository
         return jobAd;
     }
 
-    public async Task<IEnumerable<JobAdDto>> GetAllAsync(int page, int pageSize, PositionType? position, Guid? leagueId, string? searchTerm, Guid? excludePlayerId = null, bool sortDescending = true)
+    public async Task<IEnumerable<JobAdDto>> GetAllAsync(int page, int pageSize, PositionType? position, 
+        Guid? leagueId, string? searchTerm, Guid? excludePlayerId = null, bool sortDescending = true)
     {
         var offset = (page - 1) * pageSize;
         var orderBy = sortDescending ? "DESC" : "ASC";

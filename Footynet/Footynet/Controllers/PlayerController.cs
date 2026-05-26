@@ -23,15 +23,8 @@ public class PlayerController : ControllerBase
     [HttpPost("apply")]
     public async Task<IActionResult> ApplyToJob(CreateApplicationDto dto)
     {
-        var application = await _playerService.ApplyToJobAsync(GetUserId(), dto);
-        return Ok(new
-        {
-            application.Id,
-            application.PlayerId,
-            application.JobAdId,
-            application.AppliedAt,
-            Status = application.Status.ToString()
-        });
+        var result = await _playerService.ApplyToJobAsync(GetUserId(), dto);
+        return Ok(result);
     }
 
     [HttpGet("profile")]

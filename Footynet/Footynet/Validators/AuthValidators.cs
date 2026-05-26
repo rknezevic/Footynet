@@ -32,7 +32,6 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
         RuleFor(x => x.Role)
             .IsInEnum().WithMessage("Invalid role");
 
-        // Player-specific rules
         When(x => x.Role == RoleType.Player, () =>
         {
             RuleFor(x => x.FirstName)
@@ -51,7 +50,6 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
                 .NotEmpty().WithMessage("City is required");
         });
 
-        // Club-specific rules
         When(x => x.Role == RoleType.Club, () =>
         {
             RuleFor(x => x.Name)

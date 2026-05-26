@@ -8,6 +8,9 @@ import UnifiedNavBar from '@/components/UnifiedNavBar';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
+import FormInput from '@/components/FormInput';
+import FormSelect from '@/components/FormSelect';
+import FormTextarea from '@/components/FormTextarea';
 import CityAutocomplete from '@/components/CityAutocomplete';
 
 export default function PlayerProfilePage() {
@@ -65,39 +68,19 @@ export default function PlayerProfilePage() {
           {editing ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">First Name</label>
-                  <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">Last Name</label>
-                  <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
-                </div>
+                <FormInput label="First Name" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                <FormInput label="Last Name" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Age</label>
-                <input type="number" value={age} onChange={(e) => setAge(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
-              </div>
+              <FormInput label="Age" type="number" value={age} onChange={(e) => setAge(parseInt(e.target.value))} />
               <div>
                 <label className="block text-sm font-medium text-neutral-700 mb-1">City</label>
                 <CityAutocomplete value={city} county={county} onSelect={(c, co) => { setCity(c); setCounty(co); }} />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Preferred Foot</label>
-                <select value={preferredFootType} onChange={(e) => setPreferredFootType(parseInt(e.target.value) as PreferredFootType)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
-                  <option value={PreferredFootType.Right}>Right</option>
-                  <option value={PreferredFootType.Left}>Left</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">Description</label>
-                <textarea value={description} onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" rows={4} />
-              </div>
+              <FormSelect label="Preferred Foot" value={preferredFootType} onChange={(e) => setPreferredFootType(parseInt(e.target.value) as PreferredFootType)}>
+                <option value={PreferredFootType.Right}>Right</option>
+                <option value={PreferredFootType.Left}>Left</option>
+              </FormSelect>
+              <FormTextarea label="Description" value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
             </div>
           ) : (
             <div className="space-y-4">

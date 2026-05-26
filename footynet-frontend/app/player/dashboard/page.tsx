@@ -29,7 +29,7 @@ export default function PlayerDashboard() {
         if (status === 401 || status === 403) {
           router.push('/login');
         } else {
-          router.push('/player/profile/setup');
+          router.push('/player/dashboard');
         }
       }
     };

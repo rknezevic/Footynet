@@ -22,7 +22,8 @@ public class LocationController : ControllerBase
             return Ok(new { suggestions = Array.Empty<object>() });
 
         var token = sessionToken ?? Guid.NewGuid().ToString();
-        var url = $"https://api.mapbox.com/search/searchbox/v1/suggest?q={Uri.EscapeDataString(q)}&types=place&country=HR&language=hr&session_token={token}&access_token={_accessToken}";
+        var url = $"https://api.mapbox.com/search/searchbox/v1/suggest?q={Uri.EscapeDataString(q)}" +
+            $"&types=place&country=HR&language=hr&session_token={token}&access_token={_accessToken}";
         var response = await _httpClient.GetAsync(url);
         var content = await response.Content.ReadAsStringAsync();
         return Content(content, "application/json");

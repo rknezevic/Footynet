@@ -10,6 +10,7 @@ public class JobAdDto
     public string ClubName { get; set; } = string.Empty;
     public string LeagueName { get; set; } = string.Empty;
     public PositionType RequiredPosition { get; set; }
+    public string RequiredPositionName => RequiredPosition.ToString();
     public StatusType ApplicationStatus { get; set; }  
     public DateTime CreatedAt { get; set; }
 }

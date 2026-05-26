@@ -74,7 +74,7 @@ export default function PlayerJobsPage() {
           ) : jobs.map((job) => (
             <div key={job.id} className="bg-white border border-neutral-200 rounded-lg p-6 hover-lift">
               <h3 className="text-xl font-semibold text-neutral-900 mb-1">{job.title}</h3>
-              <p className="text-xs text-neutral-400 mb-3">{job.clubName} · {job.leagueName} · {job.requiredPosition}</p>
+              <p className="text-xs text-neutral-400 mb-3">{job.clubName} · {job.leagueName} · {job.requiredPositionName}</p>
               <p className="text-sm text-neutral-600 mb-4 leading-relaxed">{job.description}</p>
               <Link href={`/player/jobs/${job.id}`} className="inline-block bg-neutral-900 text-white px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">View & Apply</Link>
             </div>
