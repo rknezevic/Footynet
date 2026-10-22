@@ -16,6 +16,7 @@ public class FootynetDbContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<County> Counties { get; set; }
     public DbSet<League> Leagues { get; set; }
+    public DbSet<PlayerCareerEntry> PlayerCareerEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +56,16 @@ public class FootynetDbContext : DbContext
             .WithMany(c => c.Leagues)
             .HasForeignKey(l => l.CountyId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PlayerCareerEntry>(e =>
+        {
+            e.Property(c => c.ClubName).HasMaxLength(100);
+            e.HasOne(c => c.Player)
+                .WithMany(p => p.CareerEntries)
+                .HasForeignKey(c => c.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        modelBuilder.Entity<Club>().Property(c => c.Phone).HasMaxLength(30);
 
         modelBuilder.Entity<County>().HasData(LookupSeed.Counties);
         modelBuilder.Entity<League>().HasData(LookupSeed.Leagues);

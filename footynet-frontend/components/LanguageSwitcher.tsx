@@ -4,7 +4,7 @@ import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { locales, LOCALE_COOKIE } from '@/i18n/config';
 
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({ tone = 'default' }: { tone?: 'default' | 'light' }) {
   const locale = useLocale();
   const router = useRouter();
 
@@ -15,19 +15,21 @@ export default function LanguageSwitcher() {
     router.refresh();
   };
 
+  const track = tone === 'light' ? 'bg-white/15' : 'bg-ink-100';
+  const activeCls = tone === 'light' ? 'bg-white text-pitch-700' : 'bg-white text-ink-900 shadow-sm';
+  const idleCls = tone === 'light' ? 'text-white/80 hover:text-white' : 'text-ink-500 hover:text-ink-900';
+
   return (
-    <div className="flex items-center gap-1 text-xs font-medium">
-      {locales.map((l, i) => (
-        <span key={l} className="flex items-center gap-1">
-          {i > 0 && <span className="text-neutral-300">|</span>}
-          <button
-            onClick={() => changeLocale(l)}
-            className={l === locale ? 'text-neutral-900' : 'text-neutral-400 hover:text-neutral-900 transition-colors'}
-            aria-pressed={l === locale}
-          >
-            {l.toUpperCase()}
-          </button>
-        </span>
+    <div className={`flex items-center rounded-lg p-0.5 text-xs font-semibold ${track}`}>
+      {locales.map(l => (
+        <button
+          key={l}
+          onClick={() => changeLocale(l)}
+          className={`rounded-md px-2 py-1 transition-colors ${l === locale ? activeCls : idleCls}`}
+          aria-pressed={l === locale}
+        >
+          {l.toUpperCase()}
+        </button>
       ))}
     </div>
   );

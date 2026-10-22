@@ -1,5 +1,5 @@
 import { api } from './api';
-import { Message, CreateMessageDto } from '@/types';
+import { Message, CreateMessageDto, InboxItem } from '@/types';
 
 export const messageService = {
   async sendMessage(data: CreateMessageDto): Promise<Message> {
@@ -12,8 +12,17 @@ export const messageService = {
     return response.data;
   },
 
-  async getInbox(): Promise<Message[]> {
-    const response = await api.get<Message[]>('/Message/inbox');
+  async markConversationRead(otherUserId: string): Promise<void> {
+    await api.post(`/Message/conversation/${otherUserId}/read`);
+  },
+
+  async getInbox(): Promise<InboxItem[]> {
+    const response = await api.get<InboxItem[]>('/Message/inbox');
+    return response.data;
+  },
+
+  async getUnreadCount(): Promise<number> {
+    const response = await api.get<number>('/Message/unread-count');
     return response.data;
   },
 };

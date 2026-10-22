@@ -18,17 +18,20 @@ public class JobApplicationRepository : IJobApplicationRepository
         _connection = connection;
     }
 
-    public async Task<IEnumerable<JobApplication>> GetApplicationsByJobAdAsync(Guid jobAdId, StatusType? status = null, bool orderByDateDesc = true, int page = 1, int pageSize = 10)
+    public async Task<IEnumerable<JobApplication>> GetApplicationsByJobAdAsync(Guid jobAdId, StatusType? status = null, bool orderByDateDesc = true, int page = 1, int pageSize = 10, Guid? clubId = null)
     {
         var orderBy = orderByDateDesc ? "DESC" : "ASC";
         var offset = (page - 1) * pageSize;
         
         var sql = $@"
             SELECT ja.*, 
-                   p.""Id"", p.""Email"", p.""FirstName"", p.""LastName"", p.""Age"", p.""City"", p.""County"", p.""Description"", p.""PrefeeredFootType""
+                   p.""Id"", p.""FirstName"", p.""LastName"", p.""Age"", p.""City"", p.""County"" AS CountyName, p.""Description"", p.""PrefeeredFootType"",
+                   p.""PrimaryPosition"", p.""SecondaryPosition"", p.""Availability""
             FROM ""JobApplications"" ja
             JOIN ""Users"" p ON ja.""PlayerId"" = p.""Id""
+            JOIN ""JobAds"" ad ON ja.""JobAdId"" = ad.""Id""
             WHERE ja.""JobAdId"" = @jobAdId
+            AND (@clubId IS NULL OR ad.""ClubId"" = @clubId)
             AND p.""IsActive"" = true
             AND (@status IS NULL OR ja.""Status"" = @status)
             ORDER BY ja.""AppliedAt"" {orderBy}
@@ -41,24 +44,38 @@ public class JobApplicationRepository : IJobApplicationRepository
                 application.Player = player;
                 return application;
             },
-            new { jobAdId, status, pageSize, offset },
+            new { jobAdId, status, pageSize, offset, clubId },
             splitOn: "Id"
         );
 
-        return applications;
+        // Load the career history of all listed players in one query
+        var list = applications.ToList();
+        var playerIds = list.Select(a => a.PlayerId).Distinct().ToList();
+        if (playerIds.Count > 0)
+        {
+            var career = await _context.PlayerCareerEntries
+                .Where(c => playerIds.Contains(c.PlayerId))
+                .ToListAsync();
+            foreach (var application in list)
+                application.Player.CareerEntries = career.Where(c => c.PlayerId == application.PlayerId).ToList();
+        }
+
+        return list;
     }
 
-    public async Task<int> GetApplicationsCountAsync(Guid jobAdId, StatusType? status = null)
+    public async Task<int> GetApplicationsCountAsync(Guid jobAdId, StatusType? status = null, Guid? clubId = null)
     {
         var sql = @"
             SELECT COUNT(*)
             FROM ""JobApplications"" ja
             JOIN ""Users"" p ON ja.""PlayerId"" = p.""Id""
+            JOIN ""JobAds"" ad ON ja.""JobAdId"" = ad.""Id""
             WHERE ja.""JobAdId"" = @jobAdId
+            AND (@clubId IS NULL OR ad.""ClubId"" = @clubId)
             AND p.""IsActive"" = true
             AND (@status IS NULL OR ja.""Status"" = @status)";
 
-        return await _connection.ExecuteScalarAsync<int>(sql, new { jobAdId, status });
+        return await _connection.ExecuteScalarAsync<int>(sql, new { jobAdId, status, clubId });
     }
 
     public async Task<JobApplication?> GetByIdAsync(Guid id)

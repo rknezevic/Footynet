@@ -5,6 +5,10 @@ using Microsoft.Extensions.Localization;
 
 namespace Footynet.Middleware;
 
+// Thrown when an authenticated user tries something they are not allowed to do (403).
+// UnauthorizedAccessException maps to 401, which makes the frontend log the user out.
+public class ForbiddenException(string message) : Exception(message);
+
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -35,6 +39,7 @@ public class ExceptionMiddleware
         var (statusCode, message) = exception switch
         {
             UnauthorizedAccessException ex => (HttpStatusCode.Unauthorized, ex.Message),
+            ForbiddenException ex => (HttpStatusCode.Forbidden, ex.Message),
             InvalidOperationException ex => (HttpStatusCode.BadRequest, ex.Message),
             ArgumentException ex => (HttpStatusCode.BadRequest, ex.Message),
             KeyNotFoundException ex => (HttpStatusCode.NotFound, ex.Message),

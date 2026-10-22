@@ -1,48 +1,26 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import AuthLayout from '@/components/AuthLayout';
+import Button from '@/components/Button';
 
 export default function PendingApprovalPage() {
   const { logout } = useAuth();
   const t = useTranslations('pendingApproval');
 
   return (
-    <div className="min-h-screen bg-neutral-50 grid place-items-center">
-      <div className="w-full max-w-sm px-8 text-center">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 mb-1">FootyNet</h1>
-          <p className="text-sm text-neutral-500">{t('subtitle')}</p>
+    <AuthLayout>
+      <div className="rounded-2xl border border-ink-200/70 bg-white p-8 text-center shadow-card">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+          <Clock className="h-7 w-7" />
         </div>
-        <div className="border border-neutral-200 rounded-md bg-white px-6 py-8 mb-6">
-          <div className="mb-4">
-            <svg
-              className="mx-auto h-10 w-10 text-neutral-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-          </div>
-          <h2 className="text-sm font-semibold text-neutral-900 mb-2">{t('title')}</h2>
-          <p className="text-sm text-neutral-500 leading-relaxed">
-            {t('message')}
-          </p>
-        </div>
-        <button
-          onClick={logout}
-          className="w-full bg-neutral-900 text-white py-2.5 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors"
-        >
-          {t('backToLogin')}
-        </button>
+        <p className="mb-1 text-sm font-semibold text-pitch-700">{t('subtitle')}</p>
+        <h1 className="mb-3 text-2xl font-bold tracking-tight text-ink-900">{t('title')}</h1>
+        <p className="mb-8 text-sm leading-relaxed text-ink-600">{t('message')}</p>
+        <Button onClick={logout} variant="secondary" className="w-full">{t('backToLogin')}</Button>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

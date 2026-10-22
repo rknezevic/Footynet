@@ -7,6 +7,7 @@ public class UpdateClubProfileDto
     public string City { get; set; } = string.Empty;
     public string County { get; set; } = string.Empty;
     public Guid LeagueId { get; set; }
+    public string? Phone { get; set; }
 }
 
 public class ClubProfileDto
@@ -18,4 +19,5 @@ public class ClubProfileDto
     public string County { get; set; } = string.Empty;
     public string LeagueName { get; set; } = string.Empty;
     public Guid LeagueId { get; set; }
+    public string? Phone { get; set; }
 }

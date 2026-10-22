@@ -1,15 +1,22 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { adminService } from '@/lib/admin';
-import { AdminUserDto, PaginatedResult, RoleType } from '@/types';
-import UnifiedNavBar from '@/components/UnifiedNavBar';
-import PageHeader from '@/components/PageHeader';
-import Card from '@/components/Card';
-import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Search, UserCheck, UserX, Users } from 'lucide-react';
+import { adminService } from '@/lib/admin';
 import { useEnumLabels } from '@/i18n/useEnumLabels';
+import { AdminUserDto, PaginatedResult, RoleType } from '@/types';
+import PageShell from '@/components/PageShell';
+import PageHeader from '@/components/PageHeader';
+import Card from '@/components/Card';
+import Avatar from '@/components/Avatar';
+import Badge from '@/components/Badge';
+import Button from '@/components/Button';
+import EmptyState from '@/components/EmptyState';
+import ErrorMessage from '@/components/ErrorMessage';
+import Loading from '@/components/Loading';
+import Pagination from '@/components/Pagination';
 
 const PAGE_SIZE = 10;
 
@@ -29,198 +36,115 @@ export default function AdminUsers() {
   const [actioningId, setActioningId] = useState<string | null>(null);
   const router = useRouter();
   const t = useTranslations('adminUsers');
-  const tCommon = useTranslations('common');
   const labels = useEnumLabels();
 
   const loadUsers = useCallback(async (p: number, s: string, r: string) => {
     try {
       setError('');
       const role = r !== '' ? Number(r) : undefined;
-      const result = await adminService.getUsers(s || undefined, role, p, PAGE_SIZE);
-      setData(result);
+      setData(await adminService.getUsers(s || undefined, role, p, PAGE_SIZE));
     } catch (err: any) {
       const status = err?.response?.status ?? err?.status;
-      if (status === 401 || status === 403) {
-        router.push('/login');
-      } else {
-        setError(t('loadFailed'));
-      }
+      if (status === 401 || status === 403) router.push('/login');
+      else setError(t('loadFailed'));
     }
-  }, [router]);
+  }, [router, t]);
 
   useEffect(() => {
     loadUsers(page, search, roleFilter);
   }, [page, search, roleFilter, loadUsers]);
 
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  };
-
-  const handleRoleChange = (value: string) => {
-    setRoleFilter(value);
-    setPage(1);
-  };
-
-  const handleDeactivate = async (id: string) => {
+  const runAction = async (id: string, action: (id: string) => Promise<unknown>, failedKey: string) => {
     setActioningId(id);
     try {
-      await adminService.deactivateUser(id);
+      await action(id);
       await loadUsers(page, search, roleFilter);
     } catch {
-      setError(t('deactivateFailed'));
+      setError(t(failedKey));
     } finally {
       setActioningId(null);
     }
   };
 
-  const handleReactivate = async (id: string) => {
-    setActioningId(id);
-    try {
-      await adminService.reactivateUser(id);
-      await loadUsers(page, search, roleFilter);
-    } catch {
-      setError(t('reactivateFailed'));
-    } finally {
-      setActioningId(null);
-    }
-  };
+  if (error && !data) return <PageShell><ErrorMessage message={error} /></PageShell>;
+  if (!data) return <PageShell><Loading /></PageShell>;
 
-  if (error && !data) {
-    return (
-      <div className="min-h-screen bg-neutral-50">
-        <UnifiedNavBar />
-        <div className="max-w-7xl mx-auto px-8 py-12">
-          <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r">
-            {error}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
-
-  const { items, totalPages } = data;
+  const users = data.items.filter(user => user.role !== 'Admin');
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <UnifiedNavBar />
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title={t('title')} subtitle={t('subtitle')} />
+    <PageShell>
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
+      {error && <div className="mb-6"><ErrorMessage message={error} /></div>}
 
-        {error && (
-          <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r mb-6">
-            {error}
+      <Card>
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row">
+          <div className="relative flex-1 sm:max-w-xs">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
+            <input
+              type="text"
+              placeholder={t('searchPlaceholder')}
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              className="field pl-9"
+            />
           </div>
-        )}
-
-        <div className="flex items-center gap-4 mb-6">
-          <input
-            type="text"
-            placeholder={t('searchPlaceholder')}
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="flex-1 max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 bg-white text-neutral-900 placeholder-neutral-400"
-          />
-          <select
-            value={roleFilter}
-            onChange={(e) => handleRoleChange(e.target.value)}
-            className="px-3 py-2 text-sm border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 bg-white text-neutral-700"
-          >
-            {ROLE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+          <div className="flex rounded-lg bg-ink-100 p-1">
+            {ROLE_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => { setRoleFilter(opt.value); setPage(1); }}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${roleFilter === opt.value ? 'bg-white text-ink-900 shadow-sm' : 'text-ink-500 hover:text-ink-900'}`}
+              >
                 {opt.value === '' ? t('allRoles') : labels.role(opt.labelKey)}
-              </option>
+              </button>
             ))}
-          </select>
+          </div>
         </div>
 
-        <Card>
-          {items.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t('empty')}</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-neutral-200">
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('email')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('role')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('status')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">{t('actions')}</th>
+        {users.length === 0 ? (
+          <EmptyState icon={Users} title={t('empty')} />
+        ) : (
+          <div className="-mx-6 overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-ink-100 text-xs uppercase tracking-wider text-ink-500">
+                  <th className="px-6 pb-3 font-semibold">{t('email')}</th>
+                  <th className="px-6 pb-3 font-semibold">{t('role')}</th>
+                  <th className="px-6 pb-3 font-semibold">{t('status')}</th>
+                  <th className="px-6 pb-3 text-right font-semibold">{t('actions')}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-ink-100">
+                {users.map(user => (
+                  <tr key={user.id} className="transition-colors hover:bg-ink-50/60">
+                    <td className="px-6 py-3">
+                      <div className="flex items-center gap-3">
+                        <Avatar name={user.email} size="sm" />
+                        <span className="font-medium text-ink-900">{user.email}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-3"><Badge tone={user.role === 'Club' ? 'blue' : 'green'}>{labels.role(user.role)}</Badge></td>
+                    <td className="px-6 py-3"><Badge tone={user.isActive ? 'green' : 'gray'} dot>{user.isActive ? t('active') : t('inactive')}</Badge></td>
+                    <td className="px-6 py-3 text-right">
+                      {user.isActive ? (
+                        <Button variant="danger" size="sm" onClick={() => runAction(user.id, adminService.deactivateUser, 'deactivateFailed')} disabled={actioningId === user.id}>
+                          <UserX className="h-3.5 w-3.5" />{t('deactivate')}
+                        </Button>
+                      ) : (
+                        <Button size="sm" onClick={() => runAction(user.id, adminService.reactivateUser, 'reactivateFailed')} disabled={actioningId === user.id}>
+                          <UserCheck className="h-3.5 w-3.5" />{t('activate')}
+                        </Button>
+                      )}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {items.filter((user) => user.role !== 'Admin').map((user) => (
-                    <tr key={user.id} className="border-b border-neutral-100 last:border-0">
-                      <td className="py-4 text-neutral-900 font-medium">{user.email}</td>
-                      <td className="py-4 text-neutral-600">{labels.role(user.role)}</td>
-                      <td className="py-4">
-                        <span
-                          className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
-                            user.isActive
-                              ? 'bg-green-50 text-green-700'
-                              : 'bg-neutral-100 text-neutral-500'
-                          }`}
-                        >
-                          {user.isActive ? t('active') : t('inactive')}
-                        </span>
-                      </td>
-                      <td className="py-4 text-right">
-                        {user.isActive ? (
-                          <Button
-                            variant="danger"
-                            onClick={() => handleDeactivate(user.id)}
-                            disabled={actioningId === user.id}
-                            className="px-3 py-1.5 text-xs"
-                          >
-                            {t('deactivate')}
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="primary"
-                            onClick={() => handleReactivate(user.id)}
-                            disabled={actioningId === user.id}
-                            className="px-3 py-1.5 text-xs"
-                          >
-                            {t('activate')}
-                          </Button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6">
-            <p className="text-xs text-neutral-500">
-              {tCommon('pageOf', { page, totalPages })}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="px-3 py-1.5 text-xs"
-              >
-                {tCommon('previous')}
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages}
-                className="px-3 py-1.5 text-xs"
-              >
-                {tCommon('next')}
-              </Button>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
-      </div>
-    </div>
+      </Card>
+
+      <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
+    </PageShell>
   );
 }

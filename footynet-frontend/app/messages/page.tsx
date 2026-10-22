@@ -1,102 +1,232 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { messageService } from '@/lib/message';
-import { Message } from '@/types';
-import UnifiedNavBar from '@/components/UnifiedNavBar';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations, useFormatter } from 'next-intl';
+import { ArrowLeft, MessageCircle, Send } from 'lucide-react';
+import { messageService } from '@/lib/message';
+import { useAuth } from '@/contexts/AuthContext';
+import { useChat } from '@/contexts/ChatContext';
+import { InboxItem, Message } from '@/types';
+import PageShell from '@/components/PageShell';
+import Avatar from '@/components/Avatar';
+import EmptyState from '@/components/EmptyState';
+import ErrorMessage from '@/components/ErrorMessage';
 
-interface InboxMessage extends Message { otherUserName?: string; }
+interface Conversation {
+  userId: string;
+  name: string;
+}
 
 export default function MessagesPage() {
-  const [inbox, setInbox] = useState<InboxMessage[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [selectedUserName, setSelectedUserName] = useState('');
-  const [conversation, setConversation] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  // useSearchParams needs a Suspense boundary in the App Router
+  return (
+    <Suspense>
+      <MessagesView />
+    </Suspense>
+  );
+}
+
+function MessagesView() {
   const t = useTranslations('messages');
   const format = useFormatter();
+  // Re-render every 30s so "2 minutes ago" labels stay current. Relative times are computed against
+  // new Date() at render time: next-intl's default 'now' is the server render time ("in 19 seconds")
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  const searchParams = useSearchParams();
+  const { userId: myId } = useAuth();
+  const { connected, onMessage, refreshUnread } = useChat();
 
-  useEffect(() => { loadInbox(); }, []);
-  useEffect(() => { if (selectedUserId) loadConversation(selectedUserId); }, [selectedUserId]);
+  const [inbox, setInbox] = useState<InboxItem[]>([]);
+  const [selected, setSelected] = useState<Conversation | null>(null);
+  const [conversation, setConversation] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const bottomRef = useRef<HTMLDivElement>(null);
+  // The open conversation, readable inside the SignalR callback without re-subscribing
+  const selectedRef = useRef<Conversation | null>(null);
+  selectedRef.current = selected;
 
-  const loadInbox = async () => setInbox(await messageService.getInbox());
-  const loadConversation = async (userId: string) => setConversation(await messageService.getConversation(userId));
+  const loadInbox = useCallback(() => messageService.getInbox().then(setInbox), []);
+
+  // Open the conversation passed in the URL (e.g. from "Message club" on an accepted application)
+  useEffect(() => {
+    loadInbox();
+    const user = searchParams.get('user');
+    if (user) setSelected({ userId: user, name: searchParams.get('name') ?? '' });
+  }, [loadInbox, searchParams]);
+
+  useEffect(() => {
+    if (!selected) return;
+    setError('');
+    messageService.getConversation(selected.userId).then(setConversation);
+    messageService.markConversationRead(selected.userId).then(() => {
+      refreshUnread();
+      setInbox(prev => prev.map(i => i.otherUserId === selected.userId ? { ...i, unreadCount: 0 } : i));
+    }).catch(() => {});
+  }, [selected, refreshUnread]);
+
+  // Real-time: the server pushes every new message for this user over SignalR
+  useEffect(() => onMessage((msg) => {
+    const otherId = msg.senderId === myId ? msg.receiverId : msg.senderId;
+    const isOpen = selectedRef.current?.userId === otherId;
+
+    if (isOpen) {
+      // Ignore duplicates: our own sent message is already added from the POST response
+      setConversation(prev => prev.some(m => m.id === msg.id) ? prev : [...prev, msg]);
+      if (msg.senderId !== myId) messageService.markConversationRead(otherId).then(refreshUnread).catch(() => {});
+    }
+
+    setInbox(prev => {
+      const existing = prev.find(i => i.otherUserId === otherId);
+      const updated: InboxItem = {
+        ...msg,
+        otherUserId: otherId,
+        otherUserName: existing?.otherUserName ?? msg.senderName ?? selectedRef.current?.name ?? '',
+        unreadCount: isOpen || msg.senderId === myId ? 0 : (existing?.unreadCount ?? 0) + 1,
+      };
+      return [updated, ...prev.filter(i => i.otherUserId !== otherId)];
+    });
+  }), [onMessage, myId, refreshUnread]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [conversation]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedUserId || !newMessage.trim()) return;
-    await messageService.sendMessage({ receiverId: selectedUserId, content: newMessage });
-    setNewMessage('');
-    loadConversation(selectedUserId);
-    loadInbox();
+    const content = newMessage.trim();
+    if (!selected || !content) return;
+    setSending(true);
+    setError('');
+    try {
+      const sent = await messageService.sendMessage({ receiverId: selected.userId, content });
+      setNewMessage('');
+      setConversation(prev => prev.some(m => m.id === sent.id) ? prev : [...prev, sent]);
+    } catch (err: any) {
+      setError(err?.message);
+    } finally {
+      setSending(false);
+    }
   };
 
-  const uniqueUsers = Array.from(
-    new Map(inbox.map(m => {
-      const myId = localStorage.getItem('userId');
-      return [m.senderId === myId ? m.receiverId : m.senderId, m];
-    })).values()
-  );
+  const selectedName = selected
+    ? inbox.find(i => i.otherUserId === selected.userId)?.otherUserName || selected.name
+    : '';
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <UnifiedNavBar />
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">{t('title')}</h1>
-        <p className="text-sm text-neutral-500 mb-8">{t('subtitle')}</p>
-
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-4 bg-white border border-neutral-200 rounded-lg p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">{t('inbox')}</h3>
-            <div className="space-y-2">
-              {uniqueUsers.length === 0 ? <p className="text-sm text-neutral-400">{t('empty')}</p> : uniqueUsers.map((msg) => {
-                const myId = localStorage.getItem('userId');
-                const otherUserId = msg.senderId === myId ? msg.receiverId : msg.senderId;
-                const displayName = (msg as InboxMessage).otherUserName || otherUserId.substring(0, 8);
-                return (
-                  <button key={otherUserId} onClick={() => { setSelectedUserId(otherUserId); setSelectedUserName(displayName); }}
-                    className={`w-full text-left p-3 rounded-md border transition-colors ${selectedUserId === otherUserId ? 'border-neutral-900 bg-neutral-50' : 'border-neutral-200 hover:border-neutral-400'}`}>
-                    <p className="text-sm font-medium text-neutral-900 mb-0.5">{displayName}</p>
-                    <p className="text-xs text-neutral-400 truncate">{msg.content}</p>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="col-span-8 bg-white border border-neutral-200 rounded-lg flex flex-col" style={{ height: '600px' }}>
-            {selectedUserId ? (
-              <>
-                <div className="border-b border-neutral-200 px-5 py-3">
-                  <p className="text-sm font-medium text-neutral-700">{t('conversationWith', { name: selectedUserName })}</p>
-                </div>
-                <div className="flex-1 overflow-y-auto p-5 space-y-3">
-                  {conversation.map((msg) => {
-                    const isMe = msg.senderId === localStorage.getItem('userId');
-                    return (
-                      <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-md px-4 py-2.5 rounded-lg ${isMe ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-900'}`}>
-                          <p className="text-sm">{msg.content}</p>
-                          <p className={`text-[10px] mt-1 ${isMe ? 'text-neutral-400' : 'text-neutral-500'}`}>{format.dateTime(new Date(msg.sentAt), { dateStyle: 'short', timeStyle: 'short' })}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <form onSubmit={handleSend} className="border-t border-neutral-200 p-4 flex gap-3">
-                  <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder={t('placeholder')} className="flex-1 px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" required />
-                  <button type="submit" className="bg-neutral-900 text-white px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">{t('send')}</button>
-                </form>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center">
-                <p className="text-sm text-neutral-400">{t('selectConversation')}</p>
-              </div>
-            )}
-          </div>
+    <PageShell>
+      <div className="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-ink-900">{t('title')}</h1>
+          <p className="mt-1 text-ink-500">{t('subtitle')}</p>
         </div>
+        <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${connected ? 'bg-pitch-50 text-pitch-700' : 'bg-ink-100 text-ink-500'}`}>
+          <span className={`h-2 w-2 rounded-full ${connected ? 'animate-pulse bg-pitch-500' : 'bg-ink-400'}`} />
+          {connected ? t('live') : t('connecting')}
+        </span>
       </div>
-    </div>
+
+      <div className="grid h-[calc(100vh-15rem)] min-h-[28rem] overflow-hidden rounded-2xl border border-ink-200/70 bg-white shadow-card md:grid-cols-[20rem_1fr]">
+        {/* Conversation list (hidden on mobile while a conversation is open) */}
+        <aside className={`flex-col border-r border-ink-100 ${selected ? 'hidden md:flex' : 'flex'}`}>
+          <h2 className="eyebrow border-b border-ink-100 px-5 py-4">{t('inbox')}</h2>
+          <div className="flex-1 overflow-y-auto p-2">
+            {inbox.length === 0 ? (
+              <EmptyState icon={MessageCircle} title={t('empty')} description={t('emptyHint')} />
+            ) : inbox.map(item => {
+              const active = selected?.userId === item.otherUserId;
+              return (
+                <button
+                  key={item.otherUserId}
+                  onClick={() => setSelected({ userId: item.otherUserId, name: item.otherUserName })}
+                  className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-colors ${active ? 'bg-pitch-50' : 'hover:bg-ink-50'}`}
+                >
+                  <Avatar name={item.otherUserName} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className={`truncate text-sm ${item.unreadCount ? 'font-bold text-ink-900' : 'font-semibold text-ink-800'}`}>{item.otherUserName}</p>
+                      <span className="shrink-0 text-[11px] text-ink-400">{format.relativeTime(new Date(item.sentAt), new Date())}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className={`flex-1 truncate text-xs ${item.unreadCount ? 'font-medium text-ink-700' : 'text-ink-500'}`}>
+                        {item.senderId === myId && <span className="text-ink-400">{t('you')}: </span>}{item.content}
+                      </p>
+                      {!!item.unreadCount && (
+                        <span className="min-w-[1.25rem] rounded-full bg-pitch-600 px-1.5 py-0.5 text-center text-[10px] font-bold text-white">{item.unreadCount}</span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
+
+        {/* Open conversation */}
+        <section className={`flex-col ${selected ? 'flex' : 'hidden md:flex'}`}>
+          {selected ? (
+            <>
+              <header className="flex items-center gap-3 border-b border-ink-100 px-5 py-3">
+                <button onClick={() => setSelected(null)} className="rounded-lg p-1.5 text-ink-500 hover:bg-ink-100 md:hidden" aria-label={t('back')}>
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+                <Avatar name={selectedName || '?'} />
+                <p className="font-semibold text-ink-900">{selectedName}</p>
+              </header>
+
+              <div className="flex-1 space-y-2 overflow-y-auto bg-ink-50/60 px-4 py-5 sm:px-6">
+                {conversation.length === 0 && <p className="py-10 text-center text-sm text-ink-400">{t('startConversation')}</p>}
+                {conversation.map(msg => {
+                  const isMe = msg.senderId === myId;
+                  return (
+                    <div key={msg.id} className={`flex animate-fade-in-up ${isMe ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 shadow-sm sm:max-w-md ${
+                        isMe ? 'rounded-br-md bg-pitch-600 text-white' : 'rounded-bl-md border border-ink-200/70 bg-white text-ink-900'
+                      }`}>
+                        <p className="whitespace-pre-line break-words text-sm">{msg.content}</p>
+                        <p className={`mt-1 text-right text-[10px] ${isMe ? 'text-pitch-100' : 'text-ink-400'}`}>
+                          {format.dateTime(new Date(msg.sentAt), { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div ref={bottomRef} />
+              </div>
+
+              {error && <div className="px-4 pt-3"><ErrorMessage message={error} /></div>}
+              <form onSubmit={handleSend} className="flex gap-2 border-t border-ink-100 p-3 sm:p-4">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder={t('placeholder')}
+                  maxLength={2000}
+                  className="field flex-1"
+                />
+                <button
+                  type="submit"
+                  disabled={sending || !newMessage.trim()}
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-pitch-600 text-white shadow-sm transition hover:bg-pitch-700 disabled:opacity-40"
+                  aria-label={t('send')}
+                >
+                  <Send className="h-4 w-4" />
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="flex flex-1 items-center justify-center">
+              <EmptyState icon={MessageCircle} title={t('selectConversation')} />
+            </div>
+          )}
+        </section>
+      </div>
+    </PageShell>
   );
 }

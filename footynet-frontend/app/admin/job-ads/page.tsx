@@ -1,16 +1,24 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { adminService } from '@/lib/admin';
-import { jobAdService } from '@/lib/jobAds';
-import { AdminJobAdDto, PaginatedResult } from '@/types';
-import UnifiedNavBar from '@/components/UnifiedNavBar';
-import PageHeader from '@/components/PageHeader';
-import Card from '@/components/Card';
-import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useFormatter } from 'next-intl';
+import { Eye, Megaphone, Search, Trash2 } from 'lucide-react';
+import { adminService } from '@/lib/admin';
+import { jobAdService } from '@/lib/jobAds';
 import { useEnumLabels } from '@/i18n/useEnumLabels';
+import { AdminJobAdDto, PaginatedResult } from '@/types';
+import PageShell from '@/components/PageShell';
+import PageHeader from '@/components/PageHeader';
+import Card from '@/components/Card';
+import Avatar from '@/components/Avatar';
+import Badge from '@/components/Badge';
+import Button from '@/components/Button';
+import EmptyState from '@/components/EmptyState';
+import ErrorMessage from '@/components/ErrorMessage';
+import Loading from '@/components/Loading';
+import Modal from '@/components/Modal';
+import Pagination from '@/components/Pagination';
 
 const PAGE_SIZE = 10;
 
@@ -31,26 +39,17 @@ export default function AdminJobAds() {
   const loadJobAds = useCallback(async (p: number, s: string) => {
     try {
       setError('');
-      const result = await adminService.getJobAds(s || undefined, p, PAGE_SIZE);
-      setData(result);
+      setData(await adminService.getJobAds(s || undefined, p, PAGE_SIZE));
     } catch (err: any) {
       const status = err?.response?.status ?? err?.status;
-      if (status === 401 || status === 403) {
-        router.push('/login');
-      } else {
-        setError(t('loadFailed'));
-      }
+      if (status === 401 || status === 403) router.push('/login');
+      else setError(t('loadFailed'));
     }
-  }, [router]);
+  }, [router, t]);
 
   useEffect(() => {
     loadJobAds(page, search);
   }, [page, search, loadJobAds]);
-
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  };
 
   const handleDelete = async (id: string) => {
     setActioningId(id);
@@ -67,8 +66,7 @@ export default function AdminJobAds() {
   const handleViewDetails = async (id: string) => {
     setLoadingDetail(true);
     try {
-      const detail = await jobAdService.getById(id);
-      setSelectedJob(detail);
+      setSelectedJob(await jobAdService.getById(id));
     } catch {
       setError(t('detailFailed'));
     } finally {
@@ -76,157 +74,84 @@ export default function AdminJobAds() {
     }
   };
 
-  if (error && !data) {
-    return (
-      <div className="min-h-screen bg-neutral-50">
-        <UnifiedNavBar />
-        <div className="max-w-7xl mx-auto px-8 py-12">
-          <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r">
-            {error}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const formatDate = (value: string) => format.dateTime(new Date(value), { dateStyle: 'medium' });
+  const statusName = (s: string | number) => (s === 0 ? 'Open' : s === 1 ? 'Closed' : String(s));
 
-  if (!data) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
-
-  const { items, totalPages } = data;
+  if (error && !data) return <PageShell><ErrorMessage message={error} /></PageShell>;
+  if (!data) return <PageShell><Loading /></PageShell>;
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <UnifiedNavBar />
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title={t('title')} subtitle={t('subtitle')} />
+    <PageShell>
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
+      {error && <div className="mb-6"><ErrorMessage message={error} /></div>}
 
-        {error && (
-          <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r mb-6">
-            {error}
-          </div>
-        )}
-
-        <div className="flex items-center gap-4 mb-6">
+      <Card>
+        <div className="relative mb-5 sm:max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
           <input
             type="text"
             placeholder={t('searchPlaceholder')}
             value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="flex-1 max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 bg-white text-neutral-900 placeholder-neutral-400"
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            className="field pl-9"
           />
         </div>
 
-        <Card>
-          {items.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t('empty')}</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-neutral-200">
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('adTitle')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('club')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('createdAt')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('status')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">{t('actions')}</th>
+        {data.items.length === 0 ? (
+          <EmptyState icon={Megaphone} title={t('empty')} />
+        ) : (
+          <div className="-mx-6 overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-ink-100 text-xs uppercase tracking-wider text-ink-500">
+                  <th className="px-6 pb-3 font-semibold">{t('adTitle')}</th>
+                  <th className="px-6 pb-3 font-semibold">{t('club')}</th>
+                  <th className="px-6 pb-3 font-semibold">{t('createdAt')}</th>
+                  <th className="px-6 pb-3 font-semibold">{t('status')}</th>
+                  <th className="px-6 pb-3 text-right font-semibold">{t('actions')}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-ink-100">
+                {data.items.map(ad => (
+                  <tr key={ad.id} className="transition-colors hover:bg-ink-50/60">
+                    <td className="px-6 py-3 font-semibold text-ink-900">{ad.title}</td>
+                    <td className="px-6 py-3">
+                      <div className="flex items-center gap-2"><Avatar name={ad.clubName} size="sm" /><span className="text-ink-600">{ad.clubName}</span></div>
+                    </td>
+                    <td className="px-6 py-3 text-ink-600">{formatDate(ad.createdAt)}</td>
+                    <td className="px-6 py-3"><Badge tone={ad.adStatus === 'Open' ? 'green' : 'gray'} dot>{labels.adStatus(ad.adStatus)}</Badge></td>
+                    <td className="px-6 py-3">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="secondary" size="sm" onClick={() => handleViewDetails(ad.id)} disabled={loadingDetail}><Eye className="h-3.5 w-3.5" />{t('view')}</Button>
+                        <Button variant="danger" size="sm" onClick={() => handleDelete(ad.id)} disabled={actioningId === ad.id}><Trash2 className="h-3.5 w-3.5" />{t('delete')}</Button>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {items.map((ad) => (
-                    <tr key={ad.id} className="border-b border-neutral-100 last:border-0">
-                      <td className="py-4 text-neutral-900 font-medium">{ad.title}</td>
-                      <td className="py-4 text-neutral-600">{ad.clubName}</td>
-                      <td className="py-4 text-neutral-600">{format.dateTime(new Date(ad.createdAt), { dateStyle: 'medium' })}</td>
-                      <td className="py-4">
-                        <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
-                          ad.adStatus === 'Open' ? 'bg-green-50 text-green-700' : 'bg-neutral-100 text-neutral-500'
-                        }`}>
-                          {labels.adStatus(ad.adStatus)}
-                        </span>
-                      </td>
-                      <td className="py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="secondary"
-                            onClick={() => handleViewDetails(ad.id)}
-                            disabled={loadingDetail}
-                            className="px-3 py-1.5 text-xs"
-                          >
-                            {t('view')}
-                          </Button>
-                          <Button
-                            variant="danger"
-                            onClick={() => handleDelete(ad.id)}
-                            disabled={actioningId === ad.id}
-                            className="px-3 py-1.5 text-xs"
-                          >
-                            {t('delete')}
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6">
-            <p className="text-xs text-neutral-500">
-              {tCommon('pageOf', { page, totalPages })}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="px-3 py-1.5 text-xs"
-              >
-                {tCommon('previous')}
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages}
-                className="px-3 py-1.5 text-xs"
-              >
-                {tCommon('next')}
-              </Button>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
-      </div>
+      </Card>
+
+      <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
 
       {selectedJob && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setSelectedJob(null)}>
-          <div className="bg-white rounded-lg max-w-lg w-full max-h-[80vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start justify-between mb-4">
-              <h2 className="text-xl font-bold text-neutral-900">{selectedJob.title}</h2>
-              <button onClick={() => setSelectedJob(null)} className="text-neutral-400 hover:text-neutral-600 text-lg">✕</button>
-            </div>
-            <p className="text-sm text-neutral-500 mb-4">
-              {selectedJob.clubName} · {selectedJob.leagueName} · {labels.position(selectedJob.requiredPositionName)}
-            </p>
-            <p className="text-sm text-neutral-600 leading-relaxed mb-4">{selectedJob.description}</p>
-            <div className="flex items-center gap-3 text-xs text-neutral-400">
-              <span>{t('posted', { date: format.dateTime(new Date(selectedJob.createdAt), { dateStyle: 'medium' }) })}</span>
-              <span className={`px-2 py-0.5 font-medium rounded-full ${
-                selectedJob.adStatus === 'Open' || selectedJob.adStatus === 0
-                  ? 'bg-green-50 text-green-700'
-                  : 'bg-neutral-100 text-neutral-500'
-              }`}>
-                {labels.adStatus(selectedJob.adStatus === 0 ? 'Open' : selectedJob.adStatus === 1 ? 'Closed' : String(selectedJob.adStatus))}
-              </span>
-            </div>
-            <div className="mt-6 flex justify-end">
-              <Button variant="secondary" onClick={() => setSelectedJob(null)} className="px-4 py-2 text-sm">
-                {tCommon('close')}
-              </Button>
-            </div>
+        <Modal
+          title={selectedJob.title}
+          onClose={() => setSelectedJob(null)}
+          footer={<Button variant="secondary" onClick={() => setSelectedJob(null)}>{tCommon('close')}</Button>}
+        >
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <Badge tone="green">{labels.position(selectedJob.requiredPositionName)}</Badge>
+            <Badge>{selectedJob.leagueName}</Badge>
+            <Badge tone={statusName(selectedJob.adStatus) === 'Open' ? 'green' : 'gray'} dot>{labels.adStatus(statusName(selectedJob.adStatus))}</Badge>
           </div>
-        </div>
+          <p className="mb-2 text-sm font-medium text-ink-700">{selectedJob.clubName}</p>
+          <p className="mb-4 whitespace-pre-line text-sm leading-relaxed text-ink-600">{selectedJob.description}</p>
+          <p className="text-xs text-ink-400">{t('posted', { date: formatDate(selectedJob.createdAt) })}</p>
+        </Modal>
       )}
-    </div>
+    </PageShell>
   );
 }

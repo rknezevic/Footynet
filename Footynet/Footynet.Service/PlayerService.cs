@@ -53,17 +53,7 @@ public class PlayerService : IPlayerService
         if (player == null)
             return null;
 
-        return new PlayerProfileDto
-        {
-            Id = player.Id,
-            FirstName = player.FirstName,
-            LastName = player.LastName,
-            Age = player.Age,
-            Description = player.Description ?? "",
-            PrefeeredFootType = player.PrefeeredFootType,
-            City = player.City,
-            County = player.CountyName
-        };
+        return PlayerProfileDto.From(player);
     }
 
     public async Task<PlayerProfileDto> UpdatePlayerProfileAsync(Guid userId, UpdatePlayerProfileDto dto)
@@ -79,20 +69,26 @@ public class PlayerService : IPlayerService
         player.PrefeeredFootType = dto.PrefeeredFootType;
         player.City = dto.City;
         player.CountyName = dto.County;
+        player.PrimaryPosition = dto.PrimaryPosition;
+        player.SecondaryPosition = dto.SecondaryPosition;
+        player.Availability = dto.Availability;
+
+        // The career list is replaced as a whole; removed entries are deleted by EF (orphan removal)
+        player.CareerEntries.Clear();
+        foreach (var (entry, index) in dto.Career.Select((e, i) => (e, i)))
+        {
+            player.CareerEntries.Add(new PlayerCareerEntry
+            {
+                ClubName = entry.ClubName.Trim(),
+                FromYear = entry.FromYear,
+                ToYear = entry.ToYear,
+                SortOrder = index
+            });
+        }
 
         await _playerRepository.UpdateAsync(player);
 
-        return new PlayerProfileDto
-        {
-            Id = player.Id,
-            FirstName = player.FirstName,
-            LastName = player.LastName,
-            Age = player.Age,
-            Description = player.Description ?? "",
-            PrefeeredFootType = player.PrefeeredFootType,
-            City = player.City,
-            County = player.CountyName
-        };
+        return PlayerProfileDto.From(player);
     }
 
     public async Task<PaginatedResult<JobAdDto>> GetMyApplicationsAsync(Guid userId, int page = 1, int pageSize = 10)

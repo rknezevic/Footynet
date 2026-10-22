@@ -15,6 +15,25 @@ export enum PreferredFootType {
   Left = 1
 }
 
+export enum PositionType {
+  Goalkeeper = 0,
+  Defender = 1,
+  Midfielder = 2,
+  Forward = 3
+}
+
+export enum AvailabilityStatus {
+  LookingForClub = 0,
+  OpenToOffers = 1,
+  NotAvailable = 2
+}
+
+export interface CareerEntry {
+  clubName: string;
+  fromYear?: number | null;
+  toYear?: number | null;
+}
+
 export interface LoginDto {
   email: string;
   password: string;
@@ -51,6 +70,10 @@ export interface PlayerProfileDto {
   county: string;
   description: string;
   prefeeredFootType: PreferredFootType;
+  primaryPosition: PositionType | null;
+  secondaryPosition: PositionType | null;
+  availability: AvailabilityStatus;
+  career: CareerEntry[];
 }
 
 export interface UpdatePlayerProfileDto {
@@ -61,6 +84,10 @@ export interface UpdatePlayerProfileDto {
   prefeeredFootType: PreferredFootType;
   city: string;
   county: string;
+  primaryPosition: PositionType | null;
+  secondaryPosition: PositionType | null;
+  availability: AvailabilityStatus;
+  career: CareerEntry[];
 }
 
 export interface ClubProfileDto {
@@ -71,6 +98,7 @@ export interface ClubProfileDto {
   county: string;
   leagueName: string;
   leagueId: string;
+  phone?: string | null;
 }
 
 export interface UpdateClubProfileDto {
@@ -79,12 +107,14 @@ export interface UpdateClubProfileDto {
   city: string;
   county: string;
   leagueId: string;
+  phone?: string | null;
 }
 
 export interface JobAdDto {
   id: string;
   title: string;
   description: string;
+  clubId: string;
   clubName: string;
   leagueName: string;
   requiredPosition: string;
@@ -120,6 +150,15 @@ export interface Message {
   receiverId: string;
   content: string;
   sentAt: string;
+  isRead: boolean;
+  senderName?: string;
+}
+
+// Latest message of each conversation, as returned by GET /Message/inbox
+export interface InboxItem extends Message {
+  otherUserId: string;
+  otherUserName: string;
+  unreadCount: number;
 }
 
 export interface CreateMessageDto {

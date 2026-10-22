@@ -859,6 +859,36 @@ namespace Footynet.Data.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("Footynet.Models.PlayerCareerEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ClubName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("FromYear")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ToYear")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("PlayerCareerEntries");
+                });
+
             modelBuilder.Entity("Footynet.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -924,6 +954,10 @@ namespace Footynet.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Phone")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
                     b.HasIndex("LeagueId");
 
                     b.ToTable("Users", t =>
@@ -940,6 +974,9 @@ namespace Footynet.Data.Migrations
                     b.HasBaseType("Footynet.Models.User");
 
                     b.Property<int>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Availability")
                         .HasColumnType("integer");
 
                     b.Property<string>("City")
@@ -961,6 +998,12 @@ namespace Footynet.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("PrefeeredFootType")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PrimaryPosition")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SecondaryPosition")
                         .HasColumnType("integer");
 
                     b.HasDiscriminator().HasValue("Player");
@@ -1025,6 +1068,17 @@ namespace Footynet.Data.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("Footynet.Models.PlayerCareerEntry", b =>
+                {
+                    b.HasOne("Footynet.Models.Player", "Player")
+                        .WithMany("CareerEntries")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Player");
+                });
+
             modelBuilder.Entity("Footynet.Models.Club", b =>
                 {
                     b.HasOne("Footynet.Models.League", "League")
@@ -1054,6 +1108,8 @@ namespace Footynet.Data.Migrations
             modelBuilder.Entity("Footynet.Models.Player", b =>
                 {
                     b.Navigation("Applications");
+
+                    b.Navigation("CareerEntries");
                 });
 #pragma warning restore 612, 618
         }

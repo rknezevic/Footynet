@@ -58,4 +58,24 @@ public class MessageRepository : IMessageRepository
 
         return await _connection.QueryAsync<Message>(sql, new { userId });
     }
+
+    public async Task<bool> AreConnectedAsync(Guid userId, Guid otherUserId)
+    {
+        return await _context.JobApplications
+            .AnyAsync(a => a.Status == StatusType.Accepted &&
+                ((a.PlayerId == userId && a.JobAd.ClubId == otherUserId) ||
+                 (a.PlayerId == otherUserId && a.JobAd.ClubId == userId)));
+    }
+
+    public async Task<int> MarkConversationReadAsync(Guid userId, Guid otherUserId)
+    {
+        return await _context.Messages
+            .Where(m => m.SenderId == otherUserId && m.ReceiverId == userId && !m.IsRead)
+            .ExecuteUpdateAsync(s => s.SetProperty(m => m.IsRead, true));
+    }
+
+    public async Task<int> GetUnreadCountAsync(Guid userId)
+    {
+        return await _context.Messages.CountAsync(m => m.ReceiverId == userId && !m.IsRead);
+    }
 }

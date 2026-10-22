@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using Footynet.Data;
+using Footynet.Hubs;
+using Footynet.Middleware;
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,17 +18,24 @@ public class MessageController : ControllerBase
 {
     private readonly IMessageRepository _messageRepository;
     private readonly FootynetDbContext _context;
+    private readonly IHubContext<ChatHub> _hub;
 
-    public MessageController(IMessageRepository messageRepository, FootynetDbContext context)
+    public MessageController(IMessageRepository messageRepository, FootynetDbContext context, IHubContext<ChatHub> hub)
     {
         _messageRepository = messageRepository;
         _context = context;
+        _hub = hub;
     }
 
+    private Guid GetUserId() => Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
     [HttpPost]
-    public async Task<IActionResult> SendMessage([FromBody] CreateMessageDto dto)
+    public async Task<ActionResult<MessageDto>> SendMessage([FromBody] CreateMessageDto dto)
     {
-        var senderId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var senderId = GetUserId();
+        if (!await _messageRepository.AreConnectedAsync(senderId, dto.ReceiverId))
+            throw new ForbiddenException("You can only message users connected through an accepted application");
+
         var message = new Message
         {
             Id = Guid.NewGuid(),
@@ -34,53 +44,60 @@ public class MessageController : ControllerBase
             Content = dto.Content,
             SentAt = DateTime.UtcNow
         };
-        
+
         var created = await _messageRepository.CreateAsync(message);
-        return Ok(new
-        {
-            created.Id,
-            created.SenderId,
-            created.ReceiverId,
-            created.Content,
-            created.SentAt,
-            created.IsRead
-        });
+        var result = MessageDto.From(created, await GetDisplayNameAsync(senderId));
+
+        // Push to the receiver and to the sender's other open tabs, no polling needed
+        await _hub.Clients.Users(dto.ReceiverId.ToString(), senderId.ToString())
+            .SendAsync(ChatHub.ReceiveMessage, result);
+
+        return Ok(result);
     }
 
     [HttpGet("conversation/{otherUserId}")]
-    public async Task<IActionResult> GetConversation(Guid otherUserId)
+    public async Task<ActionResult<IEnumerable<MessageDto>>> GetConversation(Guid otherUserId)
     {
-        var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var messages = await _messageRepository.GetConversationAsync(userId, otherUserId);
-        return Ok(messages.Select(m => new
+        var messages = await _messageRepository.GetConversationAsync(GetUserId(), otherUserId);
+        return Ok(messages.Select(m => MessageDto.From(m)));
+    }
+
+    [HttpPost("conversation/{otherUserId}/read")]
+    public async Task<IActionResult> MarkConversationRead(Guid otherUserId)
+    {
+        var userId = GetUserId();
+        var updated = await _messageRepository.MarkConversationReadAsync(userId, otherUserId);
+        if (updated > 0)
         {
-            m.Id,
-            m.SenderId,
-            m.ReceiverId,
-            m.Content,
-            m.SentAt,
-            m.IsRead
-        }));
+            // Lets the reader's other tabs refresh their unread badge and the sender see "read"
+            await _hub.Clients.Users(userId.ToString(), otherUserId.ToString())
+                .SendAsync(ChatHub.MessagesRead, new { readerId = userId, otherUserId });
+        }
+        return NoContent();
+    }
+
+    [HttpGet("unread-count")]
+    public async Task<ActionResult<int>> GetUnreadCount()
+    {
+        return Ok(await _messageRepository.GetUnreadCountAsync(GetUserId()));
     }
 
     [HttpGet("inbox")]
     public async Task<IActionResult> GetInbox()
     {
-        var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var userId = GetUserId();
         var messages = await _messageRepository.GetInboxAsync(userId);
-        
+
         var userIds = messages.Select(m => m.SenderId == userId ? m.ReceiverId : m.SenderId).Distinct().ToList();
         var users = await _context.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
-        
-        string GetDisplayName(Guid id)
+        var unreadBySender = await _context.Messages
+            .Where(m => m.ReceiverId == userId && !m.IsRead)
+            .GroupBy(m => m.SenderId)
+            .Select(g => new { SenderId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.SenderId, x => x.Count);
+
+        return Ok(messages.Select(m =>
         {
-            var user = users.FirstOrDefault(u => u.Id == id);
-            if (user is Player p) return $"{p.FirstName} {p.LastName}";
-            if (user is Club c) return c.Name;
-            return "Unknown";
-        }
-        
-        return Ok(messages.Select(m => {
             var otherUserId = m.SenderId == userId ? m.ReceiverId : m.SenderId;
             return new
             {
@@ -90,7 +107,9 @@ public class MessageController : ControllerBase
                 m.Content,
                 m.SentAt,
                 m.IsRead,
-                OtherUserName = GetDisplayName(otherUserId)
+                OtherUserId = otherUserId,
+                OtherUserName = DisplayName(users.FirstOrDefault(u => u.Id == otherUserId)),
+                UnreadCount = unreadBySender.GetValueOrDefault(otherUserId)
             };
         }));
     }
@@ -100,14 +119,24 @@ public class MessageController : ControllerBase
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null) return NotFound();
-        
-        string displayName;
-        if (user is Player p) displayName = $"{p.FirstName} {p.LastName}";
-        else if (user is Club c) displayName = c.Name;
-        else displayName = "Unknown";
-        
-        return Ok(new { displayName });
+        return Ok(new { displayName = DisplayName(user) });
     }
+
+    private async Task<string> GetDisplayNameAsync(Guid userId) =>
+        DisplayName(await _context.Users.FirstOrDefaultAsync(u => u.Id == userId));
+
+    private static string DisplayName(User? user) => user switch
+    {
+        Player p => $"{p.FirstName} {p.LastName}",
+        Club c => c.Name,
+        _ => "Unknown"
+    };
 }
 
 public record CreateMessageDto(Guid ReceiverId, string Content);
+
+public record MessageDto(Guid Id, Guid SenderId, Guid ReceiverId, string Content, DateTime SentAt, bool IsRead, string? SenderName)
+{
+    public static MessageDto From(Message m, string? senderName = null) =>
+        new(m.Id, m.SenderId, m.ReceiverId, m.Content, m.SentAt, m.IsRead, senderName);
+}

@@ -7,13 +7,14 @@ import { useTranslations } from 'next-intl';
 function ErrorFallback({ error }: { error?: Error }) {
   const t = useTranslations('errorBoundary');
   return (
-    <div className="min-h-screen bg-neutral-50 grid place-items-center p-8">
-      <div className="max-w-md text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-neutral-900 mb-4">{t('title')}</h1>
-        <p className="text-sm text-neutral-600 mb-8">{error?.message || t('unexpected')}</p>
+    <div className="grid min-h-screen place-items-center p-8">
+      <div className="max-w-md rounded-2xl border border-ink-200 bg-white p-10 text-center shadow-card">
+        <div className="mb-4 text-5xl" aria-hidden="true">🥅</div>
+        <h1 className="mb-2 text-2xl font-bold tracking-tight text-ink-900">{t('title')}</h1>
+        <p className="mb-8 text-sm text-ink-600">{error?.message || t('unexpected')}</p>
         <button
           onClick={() => window.location.reload()}
-          className="bg-neutral-900 text-white px-6 py-3 text-[11px] font-medium uppercase tracking-[0.15em] hover:bg-neutral-700 transition-colors"
+          className="rounded-lg bg-pitch-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-pitch-700"
         >
           {t('reload')}
         </button>

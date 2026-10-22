@@ -13,5 +13,9 @@ public class UpdateClubProfileDtoValidator : AbstractValidator<UpdateClubProfile
 
         RuleFor(x => x.LeagueId)
             .NotEqual(Guid.Empty).WithMessage("League is required");
+
+        RuleFor(x => x.Phone)
+            .Matches(@"^\+?[0-9 ()/-]{6,30}$").WithMessage("Invalid phone number")
+            .When(x => !string.IsNullOrWhiteSpace(x.Phone));
     }
 }

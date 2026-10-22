@@ -52,6 +52,11 @@
     "adStatus": {
       "Open": "Open",
       "Closed": "Closed"
+    },
+    "availability": {
+      "LookingForClub": "Looking for a club",
+      "OpenToOffers": "Open to offers",
+      "NotAvailable": "Not available"
     }
   },
   "city": {
@@ -65,7 +70,7 @@
     "reload": "Reload Page"
   },
   "login": {
-    "subtitle": "Sign in to your account",
+    "subtitle": "Sign in to continue to FootyNet",
     "email": "Email",
     "emailPlaceholder": "you@example.com",
     "password": "Password",
@@ -73,10 +78,11 @@
     "signingIn": "Signing in...",
     "failed": "Login failed",
     "noAccount": "No account?",
-    "register": "Register"
+    "register": "Register",
+    "title": "Welcome back"
   },
   "register": {
-    "step": "Register · Step {step} of 2",
+    "step": "Step {step} of 2",
     "chooseType": "Choose Account Type",
     "player": "Player",
     "playerDescription": "Find opportunities and apply to clubs",
@@ -100,7 +106,10 @@
     "submit": "Register",
     "failed": "Registration failed",
     "haveAccount": "Have an account?",
-    "login": "Login"
+    "login": "Login",
+    "details": "Your details",
+    "passwordHint": "At least 6 characters",
+    "playerDescriptionPlaceholder": "A few words about you as a player..."
   },
   "pendingApproval": {
     "subtitle": "Club Account Status",
@@ -115,11 +124,15 @@
     "location": "Location",
     "latestOpportunities": "Latest Opportunities",
     "viewAll": "View All",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "welcome": "Hi, {name}!",
+    "edit": "Edit",
+    "clubs": "Clubs",
+    "noJobs": "No open positions right now"
   },
   "playerJobs": {
     "title": "Job Opportunities",
-    "subtitle": "Browse and apply",
+    "subtitle": "Find the club that fits you",
     "search": "Search",
     "searchPlaceholder": "Search by title or description...",
     "position": "Position",
@@ -129,7 +142,8 @@
     "applyFilters": "Apply Filters",
     "clear": "Clear",
     "noJobs": "No jobs found. Try adjusting your filters.",
-    "viewAndApply": "View & Apply"
+    "viewAndApply": "View & Apply",
+    "resultCount": "{count, plural, one {# open position} other {# open positions}}"
   },
   "jobDetail": {
     "applyFailed": "Failed to apply",
@@ -137,16 +151,20 @@
     "applyTitle": "Apply for this position",
     "coverLetter": "Cover Letter (Optional)",
     "coverLetterPlaceholder": "Tell the club why you're a great fit...",
-    "submit": "Submit Application"
+    "submit": "Submit Application",
+    "back": "All jobs",
+    "aboutRole": "About the position"
   },
   "playerApplications": {
     "title": "My Applications",
     "subtitle": "Track your application status",
-    "empty": "No applications yet. Browse jobs to apply."
+    "empty": "No applications yet. Browse jobs to apply.",
+    "browseJobs": "Browse jobs",
+    "messageClub": "Message club"
   },
   "playerProfile": {
     "title": "My Profile",
-    "subtitle": "Player Information",
+    "subtitle": "Player · {age} years",
     "details": "Profile Details",
     "firstName": "First Name",
     "lastName": "Last Name",
@@ -156,7 +174,10 @@
     "preferredFoot": "Preferred Foot",
     "description": "Description",
     "name": "Name",
-    "about": "About"
+    "about": "About",
+    "edit": "Edit profile",
+    "basicInfo": "Basic information",
+    "footballInfo": "Football profile"
   },
   "clubDashboard": {
     "subtitle": "Club Dashboard",
@@ -174,7 +195,10 @@
     "position": "Position",
     "selectPosition": "Select Position",
     "description": "Description",
-    "updateFailed": "Failed to update job ad"
+    "updateFailed": "Failed to update job ad",
+    "openAds": "Open ads",
+    "closedAds": "Closed ads",
+    "phone": "Phone"
   },
   "clubApplications": {
     "title": "Applications",
@@ -192,7 +216,9 @@
     "age": "Age",
     "city": "City",
     "preferredFoot": "Preferred Foot",
-    "about": "About"
+    "about": "About",
+    "message": "Send message",
+    "ageYears": "{age} years"
   },
   "clubProfile": {
     "title": "Club Profile",
@@ -204,7 +230,10 @@
     "league": "League",
     "selectLeague": "Select League",
     "description": "Description",
-    "about": "About"
+    "about": "About",
+    "location": "Location",
+    "phone": "Contact phone",
+    "phoneHint": "Optional, visible to players"
   },
   "createJobAd": {
     "title": "Create Job Ad",
@@ -215,17 +244,26 @@
     "description": "Description",
     "submit": "Create Job Ad",
     "positionsFailed": "Failed to load positions.",
-    "failed": "Failed to create job ad"
+    "failed": "Failed to create job ad",
+    "back": "Back to dashboard",
+    "titlePlaceholder": "e.g. Looking for a left-footed winger",
+    "descriptionPlaceholder": "Describe the role, training schedule, what you offer..."
   },
   "messages": {
     "title": "Messages",
-    "subtitle": "Conversations",
+    "subtitle": "Your conversations with clubs and players",
     "inbox": "Inbox",
     "empty": "No messages yet",
     "conversationWith": "Conversation with {name}",
     "placeholder": "Type a message...",
     "send": "Send",
-    "selectConversation": "Select a conversation to start messaging"
+    "selectConversation": "Select a conversation to start messaging",
+    "live": "Live",
+    "connecting": "Connecting...",
+    "emptyHint": "Conversations open once a club accepts an application.",
+    "startConversation": "No messages yet. Say hello!",
+    "you": "You",
+    "back": "Back to conversations"
   },
   "adminDashboard": {
     "title": "Admin Dashboard",
@@ -296,5 +334,45 @@
     "loadFailed": "Failed to load job ads.",
     "deleteFailed": "Failed to delete job ad.",
     "detailFailed": "Failed to load job ad details."
+  },
+  "auth": {
+    "headline": "Where players and clubs find each other",
+    "subline": "FootyNet connects football players and clubs across Croatia — from county leagues to the Treća NL.",
+    "point1": "Clubs post open positions in minutes",
+    "point2": "Players apply with a complete football profile",
+    "point3": "Real-time chat once an application is accepted"
+  },
+  "career": {
+    "title": "Clubs you have played for",
+    "yearsOptional": "Years are optional",
+    "club": "Club",
+    "clubPlaceholder": "e.g. NK Hajduk Split",
+    "from": "From",
+    "to": "To",
+    "remove": "Remove club",
+    "add": "Add club"
+  },
+  "completeProfile": {
+    "badge": "Almost done",
+    "title": "Complete your profile, {name}",
+    "subtitle": "Clubs are much more likely to notice players who list their positions and previous clubs. You can always change this later.",
+    "save": "Save and continue",
+    "saving": "Saving...",
+    "skip": "Skip for now"
+  },
+  "playerExtras": {
+    "primaryPosition": "Main position",
+    "secondaryPosition": "Secondary position",
+    "notSet": "Not set",
+    "availability": "Availability"
+  },
+  "playerDetails": {
+    "positions": "Positions",
+    "preferredFoot": "Preferred foot",
+    "location": "Location",
+    "about": "About",
+    "career": "Career",
+    "noCareer": "No clubs listed yet.",
+    "present": "present"
   }
 }

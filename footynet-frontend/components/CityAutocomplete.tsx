@@ -59,7 +59,7 @@ export default function CityAutocomplete({ value, county, onSelect, className }:
     }
   };
 
-  const inputCls = className || "w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent";
+  const inputCls = className || 'field';
 
   return (
     <div ref={wrapperRef}>
@@ -73,28 +73,28 @@ export default function CityAutocomplete({ value, county, onSelect, className }:
           className={inputCls}
         />
         {open && (
-          <ul className="absolute z-50 w-full mt-1 bg-white border border-neutral-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
-            {loading && <li className="px-3 py-2 text-sm text-neutral-400">{t('searching')}</li>}
+          <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-ink-200 bg-white py-1 shadow-lift">
+            {loading && <li className="px-3.5 py-2 text-sm text-ink-400">{t('searching')}</li>}
             {suggestions.map((s) => (
               <li
                 key={s.mapboxId}
                 onClick={() => handleSelect(s)}
-                className="px-3 py-2 text-sm cursor-pointer hover:bg-neutral-50 text-neutral-900"
+                className="cursor-pointer px-3.5 py-2 text-sm text-ink-900 hover:bg-pitch-50"
               >
-                {s.name} <span className="text-neutral-400">· {s.region}</span>
+                <span className="font-medium">{s.name}</span> <span className="text-ink-400">· {s.region}</span>
               </li>
             ))}
           </ul>
         )}
       </div>
       <div className="mt-2">
-        <label className="block text-xs font-medium text-neutral-500 mb-1">{t('countyAutoFilled')}</label>
+        <label className="mb-1 block text-xs font-medium text-ink-500">{t('countyAutoFilled')}</label>
         <input
           type="text"
           value={county}
           readOnly
           tabIndex={-1}
-          className="w-full px-3 py-2 border border-neutral-200 rounded-md text-sm bg-neutral-50 text-neutral-600 cursor-not-allowed"
+          className="w-full cursor-not-allowed rounded-lg border border-ink-200 bg-ink-50 px-3.5 py-2 text-sm text-ink-600"
         />
       </div>
     </div>

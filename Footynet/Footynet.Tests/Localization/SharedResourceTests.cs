@@ -54,6 +54,8 @@ public class SharedResourceTests
             .Select(t => (IEnumerable<IValidationRule>)Activator.CreateInstance(t)!)
             .SelectMany(rules => rules)
             .SelectMany(rule => rule.Components)
+            // SetValidator(...) has no message of its own; the nested validator is checked separately
+            .Where(c => c.Validator is not FluentValidation.Validators.IChildValidatorAdaptor)
             .Select(c => c.GetUnformattedErrorMessage())
             .Distinct()
             .ToList();

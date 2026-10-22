@@ -1,15 +1,22 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { ArrowLeft, CheckCircle2, Send } from 'lucide-react';
 import { jobAdService } from '@/lib/jobAds';
 import { playerService } from '@/lib/player';
-import UnifiedNavBar from '@/components/UnifiedNavBar';
-import Card from '@/components/Card';
-import Button from '@/components/Button';
-import FormTextarea from '@/components/FormTextarea';
-import { useTranslations } from 'next-intl';
 import { useEnumLabels } from '@/i18n/useEnumLabels';
+import PageShell from '@/components/PageShell';
+import PageHeader from '@/components/PageHeader';
+import Card from '@/components/Card';
+import Avatar from '@/components/Avatar';
+import Badge from '@/components/Badge';
+import Button from '@/components/Button';
+import ErrorMessage from '@/components/ErrorMessage';
+import FormTextarea from '@/components/FormTextarea';
+import Loading from '@/components/Loading';
 
 export default function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -17,66 +24,75 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
   const [coverLetter, setCoverLetter] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const t = useTranslations('jobDetail');
-  const tCommon = useTranslations('common');
   const labels = useEnumLabels();
 
   useEffect(() => {
-    loadJob();
-  }, []);
-
-  const loadJob = async () => {
-    const data = await jobAdService.getById(id);
-    setJob(data);
-  };
+    jobAdService.getById(id).then(setJob);
+  }, [id]);
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSubmitting(true);
     try {
       await playerService.applyToJob({ jobAdId: id, coverLetter });
       setSuccess(true);
       setTimeout(() => router.push('/player/applications'), 2000);
     } catch (err: any) {
       setError(err?.message || t('applyFailed'));
+      setSubmitting(false);
     }
   };
 
-  if (!job) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
+  if (!job) return <PageShell><Loading /></PageShell>;
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <UnifiedNavBar />
+    <PageShell width="medium">
+      <Link href="/player/jobs" className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-ink-900">
+        <ArrowLeft className="h-4 w-4" />{t('back')}
+      </Link>
 
-      <div className="max-w-4xl mx-auto px-8 py-12">
-        <Card className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-2">{job.title}</h1>
-          <p className="text-sm text-neutral-500 mb-6">{job.clubName} · {job.leagueName} · {labels.position(job.requiredPositionName)}</p>
-          <p className="text-sm text-neutral-600 leading-relaxed">{job.description}</p>
+      <PageHeader
+        leading={<Avatar name={job.clubName} size="xl" tone="light" />}
+        title={job.title}
+        subtitle={`${job.clubName} · ${job.leagueName}`}
+      />
+
+      <div className="grid gap-6 lg:grid-cols-5">
+        <Card className="lg:col-span-3" title={t('aboutRole')}>
+          <div className="mb-5 flex flex-wrap gap-2">
+            <Badge tone="green">{labels.position(job.requiredPositionName)}</Badge>
+            <Badge>{job.leagueName}</Badge>
+          </div>
+          <p className="whitespace-pre-line text-sm leading-relaxed text-ink-700">{job.description}</p>
         </Card>
 
-        {success ? (
-          <div className="bg-green-50 border border-green-200 rounded-md px-4 py-3 text-sm text-green-700">
-            {t('success')}
-          </div>
-        ) : (
-          <Card>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-5">{t('applyTitle')}</h2>
-            {error && <div className="bg-red-50 border border-red-200 rounded-md px-4 py-3 mb-4 text-sm text-red-700">{error}</div>}
-            <form onSubmit={handleApply}>
+        <Card className="lg:col-span-2" title={t('applyTitle')}>
+          {success ? (
+            <div className="flex flex-col items-center py-6 text-center">
+              <CheckCircle2 className="mb-3 h-12 w-12 text-pitch-500" />
+              <p className="font-semibold text-ink-900">{t('success')}</p>
+            </div>
+          ) : (
+            <form onSubmit={handleApply} className="space-y-4">
+              {error && <ErrorMessage message={error} />}
               <FormTextarea
                 label={t('coverLetter')}
                 value={coverLetter}
                 onChange={(e) => setCoverLetter(e.target.value)}
-                rows={6}
+                rows={7}
                 placeholder={t('coverLetterPlaceholder')}
               />
-              <Button type="submit" className="w-full mt-4">{t('submit')}</Button>
+              <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                <Send className="h-4 w-4" />{t('submit')}
+              </Button>
             </form>
-          </Card>
-        )}
+          )}
+        </Card>
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -1,19 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { Pencil } from 'lucide-react';
 import { playerService } from '@/lib/player';
+import { useEnumLabels } from '@/i18n/useEnumLabels';
 import { PlayerProfileDto, PreferredFootType } from '@/types';
-import UnifiedNavBar from '@/components/UnifiedNavBar';
+import PageShell from '@/components/PageShell';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
+import Avatar from '@/components/Avatar';
+import AvailabilityBadge from '@/components/AvailabilityBadge';
 import Button from '@/components/Button';
+import ErrorMessage from '@/components/ErrorMessage';
 import FormInput from '@/components/FormInput';
 import FormSelect from '@/components/FormSelect';
 import FormTextarea from '@/components/FormTextarea';
 import CityAutocomplete from '@/components/CityAutocomplete';
-import { useTranslations } from 'next-intl';
-import { useEnumLabels } from '@/i18n/useEnumLabels';
+import Loading from '@/components/Loading';
+import PlayerProfileDetails from '@/components/PlayerProfileDetails';
+import PlayerExtrasFields, { PlayerExtras } from '@/components/PlayerExtrasFields';
 
 export default function PlayerProfilePage() {
   const [profile, setProfile] = useState<PlayerProfileDto | null>(null);
@@ -25,7 +31,9 @@ export default function PlayerProfilePage() {
   const [county, setCounty] = useState('');
   const [description, setDescription] = useState('');
   const [preferredFootType, setPreferredFootType] = useState<PreferredFootType>(PreferredFootType.Right);
-  const router = useRouter();
+  const [extras, setExtras] = useState<PlayerExtras | null>(null);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
   const t = useTranslations('playerProfile');
   const tCommon = useTranslations('common');
   const labels = useEnumLabels();
@@ -42,85 +50,83 @@ export default function PlayerProfilePage() {
     setCounty(data.county);
     setDescription(data.description);
     setPreferredFootType(data.prefeeredFootType);
+    setExtras({ primaryPosition: data.primaryPosition, secondaryPosition: data.secondaryPosition, availability: data.availability, career: data.career });
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!extras) return;
+    setError('');
+    setSaving(true);
     try {
       await playerService.updateProfile({
         firstName, lastName, age, city, county, description,
         prefeeredFootType: preferredFootType,
+        ...extras,
+        career: extras.career.filter(c => c.clubName.trim() !== ''),
       });
       setEditing(false);
-      loadProfile();
-    } catch (err: any) { alert(err.message); }
+      await loadProfile();
+    } catch (err: any) {
+      setError(err?.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  if (!profile) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
+  const cancelEdit = () => { setEditing(false); setError(''); loadProfile(); };
+
+  if (!profile || !extras) return <PageShell><Loading /></PageShell>;
+
+  const fullName = `${profile.firstName} ${profile.lastName}`;
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <UnifiedNavBar />
-      <div className="max-w-2xl mx-auto px-8 py-12">
-        <PageHeader title={t('title')} subtitle={t('subtitle')} />
-        <Card>
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">{t('details')}</h3>
-            <Button onClick={() => editing ? handleSave() : setEditing(true)}>
-              {editing ? tCommon('save') : tCommon('edit')}
-            </Button>
-          </div>
+    <PageShell width="medium">
+      <PageHeader
+        leading={<Avatar name={fullName} size="xl" tone="light" />}
+        title={fullName}
+        subtitle={t('subtitle', { age: profile.age })}
+        actions={!editing && (
+          <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" />{t('edit')}</Button>
+        )}
+      />
 
-          {editing ? (
+      {editing ? (
+        <form onSubmit={handleSave} className="space-y-6">
+          {error && <ErrorMessage message={error} />}
+          <Card title={t('basicInfo')}>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormInput label={t('firstName')} type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                <FormInput label={t('lastName')} type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <FormInput label={t('firstName')} type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+                <FormInput label={t('lastName')} type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
               </div>
-              <FormInput label={t('age')} type="number" value={age} onChange={(e) => setAge(parseInt(e.target.value))} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <FormInput label={t('age')} type="number" min={16} max={50} value={age} onChange={(e) => setAge(parseInt(e.target.value))} required />
+                <FormSelect label={t('preferredFoot')} value={preferredFootType} onChange={(e) => setPreferredFootType(parseInt(e.target.value) as PreferredFootType)}>
+                  <option value={PreferredFootType.Right}>{labels.foot('Right')}</option>
+                  <option value={PreferredFootType.Left}>{labels.foot('Left')}</option>
+                </FormSelect>
+              </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">{t('city')}</label>
+                <label className="field-label">{t('city')}</label>
                 <CityAutocomplete value={city} county={county} onSelect={(c, co) => { setCity(c); setCounty(co); }} />
               </div>
-              <FormSelect label={t('preferredFoot')} value={preferredFootType} onChange={(e) => setPreferredFootType(parseInt(e.target.value) as PreferredFootType)}>
-                <option value={PreferredFootType.Right}>{labels.foot('Right')}</option>
-                <option value={PreferredFootType.Left}>{labels.foot('Left')}</option>
-              </FormSelect>
               <FormTextarea label={t('description')} value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
             </div>
-          ) : (
-            <div className="space-y-4">
-              <div>
-                <p className="text-xs text-neutral-400 mb-0.5">{t('name')}</p>
-                <h3 className="text-2xl font-bold tracking-tight text-neutral-900">{profile.firstName} {profile.lastName}</h3>
-              </div>
-              <div className="grid grid-cols-4 gap-4 pt-4 border-t border-neutral-100">
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">{t('age')}</p>
-                  <p className="text-sm font-medium text-neutral-900">{profile.age}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">{t('city')}</p>
-                  <p className="text-sm font-medium text-neutral-900">{profile.city}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">{t('county')}</p>
-                  <p className="text-sm font-medium text-neutral-900">{profile.county}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">{t('preferredFoot')}</p>
-                  <p className="text-sm font-medium text-neutral-900">
-                    {labels.foot(profile.prefeeredFootType === PreferredFootType.Left ? 'Left' : 'Right')}
-                  </p>
-                </div>
-              </div>
-              <div className="pt-4 border-t border-neutral-100">
-                <p className="text-xs text-neutral-400 mb-1">{t('about')}</p>
-                <p className="text-sm text-neutral-600 leading-relaxed">{profile.description}</p>
-              </div>
-            </div>
-          )}
+          </Card>
+          <Card title={t('footballInfo')}>
+            <PlayerExtrasFields value={extras} onChange={setExtras} />
+          </Card>
+          <div className="flex justify-end gap-3">
+            <Button variant="secondary" onClick={cancelEdit}>{tCommon('cancel')}</Button>
+            <Button type="submit" disabled={saving}>{saving ? tCommon('saving') : tCommon('saveChanges')}</Button>
+          </div>
+        </form>
+      ) : (
+        <Card title={t('details')} action={<AvailabilityBadge status={profile.availability} />}>
+          <PlayerProfileDetails profile={profile} />
         </Card>
-      </div>
-    </div>
+      )}
+    </PageShell>
   );
 }

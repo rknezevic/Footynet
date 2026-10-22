@@ -1,14 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { adminService } from '@/lib/admin';
-import { AdminDashboardDto, PendingClubDto, PaginatedResult } from '@/types';
-import UnifiedNavBar from '@/components/UnifiedNavBar';
-import PageHeader from '@/components/PageHeader';
-import Card from '@/components/Card';
-import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Building2, Clock, Megaphone, UserRound, CheckCircle2 } from 'lucide-react';
+import { adminService } from '@/lib/admin';
+import { AdminDashboardDto, PendingClubDto, PaginatedResult } from '@/types';
+import PageShell from '@/components/PageShell';
+import PageHeader from '@/components/PageHeader';
+import Card from '@/components/Card';
+import EmptyState from '@/components/EmptyState';
+import ErrorMessage from '@/components/ErrorMessage';
+import Loading from '@/components/Loading';
+import PendingClubsTable from '@/components/admin/PendingClubsTable';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminDashboardDto | null>(null);
@@ -17,7 +21,6 @@ export default function AdminDashboard() {
   const [actioningId, setActioningId] = useState<string | null>(null);
   const router = useRouter();
   const t = useTranslations('adminDashboard');
-  const tCommon = useTranslations('common');
 
   const loadData = async () => {
     try {
@@ -29,142 +32,68 @@ export default function AdminDashboard() {
       setPendingClubs(clubsData);
     } catch (err: any) {
       const status = err?.response?.status ?? err?.status;
-      if (status === 401 || status === 403) {
-        router.push('/login');
-      } else {
-        setError(t('loadFailed'));
-      }
+      if (status === 401 || status === 403) router.push('/login');
+      else setError(t('loadFailed'));
     }
   };
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleApprove = async (id: string) => {
+  const runAction = async (id: string, action: (id: string) => Promise<unknown>, failedKey: string) => {
     setActioningId(id);
     try {
-      await adminService.approveClub(id);
+      await action(id);
       await loadData();
     } catch {
-      setError(t('approveFailed'));
+      setError(t(failedKey));
     } finally {
       setActioningId(null);
     }
   };
 
-  const handleReject = async (id: string) => {
-    setActioningId(id);
-    try {
-      await adminService.rejectClub(id);
-      await loadData();
-    } catch {
-      setError(t('rejectFailed'));
-    } finally {
-      setActioningId(null);
-    }
-  };
-
-  if (error && !stats) {
-    return (
-      <div className="min-h-screen bg-neutral-50">
-        <UnifiedNavBar />
-        <div className="max-w-7xl mx-auto px-8 py-12">
-          <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r">
-            {error}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!stats) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
+  if (error && !stats) return <PageShell><ErrorMessage message={error} /></PageShell>;
+  if (!stats) return <PageShell><Loading /></PageShell>;
 
   const statCards = [
-    { label: t('players'), value: stats.playerCount },
-    { label: t('clubs'), value: stats.clubCount },
-    { label: t('jobAds'), value: stats.jobAdCount },
-    { label: t('pendingClubs'), value: stats.pendingClubCount },
+    { label: t('players'), value: stats.playerCount, icon: UserRound, tone: 'bg-pitch-50 text-pitch-600' },
+    { label: t('clubs'), value: stats.clubCount, icon: Building2, tone: 'bg-sky-50 text-sky-600' },
+    { label: t('jobAds'), value: stats.jobAdCount, icon: Megaphone, tone: 'bg-violet-50 text-violet-600' },
+    { label: t('pendingClubs'), value: stats.pendingClubCount, icon: Clock, tone: 'bg-amber-50 text-amber-600' },
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <UnifiedNavBar />
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title={t('title')} subtitle={t('subtitle')} />
+    <PageShell>
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
-        {error && (
-          <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r mb-6">
-            {error}
-          </div>
-        )}
+      {error && <div className="mb-6"><ErrorMessage message={error} /></div>}
 
-        <div className="grid grid-cols-12 gap-8 mb-10">
-          {statCards.map((stat) => (
-            <div key={stat.label} className="col-span-12 sm:col-span-6 md:col-span-3">
-              <Card hover>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">
-                  {stat.label}
-                </h3>
-                <p className="text-3xl font-bold tracking-tight text-neutral-900">
-                  {stat.value}
-                </p>
-              </Card>
+      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {statCards.map(stat => (
+          <Card key={stat.label} hover className="flex items-center gap-4">
+            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.tone}`}><stat.icon className="h-6 w-6" /></div>
+            <div>
+              <p className="text-sm text-ink-500">{stat.label}</p>
+              <p className="font-display text-3xl font-bold text-ink-900">{stat.value}</p>
             </div>
-          ))}
-        </div>
-
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">{t('pendingRegistrations')}</h2>
-        <Card>
-          {!pendingClubs || pendingClubs.items.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t('noPending')}</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-neutral-200">
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('name')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('email')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('league')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('city')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">{t('actions')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pendingClubs.items.map((club) => (
-                    <tr key={club.id} className="border-b border-neutral-100 last:border-0">
-                      <td className="py-4 text-neutral-900 font-medium">{club.name}</td>
-                      <td className="py-4 text-neutral-600">{club.email}</td>
-                      <td className="py-4 text-neutral-600">{club.leagueName}</td>
-                      <td className="py-4 text-neutral-600">{club.city}</td>
-                      <td className="py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="primary"
-                            onClick={() => handleApprove(club.id)}
-                            disabled={actioningId === club.id}
-                            className="px-3 py-1.5 text-xs"
-                          >
-                            {t('approve')}
-                          </Button>
-                          <Button
-                            variant="danger"
-                            onClick={() => handleReject(club.id)}
-                            disabled={actioningId === club.id}
-                            className="px-3 py-1.5 text-xs"
-                          >
-                            {t('reject')}
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
+          </Card>
+        ))}
       </div>
-    </div>
+
+      <Card title={t('pendingRegistrations')}>
+        {!pendingClubs || pendingClubs.items.length === 0 ? (
+          <EmptyState icon={CheckCircle2} title={t('noPending')} />
+        ) : (
+          <PendingClubsTable
+            clubs={pendingClubs.items}
+            actioningId={actioningId}
+            onApprove={id => runAction(id, adminService.approveClub, 'approveFailed')}
+            onReject={id => runAction(id, adminService.rejectClub, 'rejectFailed')}
+          />
+        )}
+      </Card>
+    </PageShell>
   );
 }

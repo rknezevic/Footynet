@@ -1,22 +1,29 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { playerService } from '@/lib/player';
-import { jobAdService } from '@/lib/jobAds';
-import { PlayerProfileDto, JobAdDto } from '@/types';
-import PageHeader from '@/components/PageHeader';
-import Card from '@/components/Card';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import UnifiedNavBar from '@/components/UnifiedNavBar';
 import { useTranslations } from 'next-intl';
+import { ArrowRight, Briefcase, MapPin, Pencil } from 'lucide-react';
+import { playerService } from '@/lib/player';
+import { jobAdService } from '@/lib/jobAds';
+import { useEnumLabels } from '@/i18n/useEnumLabels';
+import { PlayerProfileDto, JobAdDto } from '@/types';
+import PageShell from '@/components/PageShell';
+import PageHeader from '@/components/PageHeader';
+import Card from '@/components/Card';
+import Avatar from '@/components/Avatar';
+import Badge from '@/components/Badge';
+import AvailabilityBadge from '@/components/AvailabilityBadge';
+import EmptyState from '@/components/EmptyState';
+import Loading from '@/components/Loading';
 
 export default function PlayerDashboard() {
   const [profile, setProfile] = useState<PlayerProfileDto | null>(null);
   const [jobs, setJobs] = useState<JobAdDto[]>([]);
   const router = useRouter();
   const t = useTranslations('playerDashboard');
-  const tCommon = useTranslations('common');
+  const labels = useEnumLabels();
 
   useEffect(() => {
     const loadData = async () => {
@@ -29,70 +36,79 @@ export default function PlayerDashboard() {
         setJobs(jobsData);
       } catch (err: any) {
         const status = err?.response?.status ?? err?.status;
-        if (status === 401 || status === 403) {
-          router.push('/login');
-        } else {
-          router.push('/player/dashboard');
-        }
+        if (status === 401 || status === 403) router.push('/login');
       }
     };
     loadData();
   }, [router]);
 
-  if (!profile) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
+  if (!profile) return <PageShell><Loading /></PageShell>;
+
+  const fullName = `${profile.firstName} ${profile.lastName}`;
+  const positions = [profile.primaryPosition, profile.secondaryPosition].filter(p => p !== null).map(p => labels.position(p));
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <UnifiedNavBar />
+    <PageShell>
+      <PageHeader
+        leading={<Avatar name={fullName} size="xl" tone="light" />}
+        title={t('welcome', { name: profile.firstName })}
+        subtitle={t('subtitle')}
+      />
 
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title={`${profile.firstName} ${profile.lastName}`} subtitle={t('subtitle')} />
-
-        <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-12 md:col-span-4">
-            <Card hover>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">{t('profile')}</h3>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">{t('age')}</p>
-                  <p className="text-2xl font-bold tracking-tight text-neutral-900">{profile.age}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">{t('location')}</p>
-                  <p className="text-sm text-neutral-900">{profile.city}, {profile.county}</p>
-                </div>
-                {profile.description && (
-                  <div className="pt-3 border-t border-neutral-100">
-                    <p className="text-sm leading-relaxed text-neutral-600">{profile.description}</p>
-                  </div>
-                )}
-              </div>
-            </Card>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card
+          title={t('profile')}
+          action={<Link href="/player/profile" className="inline-flex items-center gap-1 text-sm font-medium text-pitch-700 hover:text-pitch-800"><Pencil className="h-3.5 w-3.5" />{t('edit')}</Link>}
+        >
+          <div className="mb-4 flex items-center gap-3">
+            <Avatar name={fullName} size="lg" />
+            <div>
+              <p className="font-display text-lg font-semibold text-ink-900">{fullName}</p>
+              <p className="flex items-center gap-1 text-sm text-ink-500"><MapPin className="h-3.5 w-3.5" />{profile.city || '—'}</p>
+            </div>
           </div>
+          <div className="mb-4"><AvailabilityBadge status={profile.availability} /></div>
+          <dl className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl bg-ink-50 p-3">
+              <dt className="text-xs text-ink-500">{t('age')}</dt>
+              <dd className="font-display text-2xl font-bold text-ink-900">{profile.age}</dd>
+            </div>
+            <div className="rounded-xl bg-ink-50 p-3">
+              <dt className="text-xs text-ink-500">{t('clubs')}</dt>
+              <dd className="font-display text-2xl font-bold text-ink-900">{profile.career.length}</dd>
+            </div>
+          </dl>
+          {positions.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">{positions.map(p => <Badge key={p} tone="green">{p}</Badge>)}</div>
+          )}
+        </Card>
 
-          <div className="col-span-12 md:col-span-8">
-            <Card>
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">{t('latestOpportunities')}</h3>
-                <Link href="/player/jobs" className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors">
-                  {t('viewAll')} →
-                </Link>
-              </div>
-              <div className="space-y-5">
-                {jobs.map((job, i) => (
-                  <div key={job.id} className={`pb-5 ${i !== jobs.length - 1 ? 'border-b border-neutral-100' : ''}`}>
-                    <h4 className="text-lg font-semibold text-neutral-900 mb-1">{job.title}</h4>
-                    <p className="text-sm text-neutral-500 mb-2">{job.clubName} · {job.leagueName}</p>
-                    <Link href={`/player/jobs/${job.id}`} className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors">
-                      {t('viewDetails')} →
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        </div>
+        <Card
+          className="lg:col-span-2"
+          title={t('latestOpportunities')}
+          action={<Link href="/player/jobs" className="inline-flex items-center gap-1 text-sm font-medium text-pitch-700 hover:text-pitch-800">{t('viewAll')}<ArrowRight className="h-3.5 w-3.5" /></Link>}
+        >
+          {jobs.length === 0 ? (
+            <EmptyState icon={Briefcase} title={t('noJobs')} />
+          ) : (
+            <ul className="-mx-2 divide-y divide-ink-100">
+              {jobs.map(job => (
+                <li key={job.id}>
+                  <Link href={`/player/jobs/${job.id}`} className="group flex items-center gap-4 rounded-xl px-2 py-3 transition-colors hover:bg-ink-50">
+                    <Avatar name={job.clubName} />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-semibold text-ink-900 group-hover:text-pitch-700">{job.title}</p>
+                      <p className="truncate text-sm text-ink-500">{job.clubName} · {job.leagueName}</p>
+                    </div>
+                    <Badge tone="green">{labels.position(job.requiredPositionName)}</Badge>
+                    <ArrowRight className="h-4 w-4 text-ink-300 transition group-hover:translate-x-0.5 group-hover:text-pitch-600" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
       </div>
-    </div>
+    </PageShell>
   );
 }

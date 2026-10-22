@@ -7,6 +7,7 @@ public class Club : User
     public string City { get; set; } = string.Empty;
     public string CountyName { get; set; } = string.Empty;
     public Guid LeagueId { get; set; }
+    public string? Phone { get; set; }
 
     public League League { get; set; } = null!;
     public bool IsApproved { get; set; } = true;

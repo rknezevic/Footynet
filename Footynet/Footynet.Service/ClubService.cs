@@ -21,13 +21,23 @@ public class ClubService : IClubService
         _clubRepository = clubRepository;
     }
 
-    public async Task<PaginatedResult<JobApplication>> GetJobApplicationsAsync(Guid jobAdId, StatusType? status = null, bool orderByDateDesc = true, int page = 1, int pageSize = 10)
+    public async Task<PaginatedResult<ClubApplicationDto>> GetJobApplicationsAsync(Guid clubId, Guid jobAdId, StatusType? status = null, bool orderByDateDesc = true, int page = 1, int pageSize = 10)
     {
-        var items = await _applicationRepository.GetApplicationsByJobAdAsync(jobAdId, status, orderByDateDesc, page, pageSize);
-        var totalCount = await _applicationRepository.GetApplicationsCountAsync(jobAdId, status);
-        return new PaginatedResult<JobApplication>
+        // Filtering by clubId means a club only ever sees applications to its own job ads
+        var items = await _applicationRepository.GetApplicationsByJobAdAsync(jobAdId, status, orderByDateDesc, page, pageSize, clubId);
+        var totalCount = await _applicationRepository.GetApplicationsCountAsync(jobAdId, status, clubId);
+        return new PaginatedResult<ClubApplicationDto>
         {
-            Items = items,
+            Items = items.Select(a => new ClubApplicationDto
+            {
+                Id = a.Id,
+                JobAdId = a.JobAdId,
+                PlayerId = a.PlayerId,
+                CoverLetter = a.CoverLetter,
+                Status = a.Status,
+                AppliedAt = a.AppliedAt,
+                Player = PlayerProfileDto.From(a.Player)
+            }),
             TotalCount = totalCount,
             Page = page,
             PageSize = pageSize
@@ -90,7 +100,8 @@ public class ClubService : IClubService
             City = club.City,
             County = club.CountyName,
             LeagueName = club.League?.Name ?? "",
-            LeagueId = club.LeagueId
+            LeagueId = club.LeagueId,
+            Phone = club.Phone
         };
     }
 
@@ -105,6 +116,7 @@ public class ClubService : IClubService
         club.City = dto.City;
         club.CountyName = dto.County;
         club.LeagueId = dto.LeagueId;
+        club.Phone = string.IsNullOrWhiteSpace(dto.Phone) ? null : dto.Phone.Trim();
 
         await _clubRepository.UpdateAsync(club);
     }

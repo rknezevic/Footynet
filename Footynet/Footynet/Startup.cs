@@ -10,6 +10,7 @@ using Footynet.Service;
 using Footynet.Service.Interfaces;
 using Footynet.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Footynet.Hubs;
 using Footynet.WebApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -71,7 +72,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
+        // Browsers can't set an Authorization header on WebSocket connections, so the SignalR
+        // client sends the JWT as ?access_token=... — accept it, but only for the hub path
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                if (!string.IsNullOrEmpty(accessToken) && context.HttpContext.Request.Path.StartsWithSegments(ChatHub.Path))
+                    context.Token = accessToken;
+                return Task.CompletedTask;
+            }
+        };
     });
+
+builder.Services.AddSignalR();
 
 // Localization: the frontend sends Accept-Language (hr/en); messages are translated with
 // IStringLocalizer<SharedResource> using Resources/SharedResource.hr.resx (English text is the key)
@@ -190,6 +205,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>(ChatHub.Path);
 
 // Apply migrations and seed admin
 using (var scope = app.Services.CreateScope())

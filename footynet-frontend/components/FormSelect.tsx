@@ -10,14 +10,8 @@ export default function FormSelect({ label, id, children, ...props }: FormSelect
 
   return (
     <div>
-      <label htmlFor={selectId} className="block text-sm font-medium text-neutral-700 mb-1">
-        {label}
-      </label>
-      <select
-        id={selectId}
-        {...props}
-        className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
-      >
+      <label htmlFor={selectId} className="field-label">{label}</label>
+      <select id={selectId} {...props} className="field">
         {children}
       </select>
     </div>

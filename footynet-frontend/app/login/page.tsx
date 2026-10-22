@@ -4,10 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { LogIn } from 'lucide-react';
 import { authService } from '@/lib/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { RoleType } from '@/types';
+import AuthLayout from '@/components/AuthLayout';
+import Button from '@/components/Button';
+import ErrorMessage from '@/components/ErrorMessage';
+import FormInput from '@/components/FormInput';
 
 export default function LoginPage() {
   const t = useTranslations('login');
@@ -36,68 +40,31 @@ export default function LoginPage() {
       }
       router.push(redirectPath);
     } catch (err: any) {
-      const msg = err?.message || t('failed');
-      setError(msg);
+      setError(err?.message || t('failed'));
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 grid place-items-center">
-      <div className="w-full max-w-md px-8">
-        <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">⚽ FootyNet</h1>
-            <p className="text-sm text-neutral-500">{t('subtitle')}</p>
-          </div>
+    <AuthLayout>
+      <h1 className="text-3xl font-bold tracking-tight text-ink-900">{t('title')}</h1>
+      <p className="mb-8 mt-2 text-ink-500">{t('subtitle')}</p>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-md px-4 py-3 mb-6 text-sm text-red-700">
-              {error}
-            </div>
-          )}
+      {error && <div className="mb-6"><ErrorMessage message={error} /></div>}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('email')}</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('emailPlaceholder')}
-                className="w-full px-3.5 py-2.5 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent placeholder-neutral-400"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('password')}</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-3.5 py-2.5 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent placeholder-neutral-400"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-neutral-900 text-white py-2.5 text-sm font-medium rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50"
-            >
-              {loading ? t('signingIn') : t('signIn')}
-            </button>
-          </form>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <FormInput label={t('email')} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('emailPlaceholder')} autoComplete="email" required />
+        <FormInput label={t('password')} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" required />
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          <LogIn className="h-4 w-4" />
+          {loading ? t('signingIn') : t('signIn')}
+        </Button>
+      </form>
 
-          <p className="mt-6 text-center text-sm text-neutral-500">
-            {t('noAccount')}{' '}
-            <Link href="/register" className="text-neutral-900 font-medium hover:underline">{t('register')}</Link>
-          </p>
-        </div>
-        <div className="flex justify-center mt-6">
-          <LanguageSwitcher />
-        </div>
-      </div>
-    </div>
+      <p className="mt-8 text-center text-sm text-ink-500">
+        {t('noAccount')}{' '}
+        <Link href="/register" className="font-semibold text-pitch-700 hover:text-pitch-800 hover:underline">{t('register')}</Link>
+      </p>
+    </AuthLayout>
   );
 }

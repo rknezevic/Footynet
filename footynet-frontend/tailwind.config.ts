@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
 
 const config: Config = {
   content: [
@@ -9,14 +10,29 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        // Headings, logo and numbers
+        display: ['var(--font-outfit)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       colors: {
-        primary: '#000000',
-        secondary: '#666666',
-        accent: '#FF0000',
-        background: '#FFFFFF',
-        border: '#E5E5E5',
+        // Brand colour ("pitch green"); change this one line to re-theme the app
+        pitch: colors.emerald,
+        ink: colors.slate,
+      },
+      boxShadow: {
+        card: '0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px -4px rgb(15 23 42 / 0.08)',
+        lift: '0 2px 4px rgb(15 23 42 / 0.04), 0 12px 32px -8px rgb(15 23 42 / 0.16)',
+      },
+      keyframes: {
+        'fade-in-up': {
+          from: { opacity: '0', transform: 'translateY(6px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        // 'backwards' (not 'both'): keeping transform after the animation would make the element the
+        // containing block for position:fixed children, so modals would no longer cover the viewport
+        'fade-in-up': 'fade-in-up 0.25s ease-out backwards',
       },
     },
   },

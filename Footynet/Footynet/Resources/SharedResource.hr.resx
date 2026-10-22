@@ -69,14 +69,23 @@
   <data name="Email is required" xml:space="preserve">
     <value>Email je obavezan</value>
   </data>
+  <data name="End year cannot be before start year" xml:space="preserve">
+    <value>Godina završetka ne može biti prije godine početka</value>
+  </data>
   <data name="First name is required" xml:space="preserve">
     <value>Ime je obavezno</value>
   </data>
   <data name="First name must be under 50 characters" xml:space="preserve">
     <value>Ime mora imati manje od 50 znakova</value>
   </data>
+  <data name="Invalid availability status" xml:space="preserve">
+    <value>Neispravan status dostupnosti</value>
+  </data>
   <data name="Invalid email format" xml:space="preserve">
     <value>Neispravan format email adrese</value>
+  </data>
+  <data name="Invalid phone number" xml:space="preserve">
+    <value>Neispravan broj telefona</value>
   </data>
   <data name="Invalid position" xml:space="preserve">
     <value>Neispravna pozicija</value>
@@ -161,6 +170,15 @@
   </data>
   <data name="Wrong password" xml:space="preserve">
     <value>Pogrešna lozinka</value>
+  </data>
+  <data name="Year must be between 1950 and the current year" xml:space="preserve">
+    <value>Godina mora biti između 1950. i tekuće godine</value>
+  </data>
+  <data name="You can add up to 20 clubs" xml:space="preserve">
+    <value>Možete dodati najviše 20 klubova</value>
+  </data>
+  <data name="You can only message users connected through an accepted application" xml:space="preserve">
+    <value>Poruke možete slati samo korisnicima s kojima ste povezani prihvaćenom prijavom</value>
   </data>
   <data name="Your club account is pending approval" xml:space="preserve">
     <value>Račun vašeg kluba čeka odobrenje</value>

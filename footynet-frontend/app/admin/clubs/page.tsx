@@ -1,14 +1,19 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { adminService } from '@/lib/admin';
-import { PendingClubDto, PaginatedResult } from '@/types';
-import UnifiedNavBar from '@/components/UnifiedNavBar';
-import PageHeader from '@/components/PageHeader';
-import Card from '@/components/Card';
-import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { CheckCircle2 } from 'lucide-react';
+import { adminService } from '@/lib/admin';
+import { PendingClubDto, PaginatedResult } from '@/types';
+import PageShell from '@/components/PageShell';
+import PageHeader from '@/components/PageHeader';
+import Card from '@/components/Card';
+import EmptyState from '@/components/EmptyState';
+import ErrorMessage from '@/components/ErrorMessage';
+import Loading from '@/components/Loading';
+import Pagination from '@/components/Pagination';
+import PendingClubsTable from '@/components/admin/PendingClubsTable';
 
 const PAGE_SIZE = 10;
 
@@ -19,156 +24,56 @@ export default function AdminClubs() {
   const [actioningId, setActioningId] = useState<string | null>(null);
   const router = useRouter();
   const t = useTranslations('adminClubs');
-  const tCommon = useTranslations('common');
 
   const loadClubs = useCallback(async (p: number) => {
     try {
       setError('');
-      const result = await adminService.getPendingClubs(p, PAGE_SIZE);
-      setData(result);
+      setData(await adminService.getPendingClubs(p, PAGE_SIZE));
     } catch (err: any) {
       const status = err?.response?.status ?? err?.status;
-      if (status === 401 || status === 403) {
-        router.push('/login');
-      } else {
-        setError(t('loadFailed'));
-      }
+      if (status === 401 || status === 403) router.push('/login');
+      else setError(t('loadFailed'));
     }
-  }, [router]);
+  }, [router, t]);
 
   useEffect(() => {
     loadClubs(page);
   }, [page, loadClubs]);
 
-  const handleApprove = async (id: string) => {
+  const runAction = async (id: string, action: (id: string) => Promise<unknown>, failedKey: string) => {
     setActioningId(id);
     try {
-      await adminService.approveClub(id);
+      await action(id);
       await loadClubs(page);
     } catch {
-      setError(t('approveFailed'));
+      setError(t(failedKey));
     } finally {
       setActioningId(null);
     }
   };
 
-  const handleReject = async (id: string) => {
-    setActioningId(id);
-    try {
-      await adminService.rejectClub(id);
-      await loadClubs(page);
-    } catch {
-      setError(t('rejectFailed'));
-    } finally {
-      setActioningId(null);
-    }
-  };
-
-  if (error && !data) {
-    return (
-      <div className="min-h-screen bg-neutral-50">
-        <UnifiedNavBar />
-        <div className="max-w-7xl mx-auto px-8 py-12">
-          <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r">
-            {error}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
-
-  const { items, totalPages } = data;
+  if (error && !data) return <PageShell><ErrorMessage message={error} /></PageShell>;
+  if (!data) return <PageShell><Loading /></PageShell>;
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <UnifiedNavBar />
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title={t('title')} subtitle={t('subtitle')} />
+    <PageShell>
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
+      {error && <div className="mb-6"><ErrorMessage message={error} /></div>}
 
-        {error && (
-          <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r mb-6">
-            {error}
-          </div>
+      <Card>
+        {data.items.length === 0 ? (
+          <EmptyState icon={CheckCircle2} title={t('noPending')} />
+        ) : (
+          <PendingClubsTable
+            clubs={data.items}
+            actioningId={actioningId}
+            onApprove={id => runAction(id, adminService.approveClub, 'approveFailed')}
+            onReject={id => runAction(id, adminService.rejectClub, 'rejectFailed')}
+          />
         )}
+      </Card>
 
-        <Card>
-          {items.length === 0 ? (
-            <p className="text-sm text-neutral-500">{t('noPending')}</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-neutral-200">
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('name')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('email')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('league')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('city')}</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">{t('actions')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((club) => (
-                    <tr key={club.id} className="border-b border-neutral-100 last:border-0">
-                      <td className="py-4 text-neutral-900 font-medium">{club.name}</td>
-                      <td className="py-4 text-neutral-600">{club.email}</td>
-                      <td className="py-4 text-neutral-600">{club.leagueName}</td>
-                      <td className="py-4 text-neutral-600">{club.city}</td>
-                      <td className="py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="primary"
-                            onClick={() => handleApprove(club.id)}
-                            disabled={actioningId === club.id}
-                            className="px-3 py-1.5 text-xs"
-                          >
-                            {t('approve')}
-                          </Button>
-                          <Button
-                            variant="danger"
-                            onClick={() => handleReject(club.id)}
-                            disabled={actioningId === club.id}
-                            className="px-3 py-1.5 text-xs"
-                          >
-                            {t('reject')}
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6">
-            <p className="text-xs text-neutral-500">
-              {tCommon('pageOf', { page, totalPages })}
-            </p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="px-3 py-1.5 text-xs"
-              >
-                {tCommon('previous')}
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages}
-                className="px-3 py-1.5 text-xs"
-              >
-                {tCommon('next')}
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+      <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
+    </PageShell>
   );
 }

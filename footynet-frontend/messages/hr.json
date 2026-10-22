@@ -52,6 +52,11 @@
     "adStatus": {
       "Open": "Otvoren",
       "Closed": "Zatvoren"
+    },
+    "availability": {
+      "LookingForClub": "Tražim klub",
+      "OpenToOffers": "Otvoren za ponude",
+      "NotAvailable": "Nisam dostupan"
     }
   },
   "city": {
@@ -65,7 +70,7 @@
     "reload": "Ponovno učitaj stranicu"
   },
   "login": {
-    "subtitle": "Prijavite se u svoj račun",
+    "subtitle": "Prijavite se za nastavak na FootyNet",
     "email": "Email",
     "emailPlaceholder": "vi@primjer.hr",
     "password": "Lozinka",
@@ -73,10 +78,11 @@
     "signingIn": "Prijava u tijeku...",
     "failed": "Prijava nije uspjela",
     "noAccount": "Nemate račun?",
-    "register": "Registrirajte se"
+    "register": "Registrirajte se",
+    "title": "Dobro došli natrag"
   },
   "register": {
-    "step": "Registracija · Korak {step} od 2",
+    "step": "Korak {step} od 2",
     "chooseType": "Odaberite vrstu računa",
     "player": "Igrač",
     "playerDescription": "Pronađite priliku i prijavite se klubovima",
@@ -100,7 +106,10 @@
     "submit": "Registriraj se",
     "failed": "Registracija nije uspjela",
     "haveAccount": "Već imate račun?",
-    "login": "Prijavite se"
+    "login": "Prijavite se",
+    "details": "Vaši podaci",
+    "passwordHint": "Najmanje 6 znakova",
+    "playerDescriptionPlaceholder": "Nekoliko riječi o vama kao igraču..."
   },
   "pendingApproval": {
     "subtitle": "Status računa kluba",
@@ -115,11 +124,15 @@
     "location": "Lokacija",
     "latestOpportunities": "Najnovije prilike",
     "viewAll": "Prikaži sve",
-    "viewDetails": "Detalji"
+    "viewDetails": "Detalji",
+    "welcome": "Bok, {name}!",
+    "edit": "Uredi",
+    "clubs": "Klubova",
+    "noJobs": "Trenutno nema otvorenih pozicija"
   },
   "playerJobs": {
     "title": "Oglasi",
-    "subtitle": "Pregledajte oglase i prijavite se",
+    "subtitle": "Pronađite klub koji vam odgovara",
     "search": "Pretraga",
     "searchPlaceholder": "Pretraži po naslovu ili opisu...",
     "position": "Pozicija",
@@ -129,7 +142,8 @@
     "applyFilters": "Primijeni filtre",
     "clear": "Očisti",
     "noJobs": "Nema oglasa. Pokušajte promijeniti filtre.",
-    "viewAndApply": "Pogledaj i prijavi se"
+    "viewAndApply": "Pogledaj i prijavi se",
+    "resultCount": "{count, plural, one {# otvorena pozicija} few {# otvorene pozicije} other {# otvorenih pozicija}}"
   },
   "jobDetail": {
     "applyFailed": "Prijava nije uspjela",
@@ -137,16 +151,20 @@
     "applyTitle": "Prijavite se na ovu poziciju",
     "coverLetter": "Motivacijsko pismo (neobavezno)",
     "coverLetterPlaceholder": "Recite klubu zašto ste pravi izbor...",
-    "submit": "Pošalji prijavu"
+    "submit": "Pošalji prijavu",
+    "back": "Svi oglasi",
+    "aboutRole": "O poziciji"
   },
   "playerApplications": {
     "title": "Moje prijave",
     "subtitle": "Pratite status svojih prijava",
-    "empty": "Još nemate prijava. Pregledajte oglase i prijavite se."
+    "empty": "Još nemate prijava. Pregledajte oglase i prijavite se.",
+    "browseJobs": "Pregledaj oglase",
+    "messageClub": "Pošalji poruku"
   },
   "playerProfile": {
     "title": "Moj profil",
-    "subtitle": "Podaci o igraču",
+    "subtitle": "Igrač · {age} godina",
     "details": "Podaci profila",
     "firstName": "Ime",
     "lastName": "Prezime",
@@ -156,7 +174,10 @@
     "preferredFoot": "Jača noga",
     "description": "Opis",
     "name": "Ime i prezime",
-    "about": "O meni"
+    "about": "O meni",
+    "edit": "Uredi profil",
+    "basicInfo": "Osnovni podaci",
+    "footballInfo": "Nogometni profil"
   },
   "clubDashboard": {
     "subtitle": "Početna stranica kluba",
@@ -174,7 +195,10 @@
     "position": "Pozicija",
     "selectPosition": "Odaberite poziciju",
     "description": "Opis",
-    "updateFailed": "Ažuriranje oglasa nije uspjelo"
+    "updateFailed": "Ažuriranje oglasa nije uspjelo",
+    "openAds": "Otvoreni oglasi",
+    "closedAds": "Zatvoreni oglasi",
+    "phone": "Telefon"
   },
   "clubApplications": {
     "title": "Prijave",
@@ -192,7 +216,9 @@
     "age": "Dob",
     "city": "Mjesto",
     "preferredFoot": "Jača noga",
-    "about": "O igraču"
+    "about": "O igraču",
+    "message": "Pošalji poruku",
+    "ageYears": "{age} godina"
   },
   "clubProfile": {
     "title": "Profil kluba",
@@ -204,7 +230,10 @@
     "league": "Liga",
     "selectLeague": "Odaberite ligu",
     "description": "Opis",
-    "about": "O klubu"
+    "about": "O klubu",
+    "location": "Lokacija",
+    "phone": "Kontakt telefon",
+    "phoneHint": "Nije obavezno, vidljivo igračima"
   },
   "createJobAd": {
     "title": "Novi oglas",
@@ -215,17 +244,26 @@
     "description": "Opis",
     "submit": "Objavi oglas",
     "positionsFailed": "Učitavanje pozicija nije uspjelo.",
-    "failed": "Objava oglasa nije uspjela"
+    "failed": "Objava oglasa nije uspjela",
+    "back": "Natrag na početnu",
+    "titlePlaceholder": "npr. Tražimo lijevonogog krilnog napadača",
+    "descriptionPlaceholder": "Opišite ulogu, raspored treninga, što nudite..."
   },
   "messages": {
     "title": "Poruke",
-    "subtitle": "Razgovori",
+    "subtitle": "Vaši razgovori s klubovima i igračima",
     "inbox": "Pristigle",
     "empty": "Još nema poruka",
     "conversationWith": "Razgovor s: {name}",
     "placeholder": "Upišite poruku...",
     "send": "Pošalji",
-    "selectConversation": "Odaberite razgovor za slanje poruka"
+    "selectConversation": "Odaberite razgovor za slanje poruka",
+    "live": "Uživo",
+    "connecting": "Povezivanje...",
+    "emptyHint": "Razgovor se otvara kad klub prihvati prijavu.",
+    "startConversation": "Još nema poruka. Pozdravite se!",
+    "you": "Vi",
+    "back": "Natrag na razgovore"
   },
   "adminDashboard": {
     "title": "Administracija",
@@ -296,5 +334,45 @@
     "loadFailed": "Učitavanje oglasa nije uspjelo.",
     "deleteFailed": "Brisanje oglasa nije uspjelo.",
     "detailFailed": "Učitavanje detalja oglasa nije uspjelo."
+  },
+  "auth": {
+    "headline": "Mjesto gdje se igrači i klubovi pronalaze",
+    "subline": "FootyNet povezuje nogometaše i klubove diljem Hrvatske — od županijskih liga do Treće NL.",
+    "point1": "Klubovi objavljuju slobodna mjesta u par minuta",
+    "point2": "Igrači se prijavljuju s potpunim nogometnim profilom",
+    "point3": "Razgovor u stvarnom vremenu nakon prihvaćene prijave"
+  },
+  "career": {
+    "title": "Klubovi u kojima ste igrali",
+    "yearsOptional": "Godine nisu obavezne",
+    "club": "Klub",
+    "clubPlaceholder": "npr. NK Hajduk Split",
+    "from": "Od",
+    "to": "Do",
+    "remove": "Ukloni klub",
+    "add": "Dodaj klub"
+  },
+  "completeProfile": {
+    "badge": "Još samo malo",
+    "title": "Dovršite svoj profil, {name}",
+    "subtitle": "Klubovi puno lakše primijete igrače koji navedu pozicije i dosadašnje klubove. Sve ovo možete kasnije promijeniti.",
+    "save": "Spremi i nastavi",
+    "saving": "Spremanje...",
+    "skip": "Preskoči za sada"
+  },
+  "playerExtras": {
+    "primaryPosition": "Glavna pozicija",
+    "secondaryPosition": "Sporedna pozicija",
+    "notSet": "Nije odabrano",
+    "availability": "Dostupnost"
+  },
+  "playerDetails": {
+    "positions": "Pozicije",
+    "preferredFoot": "Jača noga",
+    "location": "Lokacija",
+    "about": "O igraču",
+    "career": "Karijera",
+    "noCareer": "Još nema navedenih klubova.",
+    "present": "danas"
   }
 }

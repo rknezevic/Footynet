@@ -4,8 +4,40 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased;
-    font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv02';
+    @apply font-sans antialiased bg-ink-50 text-ink-900;
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Shared form control look, used by FormInput/FormSelect/FormTextarea and plain inputs */
+  .field {
+    @apply w-full rounded-lg border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900
+      placeholder:text-ink-400 shadow-sm transition
+      focus:outline-none focus:border-pitch-500 focus:ring-4 focus:ring-pitch-500/15
+      disabled:bg-ink-50 disabled:text-ink-500;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-ink-700;
+  }
+
+  /* Small uppercase section title inside cards */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-wider text-ink-500;
+  }
+}
+
+/* Respect the OS "reduce motion" setting */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-pulse,
+  .hover-lift {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
@@ -13,22 +45,16 @@
   .text-balance {
     text-wrap: balance;
   }
-  
-  .grid-swiss {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 2rem;
-  }
-  
-  .border-accent {
-    border-color: #000;
-  }
-  
+
   .hover-lift {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    @apply transition duration-200 hover:-translate-y-0.5 hover:shadow-lift;
   }
-  
-  .hover-lift:hover {
-    transform: translateY(-2px);
+
+  /* Faint football-pitch markings for green hero sections */
+  .pitch-pattern {
+    background-image:
+      radial-gradient(circle at 50% 50%, transparent 0 58px, rgb(255 255 255 / 0.10) 59px 61px, transparent 62px),
+      linear-gradient(90deg, transparent calc(50% - 1px), rgb(255 255 255 / 0.10) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+      repeating-linear-gradient(90deg, rgb(255 255 255 / 0.035) 0 48px, transparent 48px 96px);
   }
 }

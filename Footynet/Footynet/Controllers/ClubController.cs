@@ -81,7 +81,7 @@ public class ClubController : ControllerBase
         [FromQuery] int pageSize = 10)
     {
         await EnsureClubApproved();
-        var result = await _clubService.GetJobApplicationsAsync(jobAdId, status, page: page, pageSize: pageSize);
+        var result = await _clubService.GetJobApplicationsAsync(GetUserId(), jobAdId, status, page: page, pageSize: pageSize);
         return Ok(result);
     }
 
