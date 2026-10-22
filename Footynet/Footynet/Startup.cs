@@ -141,6 +141,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 app.UseMiddleware<Footynet.Middleware.ExceptionMiddleware>();
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -150,22 +151,26 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<FootynetDbContext>();
-    await context.Database.EnsureCreatedAsync();
+    await context.Database.MigrateAsync();
     
+    var adminEmail = builder.Configuration["AdminSeed:Email"];
+    var adminPassword = builder.Configuration["AdminSeed:Password"];
     var adminExists = await context.Users.AnyAsync(u => u is Admin);
-    if (!adminExists)
+    if (!adminExists && (string.IsNullOrWhiteSpace(adminEmail) || string.IsNullOrWhiteSpace(adminPassword)))
+    {
+        Log.Warning("No admin user exists and AdminSeed:Email / AdminSeed:Password are not configured; skipping admin seed");
+    }
+    else if (!adminExists)
     {
         var admin = new Admin
         {
             Id = Guid.NewGuid(),
-            Email = "admin@footynet.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!")
+            Email = adminEmail!,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword)
         };
         context.Users.Add(admin);
         await context.SaveChangesAsync();
     }
 }
-
-app.UseCors("AllowFrontend");
 
 app.Run();

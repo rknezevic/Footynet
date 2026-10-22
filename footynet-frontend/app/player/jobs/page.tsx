@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { jobAdService } from '@/lib/jobAds';
+import LeagueOptions from '@/components/LeagueOptions';
 import { lookupService, League, Position } from '@/lib/lookup';
 import { JobAdDto } from '@/types';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
@@ -58,7 +59,7 @@ export default function PlayerJobsPage() {
               <label className="block text-sm font-medium text-neutral-700 mb-1">League</label>
               <select value={leagueId} onChange={(e) => setLeagueId(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
                 <option value="">All Leagues</option>
-                {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                <LeagueOptions leagues={leagues} />
               </select>
             </div>
           </div>

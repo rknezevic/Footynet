@@ -20,7 +20,9 @@ public class LookupController : ControllerBase
     public async Task<ActionResult<IEnumerable<object>>> GetLeagues()
     {
         var leagues = await _context.Leagues
-            .Select(l => new { l.Id, l.Name })
+            .OrderBy(l => l.Level)
+            .ThenBy(l => l.Name)
+            .Select(l => new { l.Id, l.Name, l.Level })
             .ToListAsync();
         return Ok(leagues);
     }

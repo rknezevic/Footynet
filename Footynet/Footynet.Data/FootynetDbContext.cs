@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Footynet.Models;
+using Footynet.Data.Seed;
 
 namespace Footynet.Data;
 
@@ -48,6 +49,15 @@ public class FootynetDbContext : DbContext
         {
             e.Property(c => c.CountyName).HasColumnName("County");
         });
+
+        modelBuilder.Entity<League>()
+            .HasOne(l => l.County)
+            .WithMany(c => c.Leagues)
+            .HasForeignKey(l => l.CountyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<County>().HasData(LookupSeed.Counties);
+        modelBuilder.Entity<League>().HasData(LookupSeed.Leagues);
 
         modelBuilder.Entity<User>().HasQueryFilter(u => u.IsActive);
         modelBuilder.Entity<JobAd>().HasQueryFilter(j => j.Club.IsActive);

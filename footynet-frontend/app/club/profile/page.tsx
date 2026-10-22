@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { clubService } from '@/lib/club';
+import LeagueOptions from '@/components/LeagueOptions';
 import { lookupService, League } from '@/lib/lookup';
 import { ClubProfileDto } from '@/types';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
@@ -67,7 +68,7 @@ export default function ClubProfilePage() {
               </div>
               <FormSelect label="League" value={leagueId} onChange={(e) => setLeagueId(e.target.value)} required>
                 <option value="">Select League</option>
-                {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                <LeagueOptions leagues={leagues} />
               </FormSelect>
               <FormTextarea label="Description" value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
             </div>

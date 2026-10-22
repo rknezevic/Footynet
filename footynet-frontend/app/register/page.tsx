@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authService } from '@/lib/auth';
 import { api } from '@/lib/api';
+import LeagueOptions from '@/components/LeagueOptions';
 import { lookupService, League } from '@/lib/lookup';
 import { RoleType, PreferredFootType } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -153,7 +154,7 @@ export default function RegisterPage() {
                 </div>
                 <FormSelect label="League" value={leagueId} onChange={(e) => setLeagueId(e.target.value)} required>
                   <option value="">Select League</option>
-                  {leagues.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                  <LeagueOptions leagues={leagues} />
                 </FormSelect>
                 <FormTextarea label="Description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Tell players about your club..." rows={3} />
               </>

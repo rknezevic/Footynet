@@ -3,6 +3,7 @@ import { api } from './api';
 export interface League {
   id: string;
   name: string;
+  level: number;
 }
 
 export interface Position {
