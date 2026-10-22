@@ -7,12 +7,17 @@ import { JobAdDto, StatusType } from '@/types';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
+import { useTranslations } from 'next-intl';
+import { useEnumLabels } from '@/i18n/useEnumLabels';
 
 export default function PlayerApplicationsPage() {
   const [applications, setApplications] = useState<JobAdDto[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 10;
+  const t = useTranslations('playerApplications');
+  const tCommon = useTranslations('common');
+  const labels = useEnumLabels();
 
   useEffect(() => {
     loadApplications();
@@ -33,23 +38,14 @@ export default function PlayerApplicationsPage() {
     }
   };
 
-  const getStatusText = (status: StatusType) => {
-    switch (status) {
-      case StatusType.Pending: return 'Pending';
-      case StatusType.Accepted: return 'Accepted';
-      case StatusType.Rejected: return 'Rejected';
-      default: return 'Unknown';
-    }
-  };
-
   return (
     <div className="min-h-screen bg-neutral-50">
       <UnifiedNavBar />
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title="My Applications" subtitle="Track your application status" />
+        <PageHeader title={t('title')} subtitle={t('subtitle')} />
         <div className="space-y-4">
           {applications.length === 0 ? (
-            <p className="text-sm text-neutral-400">No applications yet. Browse jobs to apply.</p>
+            <p className="text-sm text-neutral-400">{t('empty')}</p>
           ) : (
             applications.map((app) => (
               <Card key={app.id}>
@@ -60,7 +56,7 @@ export default function PlayerApplicationsPage() {
                     <p className="text-sm text-neutral-600 leading-relaxed">{app.description}</p>
                   </div>
                   <span className={`ml-4 text-xs font-medium px-2.5 py-1 rounded-md border ${getStatusStyle(app.applicationStatus)}`}>
-                    {getStatusText(app.applicationStatus)}
+                    {labels.status(app.applicationStatus)}
                   </span>
                 </div>
               </Card>
@@ -69,9 +65,9 @@ export default function PlayerApplicationsPage() {
         </div>
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-8">
-            <Button variant="secondary" onClick={() => setPage(p => p - 1)} disabled={page <= 1}>Previous</Button>
-            <span className="text-sm text-neutral-500">Page {page} of {totalPages}</span>
-            <Button variant="secondary" onClick={() => setPage(p => p + 1)} disabled={page >= totalPages}>Next</Button>
+            <Button variant="secondary" onClick={() => setPage(p => p - 1)} disabled={page <= 1}>{tCommon('previous')}</Button>
+            <span className="text-sm text-neutral-500">{tCommon('pageOf', { page, totalPages })}</span>
+            <Button variant="secondary" onClick={() => setPage(p => p + 1)} disabled={page >= totalPages}>{tCommon('next')}</Button>
           </div>
         )}
       </div>

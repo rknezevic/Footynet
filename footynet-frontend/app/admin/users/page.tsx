@@ -8,13 +8,16 @@ import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useEnumLabels } from '@/i18n/useEnumLabels';
 
 const PAGE_SIZE = 10;
 
+// labelKey is looked up in the "enums.roles" namespace ("All" has its own key)
 const ROLE_OPTIONS = [
-  { label: 'All', value: '' },
-  { label: 'Player', value: String(RoleType.Player) },
-  { label: 'Club', value: String(RoleType.Club) },
+  { labelKey: 'All', value: '' },
+  { labelKey: 'Player', value: String(RoleType.Player) },
+  { labelKey: 'Club', value: String(RoleType.Club) },
 ];
 
 export default function AdminUsers() {
@@ -25,6 +28,9 @@ export default function AdminUsers() {
   const [error, setError] = useState('');
   const [actioningId, setActioningId] = useState<string | null>(null);
   const router = useRouter();
+  const t = useTranslations('adminUsers');
+  const tCommon = useTranslations('common');
+  const labels = useEnumLabels();
 
   const loadUsers = useCallback(async (p: number, s: string, r: string) => {
     try {
@@ -37,7 +43,7 @@ export default function AdminUsers() {
       if (status === 401 || status === 403) {
         router.push('/login');
       } else {
-        setError('Failed to load users.');
+        setError(t('loadFailed'));
       }
     }
   }, [router]);
@@ -62,7 +68,7 @@ export default function AdminUsers() {
       await adminService.deactivateUser(id);
       await loadUsers(page, search, roleFilter);
     } catch {
-      setError('Failed to deactivate user.');
+      setError(t('deactivateFailed'));
     } finally {
       setActioningId(null);
     }
@@ -74,7 +80,7 @@ export default function AdminUsers() {
       await adminService.reactivateUser(id);
       await loadUsers(page, search, roleFilter);
     } catch {
-      setError('Failed to reactivate user.');
+      setError(t('reactivateFailed'));
     } finally {
       setActioningId(null);
     }
@@ -93,7 +99,7 @@ export default function AdminUsers() {
     );
   }
 
-  if (!data) return <div className="p-8 text-sm text-neutral-400">Loading...</div>;
+  if (!data) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
 
   const { items, totalPages } = data;
 
@@ -101,7 +107,7 @@ export default function AdminUsers() {
     <div className="min-h-screen bg-neutral-50">
       <UnifiedNavBar />
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title="User Management" subtitle="View and manage all platform users" />
+        <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
         {error && (
           <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r mb-6">
@@ -112,7 +118,7 @@ export default function AdminUsers() {
         <div className="flex items-center gap-4 mb-6">
           <input
             type="text"
-            placeholder="Search by email..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             className="flex-1 max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 bg-white text-neutral-900 placeholder-neutral-400"
@@ -124,7 +130,7 @@ export default function AdminUsers() {
           >
             {ROLE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
-                {opt.label}
+                {opt.value === '' ? t('allRoles') : labels.role(opt.labelKey)}
               </option>
             ))}
           </select>
@@ -132,23 +138,23 @@ export default function AdminUsers() {
 
         <Card>
           {items.length === 0 ? (
-            <p className="text-sm text-neutral-500">No users found.</p>
+            <p className="text-sm text-neutral-500">{t('empty')}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-neutral-200">
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Email</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Role</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Status</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">Actions</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('email')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('role')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('status')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">{t('actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.filter((user) => user.role !== 'Admin').map((user) => (
                     <tr key={user.id} className="border-b border-neutral-100 last:border-0">
                       <td className="py-4 text-neutral-900 font-medium">{user.email}</td>
-                      <td className="py-4 text-neutral-600">{user.role}</td>
+                      <td className="py-4 text-neutral-600">{labels.role(user.role)}</td>
                       <td className="py-4">
                         <span
                           className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
@@ -157,7 +163,7 @@ export default function AdminUsers() {
                               : 'bg-neutral-100 text-neutral-500'
                           }`}
                         >
-                          {user.isActive ? 'Active' : 'Inactive'}
+                          {user.isActive ? t('active') : t('inactive')}
                         </span>
                       </td>
                       <td className="py-4 text-right">
@@ -168,7 +174,7 @@ export default function AdminUsers() {
                             disabled={actioningId === user.id}
                             className="px-3 py-1.5 text-xs"
                           >
-                            Deactivate
+                            {t('deactivate')}
                           </Button>
                         ) : (
                           <Button
@@ -177,7 +183,7 @@ export default function AdminUsers() {
                             disabled={actioningId === user.id}
                             className="px-3 py-1.5 text-xs"
                           >
-                            Activate
+                            {t('activate')}
                           </Button>
                         )}
                       </td>
@@ -192,7 +198,7 @@ export default function AdminUsers() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-6">
             <p className="text-xs text-neutral-500">
-              Page {page} of {totalPages}
+              {tCommon('pageOf', { page, totalPages })}
             </p>
             <div className="flex gap-2">
               <Button
@@ -201,7 +207,7 @@ export default function AdminUsers() {
                 disabled={page <= 1}
                 className="px-3 py-1.5 text-xs"
               >
-                Previous
+                {tCommon('previous')}
               </Button>
               <Button
                 variant="secondary"
@@ -209,7 +215,7 @@ export default function AdminUsers() {
                 disabled={page >= totalPages}
                 className="px-3 py-1.5 text-xs"
               >
-                Next
+                {tCommon('next')}
               </Button>
             </div>
           </div>

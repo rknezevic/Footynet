@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { locationService, LocationSuggestion } from '@/lib/location';
 
 interface CityAutocompleteProps {
@@ -11,6 +12,7 @@ interface CityAutocompleteProps {
 }
 
 export default function CityAutocomplete({ value, county, onSelect, className }: CityAutocompleteProps) {
+  const t = useTranslations('city');
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [open, setOpen] = useState(false);
@@ -67,12 +69,12 @@ export default function CityAutocomplete({ value, county, onSelect, className }:
           value={query}
           onChange={(e) => handleChange(e.target.value)}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
-          placeholder="Start typing a city..."
+          placeholder={t('placeholder')}
           className={inputCls}
         />
         {open && (
           <ul className="absolute z-50 w-full mt-1 bg-white border border-neutral-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
-            {loading && <li className="px-3 py-2 text-sm text-neutral-400">Searching...</li>}
+            {loading && <li className="px-3 py-2 text-sm text-neutral-400">{t('searching')}</li>}
             {suggestions.map((s) => (
               <li
                 key={s.mapboxId}
@@ -86,7 +88,7 @@ export default function CityAutocomplete({ value, county, onSelect, className }:
         )}
       </div>
       <div className="mt-2">
-        <label className="block text-xs font-medium text-neutral-500 mb-1">County (auto-filled)</label>
+        <label className="block text-xs font-medium text-neutral-500 mb-1">{t('countyAutoFilled')}</label>
         <input
           type="text"
           value={county}

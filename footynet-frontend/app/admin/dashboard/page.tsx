@@ -8,6 +8,7 @@ import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminDashboardDto | null>(null);
@@ -15,6 +16,8 @@ export default function AdminDashboard() {
   const [error, setError] = useState('');
   const [actioningId, setActioningId] = useState<string | null>(null);
   const router = useRouter();
+  const t = useTranslations('adminDashboard');
+  const tCommon = useTranslations('common');
 
   const loadData = async () => {
     try {
@@ -29,7 +32,7 @@ export default function AdminDashboard() {
       if (status === 401 || status === 403) {
         router.push('/login');
       } else {
-        setError('Failed to load dashboard.');
+        setError(t('loadFailed'));
       }
     }
   };
@@ -44,7 +47,7 @@ export default function AdminDashboard() {
       await adminService.approveClub(id);
       await loadData();
     } catch {
-      setError('Failed to approve club.');
+      setError(t('approveFailed'));
     } finally {
       setActioningId(null);
     }
@@ -56,7 +59,7 @@ export default function AdminDashboard() {
       await adminService.rejectClub(id);
       await loadData();
     } catch {
-      setError('Failed to reject club.');
+      setError(t('rejectFailed'));
     } finally {
       setActioningId(null);
     }
@@ -75,20 +78,20 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!stats) return <div className="p-8 text-sm text-neutral-400">Loading...</div>;
+  if (!stats) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
 
   const statCards = [
-    { label: 'Players', value: stats.playerCount },
-    { label: 'Clubs', value: stats.clubCount },
-    { label: 'Job Ads', value: stats.jobAdCount },
-    { label: 'Pending Clubs', value: stats.pendingClubCount },
+    { label: t('players'), value: stats.playerCount },
+    { label: t('clubs'), value: stats.clubCount },
+    { label: t('jobAds'), value: stats.jobAdCount },
+    { label: t('pendingClubs'), value: stats.pendingClubCount },
   ];
 
   return (
     <div className="min-h-screen bg-neutral-50">
       <UnifiedNavBar />
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title="Admin Dashboard" subtitle="Platform overview and statistics" />
+        <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
         {error && (
           <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r mb-6">
@@ -111,20 +114,20 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">Pending Club Registrations</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">{t('pendingRegistrations')}</h2>
         <Card>
           {!pendingClubs || pendingClubs.items.length === 0 ? (
-            <p className="text-sm text-neutral-500">No pending club registrations.</p>
+            <p className="text-sm text-neutral-500">{t('noPending')}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-neutral-200">
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Name</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Email</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">League</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">City</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">Actions</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('name')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('email')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('league')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('city')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">{t('actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -142,7 +145,7 @@ export default function AdminDashboard() {
                             disabled={actioningId === club.id}
                             className="px-3 py-1.5 text-xs"
                           >
-                            Approve
+                            {t('approve')}
                           </Button>
                           <Button
                             variant="danger"
@@ -150,7 +153,7 @@ export default function AdminDashboard() {
                             disabled={actioningId === club.id}
                             className="px-3 py-1.5 text-xs"
                           >
-                            Reject
+                            {t('reject')}
                           </Button>
                         </div>
                       </td>

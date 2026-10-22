@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 interface NavLink {
   href: string;
@@ -15,6 +17,7 @@ interface NavBarProps {
 
 export default function NavBar({ links, onLogout }: NavBarProps) {
   const pathname = usePathname();
+  const t = useTranslations('nav');
 
   return (
     <nav className="bg-white border-b border-neutral-200">
@@ -41,8 +44,9 @@ export default function NavBar({ links, onLogout }: NavBarProps) {
             onClick={onLogout}
             className="text-sm font-medium text-neutral-400 hover:text-neutral-900 transition-colors"
           >
-            Logout
+            {t('logout')}
           </button>
+          <LanguageSwitcher />
         </div>
       </div>
     </nav>

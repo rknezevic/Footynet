@@ -10,7 +10,10 @@ using Footynet.Service;
 using Footynet.Service.Interfaces;
 using Footynet.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Footynet.WebApi;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using Serilog;
@@ -70,7 +73,36 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddControllers();
+// Localization: the frontend sends Accept-Language (hr/en); messages are translated with
+// IStringLocalizer<SharedResource> using Resources/SharedResource.hr.resx (English text is the key)
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+var supportedCultures = new[] { "hr", "en" };
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.SetDefaultCulture("hr")
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+});
+
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        // Return validation errors as { status, message, errors } with translated messages,
+        // in the same shape as ExceptionMiddleware so the frontend can show them directly
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var localizer = context.HttpContext.RequestServices
+                .GetRequiredService<IStringLocalizer<SharedResource>>();
+            var errors = context.ModelState
+                .Where(e => e.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    e => e.Key,
+                    e => e.Value!.Errors.Select(err => localizer[err.ErrorMessage].Value).ToArray());
+            var message = errors.Values.SelectMany(m => m).FirstOrDefault()
+                ?? localizer["One or more validation errors occurred."].Value;
+            return new BadRequestObjectResult(new { status = 400, message, errors });
+        };
+    });
 builder.Services.AddHttpClient();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginDtoValidator>();
@@ -150,6 +182,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 app.UseSerilogRequestLogging();
+// Must run before ExceptionMiddleware so error messages are translated into the request's culture
+app.UseRequestLocalization();
 app.UseMiddleware<Footynet.Middleware.ExceptionMiddleware>();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();

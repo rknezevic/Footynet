@@ -7,6 +7,8 @@ import LeagueOptions from '@/components/LeagueOptions';
 import { lookupService, League, Position } from '@/lib/lookup';
 import { JobAdDto } from '@/types';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
+import { useTranslations } from 'next-intl';
+import { useEnumLabels } from '@/i18n/useEnumLabels';
 
 export default function PlayerJobsPage() {
   const [jobs, setJobs] = useState<JobAdDto[]>([]);
@@ -15,6 +17,8 @@ export default function PlayerJobsPage() {
   const [leagueId, setLeagueId] = useState('');
   const [positions, setPositions] = useState<Position[]>([]);
   const [leagues, setLeagues] = useState<League[]>([]);
+  const t = useTranslations('playerJobs');
+  const labels = useEnumLabels();
 
   useEffect(() => {
     Promise.all([lookupService.getPositions(), lookupService.getLeagues()])
@@ -39,45 +43,45 @@ export default function PlayerJobsPage() {
     <div className="min-h-screen bg-neutral-50">
       <UnifiedNavBar />
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">Job Opportunities</h1>
-        <p className="text-sm text-neutral-500 mb-8">Browse and apply</p>
+        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">{t('title')}</h1>
+        <p className="text-sm text-neutral-500 mb-8">{t('subtitle')}</p>
 
         <form onSubmit={handleSearch} className="bg-white border border-neutral-200 rounded-lg p-6 mb-8">
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-12">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Search</label>
-              <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search by title or description..." className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
+              <label className="block text-sm font-medium text-neutral-700 mb-1">{t('search')}</label>
+              <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder={t('searchPlaceholder')} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" />
             </div>
             <div className="col-span-12 md:col-span-6">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Position</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">{t('position')}</label>
               <select value={positionId} onChange={(e) => setPositionId(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
-                <option value="">All Positions</option>
-                {positions.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                <option value="">{t('allPositions')}</option>
+                {positions.map(p => <option key={p.id} value={p.id}>{labels.position(p.name)}</option>)}
               </select>
             </div>
             <div className="col-span-12 md:col-span-6">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">League</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-1">{t('league')}</label>
               <select value={leagueId} onChange={(e) => setLeagueId(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent">
-                <option value="">All Leagues</option>
+                <option value="">{t('allLeagues')}</option>
                 <LeagueOptions leagues={leagues} />
               </select>
             </div>
           </div>
           <div className="flex gap-3 mt-5">
-            <button type="submit" className="bg-neutral-900 text-white px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">Apply Filters</button>
-            <button type="button" onClick={clearFilters} className="border border-neutral-300 text-neutral-700 px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-50 transition-colors">Clear</button>
+            <button type="submit" className="bg-neutral-900 text-white px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">{t('applyFilters')}</button>
+            <button type="button" onClick={clearFilters} className="border border-neutral-300 text-neutral-700 px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-50 transition-colors">{t('clear')}</button>
           </div>
         </form>
 
         <div className="space-y-4">
           {jobs.length === 0 ? (
-            <p className="text-sm text-neutral-400">No jobs found. Try adjusting your filters.</p>
+            <p className="text-sm text-neutral-400">{t('noJobs')}</p>
           ) : jobs.map((job) => (
             <div key={job.id} className="bg-white border border-neutral-200 rounded-lg p-6 hover-lift">
               <h3 className="text-xl font-semibold text-neutral-900 mb-1">{job.title}</h3>
-              <p className="text-xs text-neutral-400 mb-3">{job.clubName} · {job.leagueName} · {job.requiredPositionName}</p>
+              <p className="text-xs text-neutral-400 mb-3">{job.clubName} · {job.leagueName} · {labels.position(job.requiredPositionName)}</p>
               <p className="text-sm text-neutral-600 mb-4 leading-relaxed">{job.description}</p>
-              <Link href={`/player/jobs/${job.id}`} className="inline-block bg-neutral-900 text-white px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">View & Apply</Link>
+              <Link href={`/player/jobs/${job.id}`} className="inline-block bg-neutral-900 text-white px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">{t('viewAndApply')}</Link>
             </div>
           ))}
         </div>

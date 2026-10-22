@@ -1,0 +1,300 @@
+{
+  "metadata": {
+    "description": "Platforma za povezivanje nogometnih igrača i klubova"
+  },
+  "common": {
+    "loading": "Učitavanje...",
+    "tryAgain": "Pokušaj ponovno",
+    "save": "Spremi",
+    "saving": "Spremanje...",
+    "saveChanges": "Spremi promjene",
+    "edit": "Uredi",
+    "cancel": "Odustani",
+    "close": "Zatvori",
+    "previous": "Prethodna",
+    "next": "Sljedeća",
+    "pageOf": "Stranica {page} od {totalPages}",
+    "redirecting": "Preusmjeravanje...",
+    "genericError": "Došlo je do greške"
+  },
+  "nav": {
+    "dashboard": "Početna",
+    "jobs": "Oglasi",
+    "applications": "Prijave",
+    "messages": "Poruke",
+    "profile": "Profil",
+    "clubs": "Klubovi",
+    "users": "Korisnici",
+    "jobAds": "Oglasi",
+    "logout": "Odjava"
+  },
+  "enums": {
+    "positions": {
+      "Goalkeeper": "Vratar",
+      "Defender": "Branič",
+      "Midfielder": "Vezni",
+      "Forward": "Napadač"
+    },
+    "status": {
+      "Pending": "Na čekanju",
+      "Accepted": "Prihvaćeno",
+      "Rejected": "Odbijeno"
+    },
+    "foot": {
+      "Right": "Desna",
+      "Left": "Lijeva"
+    },
+    "roles": {
+      "Player": "Igrač",
+      "Club": "Klub",
+      "Admin": "Administrator"
+    },
+    "adStatus": {
+      "Open": "Otvoren",
+      "Closed": "Zatvoren"
+    }
+  },
+  "city": {
+    "placeholder": "Počnite upisivati mjesto...",
+    "searching": "Pretraživanje...",
+    "countyAutoFilled": "Županija (automatski)"
+  },
+  "errorBoundary": {
+    "title": "Nešto je pošlo po zlu",
+    "unexpected": "Došlo je do neočekivane greške",
+    "reload": "Ponovno učitaj stranicu"
+  },
+  "login": {
+    "subtitle": "Prijavite se u svoj račun",
+    "email": "Email",
+    "emailPlaceholder": "vi@primjer.hr",
+    "password": "Lozinka",
+    "signIn": "Prijava",
+    "signingIn": "Prijava u tijeku...",
+    "failed": "Prijava nije uspjela",
+    "noAccount": "Nemate račun?",
+    "register": "Registrirajte se"
+  },
+  "register": {
+    "step": "Registracija · Korak {step} od 2",
+    "chooseType": "Odaberite vrstu računa",
+    "player": "Igrač",
+    "playerDescription": "Pronađite priliku i prijavite se klubovima",
+    "club": "Klub",
+    "clubDescription": "Objavljujte oglase i pronađite igrače",
+    "email": "Email",
+    "password": "Lozinka",
+    "continue": "Nastavi",
+    "emailExists": "Račun s ovom email adresom već postoji.",
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "age": "Dob",
+    "city": "Mjesto",
+    "preferredFoot": "Jača noga",
+    "description": "Opis",
+    "clubName": "Naziv kluba",
+    "league": "Liga",
+    "selectLeague": "Odaberite ligu",
+    "clubDescriptionPlaceholder": "Recite igračima nešto o svom klubu...",
+    "back": "Natrag",
+    "submit": "Registriraj se",
+    "failed": "Registracija nije uspjela",
+    "haveAccount": "Već imate račun?",
+    "login": "Prijavite se"
+  },
+  "pendingApproval": {
+    "subtitle": "Status računa kluba",
+    "title": "Čeka odobrenje",
+    "message": "Račun vašeg kluba čeka odobrenje administratora. Platformu ćete moći koristiti čim administrator pregleda i odobri vašu registraciju.",
+    "backToLogin": "Natrag na prijavu"
+  },
+  "playerDashboard": {
+    "subtitle": "Početna stranica igrača",
+    "profile": "Profil",
+    "age": "Dob",
+    "location": "Lokacija",
+    "latestOpportunities": "Najnovije prilike",
+    "viewAll": "Prikaži sve",
+    "viewDetails": "Detalji"
+  },
+  "playerJobs": {
+    "title": "Oglasi",
+    "subtitle": "Pregledajte oglase i prijavite se",
+    "search": "Pretraga",
+    "searchPlaceholder": "Pretraži po naslovu ili opisu...",
+    "position": "Pozicija",
+    "allPositions": "Sve pozicije",
+    "league": "Liga",
+    "allLeagues": "Sve lige",
+    "applyFilters": "Primijeni filtre",
+    "clear": "Očisti",
+    "noJobs": "Nema oglasa. Pokušajte promijeniti filtre.",
+    "viewAndApply": "Pogledaj i prijavi se"
+  },
+  "jobDetail": {
+    "applyFailed": "Prijava nije uspjela",
+    "success": "Prijava je uspješno poslana! Preusmjeravanje...",
+    "applyTitle": "Prijavite se na ovu poziciju",
+    "coverLetter": "Motivacijsko pismo (neobavezno)",
+    "coverLetterPlaceholder": "Recite klubu zašto ste pravi izbor...",
+    "submit": "Pošalji prijavu"
+  },
+  "playerApplications": {
+    "title": "Moje prijave",
+    "subtitle": "Pratite status svojih prijava",
+    "empty": "Još nemate prijava. Pregledajte oglase i prijavite se."
+  },
+  "playerProfile": {
+    "title": "Moj profil",
+    "subtitle": "Podaci o igraču",
+    "details": "Podaci profila",
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "age": "Dob",
+    "city": "Mjesto",
+    "county": "Županija",
+    "preferredFoot": "Jača noga",
+    "description": "Opis",
+    "name": "Ime i prezime",
+    "about": "O meni"
+  },
+  "clubDashboard": {
+    "subtitle": "Početna stranica kluba",
+    "clubInfo": "O klubu",
+    "league": "Liga",
+    "county": "Županija",
+    "yourJobAds": "Vaši oglasi",
+    "createNew": "Novi oglas",
+    "noAds": "Još nemate oglasa. Objavite prvi i počnite tražiti igrače.",
+    "closeAd": "Zatvori oglas",
+    "reopenAd": "Ponovno otvori",
+    "viewApplications": "Prijave",
+    "editJobAd": "Uredi oglas",
+    "title": "Naslov",
+    "position": "Pozicija",
+    "selectPosition": "Odaberite poziciju",
+    "description": "Opis",
+    "updateFailed": "Ažuriranje oglasa nije uspjelo"
+  },
+  "clubApplications": {
+    "title": "Prijave",
+    "subtitle": "Pregledajte prijave igrača",
+    "filterByAd": "Filtriraj po oglasu",
+    "allAds": "Svi oglasi",
+    "inactive": "Neaktivan",
+    "empty": "Nema prijava",
+    "viewProfile": "Pogledaj profil",
+    "appliedFor": "Prijava za: {title}",
+    "appliedOn": "Prijavljeno: {date}",
+    "coverLetter": "Motivacijsko pismo",
+    "accept": "Prihvati",
+    "reject": "Odbij",
+    "age": "Dob",
+    "city": "Mjesto",
+    "preferredFoot": "Jača noga",
+    "about": "O igraču"
+  },
+  "clubProfile": {
+    "title": "Profil kluba",
+    "subtitle": "Podaci o klubu",
+    "details": "Podaci profila",
+    "clubName": "Naziv kluba",
+    "city": "Mjesto",
+    "county": "Županija",
+    "league": "Liga",
+    "selectLeague": "Odaberite ligu",
+    "description": "Opis",
+    "about": "O klubu"
+  },
+  "createJobAd": {
+    "title": "Novi oglas",
+    "subtitle": "Objava novog oglasa",
+    "adTitle": "Naslov",
+    "position": "Pozicija",
+    "selectPosition": "Odaberite poziciju",
+    "description": "Opis",
+    "submit": "Objavi oglas",
+    "positionsFailed": "Učitavanje pozicija nije uspjelo.",
+    "failed": "Objava oglasa nije uspjela"
+  },
+  "messages": {
+    "title": "Poruke",
+    "subtitle": "Razgovori",
+    "inbox": "Pristigle",
+    "empty": "Još nema poruka",
+    "conversationWith": "Razgovor s: {name}",
+    "placeholder": "Upišite poruku...",
+    "send": "Pošalji",
+    "selectConversation": "Odaberite razgovor za slanje poruka"
+  },
+  "adminDashboard": {
+    "title": "Administracija",
+    "subtitle": "Pregled i statistika platforme",
+    "players": "Igrači",
+    "clubs": "Klubovi",
+    "jobAds": "Oglasi",
+    "pendingClubs": "Klubovi na čekanju",
+    "pendingRegistrations": "Registracije klubova na čekanju",
+    "noPending": "Nema registracija klubova na čekanju.",
+    "name": "Naziv",
+    "email": "Email",
+    "league": "Liga",
+    "city": "Mjesto",
+    "actions": "Akcije",
+    "approve": "Odobri",
+    "reject": "Odbij",
+    "loadFailed": "Učitavanje nadzorne ploče nije uspjelo.",
+    "approveFailed": "Odobravanje kluba nije uspjelo.",
+    "rejectFailed": "Odbijanje kluba nije uspjelo."
+  },
+  "adminClubs": {
+    "title": "Klubovi na čekanju",
+    "subtitle": "Pregledajte te odobrite ili odbijte registracije klubova",
+    "noPending": "Nema registracija klubova na čekanju.",
+    "name": "Naziv",
+    "email": "Email",
+    "league": "Liga",
+    "city": "Mjesto",
+    "actions": "Akcije",
+    "approve": "Odobri",
+    "reject": "Odbij",
+    "loadFailed": "Učitavanje klubova na čekanju nije uspjelo.",
+    "approveFailed": "Odobravanje kluba nije uspjelo.",
+    "rejectFailed": "Odbijanje kluba nije uspjelo."
+  },
+  "adminUsers": {
+    "title": "Upravljanje korisnicima",
+    "subtitle": "Pregledajte i upravljajte svim korisnicima platforme",
+    "searchPlaceholder": "Pretraži po emailu...",
+    "allRoles": "Svi",
+    "empty": "Nema korisnika.",
+    "email": "Email",
+    "role": "Uloga",
+    "status": "Status",
+    "actions": "Akcije",
+    "active": "Aktivan",
+    "inactive": "Neaktivan",
+    "deactivate": "Deaktiviraj",
+    "activate": "Aktiviraj",
+    "loadFailed": "Učitavanje korisnika nije uspjelo.",
+    "deactivateFailed": "Deaktivacija korisnika nije uspjela.",
+    "reactivateFailed": "Ponovna aktivacija korisnika nije uspjela."
+  },
+  "adminJobAds": {
+    "title": "Moderacija oglasa",
+    "subtitle": "Pregledajte i upravljajte svim oglasima",
+    "searchPlaceholder": "Pretraži po naslovu...",
+    "empty": "Nema oglasa.",
+    "adTitle": "Naslov",
+    "club": "Klub",
+    "createdAt": "Objavljeno",
+    "status": "Status",
+    "actions": "Akcije",
+    "view": "Pogledaj",
+    "delete": "Obriši",
+    "posted": "Objavljeno {date}",
+    "loadFailed": "Učitavanje oglasa nije uspjelo.",
+    "deleteFailed": "Brisanje oglasa nije uspjelo.",
+    "detailFailed": "Učitavanje detalja oglasa nije uspjelo."
+  }
+}

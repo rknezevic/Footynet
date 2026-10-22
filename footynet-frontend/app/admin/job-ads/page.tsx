@@ -9,6 +9,8 @@ import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useFormatter } from 'next-intl';
+import { useEnumLabels } from '@/i18n/useEnumLabels';
 
 const PAGE_SIZE = 10;
 
@@ -21,6 +23,10 @@ export default function AdminJobAds() {
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const router = useRouter();
+  const t = useTranslations('adminJobAds');
+  const tCommon = useTranslations('common');
+  const labels = useEnumLabels();
+  const format = useFormatter();
 
   const loadJobAds = useCallback(async (p: number, s: string) => {
     try {
@@ -32,7 +38,7 @@ export default function AdminJobAds() {
       if (status === 401 || status === 403) {
         router.push('/login');
       } else {
-        setError('Failed to load job ads.');
+        setError(t('loadFailed'));
       }
     }
   }, [router]);
@@ -52,7 +58,7 @@ export default function AdminJobAds() {
       await adminService.deleteJobAd(id);
       await loadJobAds(page, search);
     } catch {
-      setError('Failed to delete job ad.');
+      setError(t('deleteFailed'));
     } finally {
       setActioningId(null);
     }
@@ -64,7 +70,7 @@ export default function AdminJobAds() {
       const detail = await jobAdService.getById(id);
       setSelectedJob(detail);
     } catch {
-      setError('Failed to load job ad details.');
+      setError(t('detailFailed'));
     } finally {
       setLoadingDetail(false);
     }
@@ -83,7 +89,7 @@ export default function AdminJobAds() {
     );
   }
 
-  if (!data) return <div className="p-8 text-sm text-neutral-400">Loading...</div>;
+  if (!data) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
 
   const { items, totalPages } = data;
 
@@ -91,7 +97,7 @@ export default function AdminJobAds() {
     <div className="min-h-screen bg-neutral-50">
       <UnifiedNavBar />
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title="Job Ad Moderation" subtitle="View and manage all job advertisements" />
+        <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
         {error && (
           <div className="bg-red-50 border-l-2 border-red-500 px-3 py-2 text-sm text-red-700 rounded-r mb-6">
@@ -102,7 +108,7 @@ export default function AdminJobAds() {
         <div className="flex items-center gap-4 mb-6">
           <input
             type="text"
-            placeholder="Search by title..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             className="flex-1 max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 bg-white text-neutral-900 placeholder-neutral-400"
@@ -111,17 +117,17 @@ export default function AdminJobAds() {
 
         <Card>
           {items.length === 0 ? (
-            <p className="text-sm text-neutral-500">No job ads found.</p>
+            <p className="text-sm text-neutral-500">{t('empty')}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-neutral-200">
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Title</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Club</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Created At</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Status</th>
-                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">Actions</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('adTitle')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('club')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('createdAt')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide">{t('status')}</th>
+                    <th className="pb-3 font-semibold text-neutral-500 text-xs uppercase tracking-wide text-right">{t('actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -129,12 +135,12 @@ export default function AdminJobAds() {
                     <tr key={ad.id} className="border-b border-neutral-100 last:border-0">
                       <td className="py-4 text-neutral-900 font-medium">{ad.title}</td>
                       <td className="py-4 text-neutral-600">{ad.clubName}</td>
-                      <td className="py-4 text-neutral-600">{new Date(ad.createdAt).toLocaleDateString()}</td>
+                      <td className="py-4 text-neutral-600">{format.dateTime(new Date(ad.createdAt), { dateStyle: 'medium' })}</td>
                       <td className="py-4">
                         <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
                           ad.adStatus === 'Open' ? 'bg-green-50 text-green-700' : 'bg-neutral-100 text-neutral-500'
                         }`}>
-                          {ad.adStatus}
+                          {labels.adStatus(ad.adStatus)}
                         </span>
                       </td>
                       <td className="py-4 text-right">
@@ -145,7 +151,7 @@ export default function AdminJobAds() {
                             disabled={loadingDetail}
                             className="px-3 py-1.5 text-xs"
                           >
-                            View
+                            {t('view')}
                           </Button>
                           <Button
                             variant="danger"
@@ -153,7 +159,7 @@ export default function AdminJobAds() {
                             disabled={actioningId === ad.id}
                             className="px-3 py-1.5 text-xs"
                           >
-                            Delete
+                            {t('delete')}
                           </Button>
                         </div>
                       </td>
@@ -168,7 +174,7 @@ export default function AdminJobAds() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-6">
             <p className="text-xs text-neutral-500">
-              Page {page} of {totalPages}
+              {tCommon('pageOf', { page, totalPages })}
             </p>
             <div className="flex gap-2">
               <Button
@@ -177,7 +183,7 @@ export default function AdminJobAds() {
                 disabled={page <= 1}
                 className="px-3 py-1.5 text-xs"
               >
-                Previous
+                {tCommon('previous')}
               </Button>
               <Button
                 variant="secondary"
@@ -185,7 +191,7 @@ export default function AdminJobAds() {
                 disabled={page >= totalPages}
                 className="px-3 py-1.5 text-xs"
               >
-                Next
+                {tCommon('next')}
               </Button>
             </div>
           </div>
@@ -200,22 +206,22 @@ export default function AdminJobAds() {
               <button onClick={() => setSelectedJob(null)} className="text-neutral-400 hover:text-neutral-600 text-lg">✕</button>
             </div>
             <p className="text-sm text-neutral-500 mb-4">
-              {selectedJob.clubName} · {selectedJob.leagueName} · {selectedJob.requiredPosition}
+              {selectedJob.clubName} · {selectedJob.leagueName} · {labels.position(selectedJob.requiredPositionName)}
             </p>
             <p className="text-sm text-neutral-600 leading-relaxed mb-4">{selectedJob.description}</p>
             <div className="flex items-center gap-3 text-xs text-neutral-400">
-              <span>Posted {new Date(selectedJob.createdAt).toLocaleDateString()}</span>
+              <span>{t('posted', { date: format.dateTime(new Date(selectedJob.createdAt), { dateStyle: 'medium' }) })}</span>
               <span className={`px-2 py-0.5 font-medium rounded-full ${
                 selectedJob.adStatus === 'Open' || selectedJob.adStatus === 0
                   ? 'bg-green-50 text-green-700'
                   : 'bg-neutral-100 text-neutral-500'
               }`}>
-                {selectedJob.adStatus === 0 ? 'Open' : selectedJob.adStatus === 1 ? 'Closed' : selectedJob.adStatus}
+                {labels.adStatus(selectedJob.adStatus === 0 ? 'Open' : selectedJob.adStatus === 1 ? 'Closed' : String(selectedJob.adStatus))}
               </span>
             </div>
             <div className="mt-6 flex justify-end">
               <Button variant="secondary" onClick={() => setSelectedJob(null)} className="px-4 py-2 text-sm">
-                Close
+                {tCommon('close')}
               </Button>
             </div>
           </div>

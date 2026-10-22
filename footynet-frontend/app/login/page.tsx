@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { authService } from '@/lib/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { RoleType } from '@/types';
 
 export default function LoginPage() {
+  const t = useTranslations('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -33,7 +36,7 @@ export default function LoginPage() {
       }
       router.push(redirectPath);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Login failed';
+      const msg = err?.message || t('failed');
       setError(msg);
       setLoading(false);
     }
@@ -45,7 +48,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">⚽ FootyNet</h1>
-            <p className="text-sm text-neutral-500">Sign in to your account</p>
+            <p className="text-sm text-neutral-500">{t('subtitle')}</p>
           </div>
 
           {error && (
@@ -56,18 +59,18 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('email')}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t('emailPlaceholder')}
                 className="w-full px-3.5 py-2.5 border border-neutral-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent placeholder-neutral-400"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">{t('password')}</label>
               <input
                 type="password"
                 value={password}
@@ -82,14 +85,17 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-neutral-900 text-white py-2.5 text-sm font-medium rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? t('signingIn') : t('signIn')}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-neutral-500">
-            No account?{' '}
-            <Link href="/register" className="text-neutral-900 font-medium hover:underline">Register</Link>
+            {t('noAccount')}{' '}
+            <Link href="/register" className="text-neutral-900 font-medium hover:underline">{t('register')}</Link>
           </p>
+        </div>
+        <div className="flex justify-center mt-6">
+          <LanguageSwitcher />
         </div>
       </div>
     </div>

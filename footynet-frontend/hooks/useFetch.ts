@@ -12,7 +12,7 @@ export function useFetch<T>(fetchFn: () => Promise<T>) {
         const result = await fetchFn();
         setData(result);
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch data');
+        setError(err.message || 'Error');
       } finally {
         setLoading(false);
       }

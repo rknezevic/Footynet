@@ -73,6 +73,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Check translations (hr/en)
+        run: npm run check:i18n
+
       - name: Type-check
         run: npx tsc --noEmit
 

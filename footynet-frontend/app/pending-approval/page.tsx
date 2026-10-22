@@ -1,16 +1,18 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function PendingApprovalPage() {
   const { logout } = useAuth();
+  const t = useTranslations('pendingApproval');
 
   return (
     <div className="min-h-screen bg-neutral-50 grid place-items-center">
       <div className="w-full max-w-sm px-8 text-center">
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-neutral-900 mb-1">FootyNet</h1>
-          <p className="text-sm text-neutral-500">Club Account Status</p>
+          <p className="text-sm text-neutral-500">{t('subtitle')}</p>
         </div>
         <div className="border border-neutral-200 rounded-md bg-white px-6 py-8 mb-6">
           <div className="mb-4">
@@ -29,16 +31,16 @@ export default function PendingApprovalPage() {
               />
             </svg>
           </div>
-          <h2 className="text-sm font-semibold text-neutral-900 mb-2">Pending Approval</h2>
+          <h2 className="text-sm font-semibold text-neutral-900 mb-2">{t('title')}</h2>
           <p className="text-sm text-neutral-500 leading-relaxed">
-            Your club account is awaiting admin approval. You will be able to access the platform once an administrator has reviewed and approved your registration.
+            {t('message')}
           </p>
         </div>
         <button
           onClick={logout}
           className="w-full bg-neutral-900 text-white py-2.5 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors"
         >
-          Back to Login
+          {t('backToLogin')}
         </button>
       </div>
     </div>

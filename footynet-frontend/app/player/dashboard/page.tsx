@@ -9,11 +9,14 @@ import Card from '@/components/Card';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
+import { useTranslations } from 'next-intl';
 
 export default function PlayerDashboard() {
   const [profile, setProfile] = useState<PlayerProfileDto | null>(null);
   const [jobs, setJobs] = useState<JobAdDto[]>([]);
   const router = useRouter();
+  const t = useTranslations('playerDashboard');
+  const tCommon = useTranslations('common');
 
   useEffect(() => {
     const loadData = async () => {
@@ -36,26 +39,26 @@ export default function PlayerDashboard() {
     loadData();
   }, [router]);
 
-  if (!profile) return <div className="p-8 text-sm text-neutral-400">Loading...</div>;
+  if (!profile) return <div className="p-8 text-sm text-neutral-400">{tCommon('loading')}</div>;
 
   return (
     <div className="min-h-screen bg-neutral-50">
       <UnifiedNavBar />
 
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <PageHeader title={`${profile.firstName} ${profile.lastName}`} subtitle="Player Dashboard" />
+        <PageHeader title={`${profile.firstName} ${profile.lastName}`} subtitle={t('subtitle')} />
 
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12 md:col-span-4">
             <Card hover>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">Profile</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">{t('profile')}</h3>
               <div className="space-y-3">
                 <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">Age</p>
+                  <p className="text-xs text-neutral-400 mb-0.5">{t('age')}</p>
                   <p className="text-2xl font-bold tracking-tight text-neutral-900">{profile.age}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-neutral-400 mb-0.5">Location</p>
+                  <p className="text-xs text-neutral-400 mb-0.5">{t('location')}</p>
                   <p className="text-sm text-neutral-900">{profile.city}, {profile.county}</p>
                 </div>
                 {profile.description && (
@@ -70,9 +73,9 @@ export default function PlayerDashboard() {
           <div className="col-span-12 md:col-span-8">
             <Card>
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Latest Opportunities</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400">{t('latestOpportunities')}</h3>
                 <Link href="/player/jobs" className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors">
-                  View All →
+                  {t('viewAll')} →
                 </Link>
               </div>
               <div className="space-y-5">
@@ -81,7 +84,7 @@ export default function PlayerDashboard() {
                     <h4 className="text-lg font-semibold text-neutral-900 mb-1">{job.title}</h4>
                     <p className="text-sm text-neutral-500 mb-2">{job.clubName} · {job.leagueName}</p>
                     <Link href={`/player/jobs/${job.id}`} className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors">
-                      View Details →
+                      {t('viewDetails')} →
                     </Link>
                   </div>
                 ))}

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account has been deactivated" xml:space="preserve">
+    <value>Račun je deaktiviran</value>
+  </data>
+  <data name="Admin registration not allowed" xml:space="preserve">
+    <value>Registracija administratora nije dopuštena</value>
+  </data>
+  <data name="Age is required" xml:space="preserve">
+    <value>Dob je obavezna</value>
+  </data>
+  <data name="Age must be between 16 and 50" xml:space="preserve">
+    <value>Dob mora biti između 16 i 50</value>
+  </data>
+  <data name="An unexpected error occurred" xml:space="preserve">
+    <value>Došlo je do neočekivane greške</value>
+  </data>
+  <data name="Application not found" xml:space="preserve">
+    <value>Prijava nije pronađena</value>
+  </data>
+  <data name="Cannot deactivate your own account" xml:space="preserve">
+    <value>Ne možete deaktivirati vlastiti račun</value>
+  </data>
+  <data name="City is required" xml:space="preserve">
+    <value>Mjesto je obavezno</value>
+  </data>
+  <data name="City must be under 100 characters" xml:space="preserve">
+    <value>Mjesto mora imati manje od 100 znakova</value>
+  </data>
+  <data name="Club is already approved" xml:space="preserve">
+    <value>Klub je već odobren</value>
+  </data>
+  <data name="Club is not in pending state" xml:space="preserve">
+    <value>Klub nije na čekanju</value>
+  </data>
+  <data name="Club name is required" xml:space="preserve">
+    <value>Naziv kluba je obavezan</value>
+  </data>
+  <data name="Club name must be under 100 characters" xml:space="preserve">
+    <value>Naziv kluba mora imati manje od 100 znakova</value>
+  </data>
+  <data name="Club not found" xml:space="preserve">
+    <value>Klub nije pronađen</value>
+  </data>
+  <data name="Club profile not found" xml:space="preserve">
+    <value>Profil kluba nije pronađen</value>
+  </data>
+  <data name="Cover letter must be under 2000 characters" xml:space="preserve">
+    <value>Motivacijsko pismo mora imati manje od 2000 znakova</value>
+  </data>
+  <data name="Description is required" xml:space="preserve">
+    <value>Opis je obavezan</value>
+  </data>
+  <data name="Description must be under 2000 characters" xml:space="preserve">
+    <value>Opis mora imati manje od 2000 znakova</value>
+  </data>
+  <data name="Email is required" xml:space="preserve">
+    <value>Email je obavezan</value>
+  </data>
+  <data name="First name is required" xml:space="preserve">
+    <value>Ime je obavezno</value>
+  </data>
+  <data name="First name must be under 50 characters" xml:space="preserve">
+    <value>Ime mora imati manje od 50 znakova</value>
+  </data>
+  <data name="Invalid email format" xml:space="preserve">
+    <value>Neispravan format email adrese</value>
+  </data>
+  <data name="Invalid position" xml:space="preserve">
+    <value>Neispravna pozicija</value>
+  </data>
+  <data name="Invalid preferred foot type" xml:space="preserve">
+    <value>Neispravna jača noga</value>
+  </data>
+  <data name="Invalid role" xml:space="preserve">
+    <value>Neispravna uloga</value>
+  </data>
+  <data name="Job ad is not open for applications" xml:space="preserve">
+    <value>Oglas više nije otvoren za prijave</value>
+  </data>
+  <data name="Job ad is required" xml:space="preserve">
+    <value>Oglas je obavezan</value>
+  </data>
+  <data name="Job ad not found" xml:space="preserve">
+    <value>Oglas nije pronađen</value>
+  </data>
+  <data name="Job ad not found or unauthorized" xml:space="preserve">
+    <value>Oglas nije pronađen ili nemate ovlasti</value>
+  </data>
+  <data name="Job application not found" xml:space="preserve">
+    <value>Prijava nije pronađena</value>
+  </data>
+  <data name="Last name is required" xml:space="preserve">
+    <value>Prezime je obavezno</value>
+  </data>
+  <data name="Last name must be under 50 characters" xml:space="preserve">
+    <value>Prezime mora imati manje od 50 znakova</value>
+  </data>
+  <data name="League is required" xml:space="preserve">
+    <value>Liga je obavezna</value>
+  </data>
+  <data name="Message content is required" xml:space="preserve">
+    <value>Sadržaj poruke je obavezan</value>
+  </data>
+  <data name="Message must be under 2000 characters" xml:space="preserve">
+    <value>Poruka mora imati manje od 2000 znakova</value>
+  </data>
+  <data name="Not authorized" xml:space="preserve">
+    <value>Nemate ovlasti</value>
+  </data>
+  <data name="One or more validation errors occurred." xml:space="preserve">
+    <value>Podaci nisu ispravni.</value>
+  </data>
+  <data name="Password is required" xml:space="preserve">
+    <value>Lozinka je obavezna</value>
+  </data>
+  <data name="Password must be at least 6 characters" xml:space="preserve">
+    <value>Lozinka mora imati barem 6 znakova</value>
+  </data>
+  <data name="Player not found" xml:space="preserve">
+    <value>Igrač nije pronađen</value>
+  </data>
+  <data name="Player profile not found" xml:space="preserve">
+    <value>Profil igrača nije pronađen</value>
+  </data>
+  <data name="Receiver is required" xml:space="preserve">
+    <value>Primatelj je obavezan</value>
+  </data>
+  <data name="Title is required" xml:space="preserve">
+    <value>Naslov je obavezan</value>
+  </data>
+  <data name="Title must be under 100 characters" xml:space="preserve">
+    <value>Naslov mora imati manje od 100 znakova</value>
+  </data>
+  <data name="User is already active" xml:space="preserve">
+    <value>Korisnik je već aktivan</value>
+  </data>
+  <data name="User is already deactivated" xml:space="preserve">
+    <value>Korisnik je već deaktiviran</value>
+  </data>
+  <data name="User not found" xml:space="preserve">
+    <value>Korisnik nije pronađen</value>
+  </data>
+  <data name="User with that email doesn't exist" xml:space="preserve">
+    <value>Korisnik s tom email adresom ne postoji</value>
+  </data>
+  <data name="User with this email already exists!" xml:space="preserve">
+    <value>Korisnik s ovom email adresom već postoji!</value>
+  </data>
+  <data name="Wrong password" xml:space="preserve">
+    <value>Pogrešna lozinka</value>
+  </data>
+  <data name="Your club account is pending approval" xml:space="preserve">
+    <value>Račun vašeg kluba čeka odobrenje</value>
+  </data>
+</root>

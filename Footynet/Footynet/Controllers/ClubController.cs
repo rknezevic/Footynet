@@ -115,7 +115,7 @@ public class ClubController : ControllerBase
         await EnsureClubApproved();
         var profile = await _clubService.GetClubProfileAsync(GetUserId());
         if (profile == null)
-            return NotFound("Club profile not found");
+            throw new KeyNotFoundException("Club profile not found");
         return Ok(profile);
     }
 

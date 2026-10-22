@@ -1,9 +1,14 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+
 interface ErrorMessageProps {
   message: string;
   onRetry?: () => void;
 }
 
 export default function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
+  const t = useTranslations('common');
   return (
     <div className="bg-red-50 border-l-[3px] border-red-600 p-6">
       <p className="text-sm text-red-900 mb-4">{message}</p>
@@ -12,7 +17,7 @@ export default function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
           onClick={onRetry}
           className="text-[11px] font-medium uppercase tracking-[0.15em] text-red-900 hover:text-red-700 underline"
         >
-          Try Again
+          {t('tryAgain')}
         </button>
       )}
     </div>

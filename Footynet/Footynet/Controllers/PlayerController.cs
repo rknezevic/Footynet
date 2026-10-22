@@ -32,7 +32,7 @@ public class PlayerController : ControllerBase
     {
         var profile = await _playerService.GetPlayerProfileAsync(GetUserId());
         if (profile == null)
-            return NotFound("Player profile not found");
+            throw new KeyNotFoundException("Player profile not found");
         return Ok(profile);
     }
 

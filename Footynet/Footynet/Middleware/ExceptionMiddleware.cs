@@ -1,5 +1,7 @@
 using System.Net;
 using System.Text.Json;
+using Footynet.WebApi;
+using Microsoft.Extensions.Localization;
 
 namespace Footynet.Middleware;
 
@@ -7,11 +9,13 @@ public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionMiddleware> _logger;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IStringLocalizer<SharedResource> localizer)
     {
         _next = next;
         _logger = logger;
+        _localizer = localizer;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -48,7 +52,8 @@ public class ExceptionMiddleware
         var response = new
         {
             status = (int)statusCode,
-            message
+            // Exception messages are written in English and used as keys for translation
+            message = _localizer[message].Value
         };
 
         await context.Response.WriteAsync(JsonSerializer.Serialize(response));

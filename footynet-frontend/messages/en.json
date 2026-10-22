@@ -1,0 +1,300 @@
+{
+  "metadata": {
+    "description": "Football player recruitment platform"
+  },
+  "common": {
+    "loading": "Loading...",
+    "tryAgain": "Try Again",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} of {totalPages}",
+    "redirecting": "Redirecting...",
+    "genericError": "An error occurred"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "jobs": "Jobs",
+    "applications": "Applications",
+    "messages": "Messages",
+    "profile": "Profile",
+    "clubs": "Clubs",
+    "users": "Users",
+    "jobAds": "Job Ads",
+    "logout": "Logout"
+  },
+  "enums": {
+    "positions": {
+      "Goalkeeper": "Goalkeeper",
+      "Defender": "Defender",
+      "Midfielder": "Midfielder",
+      "Forward": "Forward"
+    },
+    "status": {
+      "Pending": "Pending",
+      "Accepted": "Accepted",
+      "Rejected": "Rejected"
+    },
+    "foot": {
+      "Right": "Right",
+      "Left": "Left"
+    },
+    "roles": {
+      "Player": "Player",
+      "Club": "Club",
+      "Admin": "Admin"
+    },
+    "adStatus": {
+      "Open": "Open",
+      "Closed": "Closed"
+    }
+  },
+  "city": {
+    "placeholder": "Start typing a city...",
+    "searching": "Searching...",
+    "countyAutoFilled": "County (auto-filled)"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "unexpected": "An unexpected error occurred",
+    "reload": "Reload Page"
+  },
+  "login": {
+    "subtitle": "Sign in to your account",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "failed": "Login failed",
+    "noAccount": "No account?",
+    "register": "Register"
+  },
+  "register": {
+    "step": "Register · Step {step} of 2",
+    "chooseType": "Choose Account Type",
+    "player": "Player",
+    "playerDescription": "Find opportunities and apply to clubs",
+    "club": "Club",
+    "clubDescription": "Post jobs and recruit players",
+    "email": "Email",
+    "password": "Password",
+    "continue": "Continue",
+    "emailExists": "An account with this email already exists.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "age": "Age",
+    "city": "City",
+    "preferredFoot": "Preferred Foot",
+    "description": "Description",
+    "clubName": "Club Name",
+    "league": "League",
+    "selectLeague": "Select League",
+    "clubDescriptionPlaceholder": "Tell players about your club...",
+    "back": "Back",
+    "submit": "Register",
+    "failed": "Registration failed",
+    "haveAccount": "Have an account?",
+    "login": "Login"
+  },
+  "pendingApproval": {
+    "subtitle": "Club Account Status",
+    "title": "Pending Approval",
+    "message": "Your club account is awaiting admin approval. You will be able to access the platform once an administrator has reviewed and approved your registration.",
+    "backToLogin": "Back to Login"
+  },
+  "playerDashboard": {
+    "subtitle": "Player Dashboard",
+    "profile": "Profile",
+    "age": "Age",
+    "location": "Location",
+    "latestOpportunities": "Latest Opportunities",
+    "viewAll": "View All",
+    "viewDetails": "View Details"
+  },
+  "playerJobs": {
+    "title": "Job Opportunities",
+    "subtitle": "Browse and apply",
+    "search": "Search",
+    "searchPlaceholder": "Search by title or description...",
+    "position": "Position",
+    "allPositions": "All Positions",
+    "league": "League",
+    "allLeagues": "All Leagues",
+    "applyFilters": "Apply Filters",
+    "clear": "Clear",
+    "noJobs": "No jobs found. Try adjusting your filters.",
+    "viewAndApply": "View & Apply"
+  },
+  "jobDetail": {
+    "applyFailed": "Failed to apply",
+    "success": "Application submitted successfully! Redirecting...",
+    "applyTitle": "Apply for this position",
+    "coverLetter": "Cover Letter (Optional)",
+    "coverLetterPlaceholder": "Tell the club why you're a great fit...",
+    "submit": "Submit Application"
+  },
+  "playerApplications": {
+    "title": "My Applications",
+    "subtitle": "Track your application status",
+    "empty": "No applications yet. Browse jobs to apply."
+  },
+  "playerProfile": {
+    "title": "My Profile",
+    "subtitle": "Player Information",
+    "details": "Profile Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "age": "Age",
+    "city": "City",
+    "county": "County",
+    "preferredFoot": "Preferred Foot",
+    "description": "Description",
+    "name": "Name",
+    "about": "About"
+  },
+  "clubDashboard": {
+    "subtitle": "Club Dashboard",
+    "clubInfo": "Club Info",
+    "league": "League",
+    "county": "County",
+    "yourJobAds": "Your Job Ads",
+    "createNew": "Create New",
+    "noAds": "No job ads yet. Create one to start recruiting.",
+    "closeAd": "Close Ad",
+    "reopenAd": "Reopen Ad",
+    "viewApplications": "View Applications",
+    "editJobAd": "Edit Job Ad",
+    "title": "Title",
+    "position": "Position",
+    "selectPosition": "Select Position",
+    "description": "Description",
+    "updateFailed": "Failed to update job ad"
+  },
+  "clubApplications": {
+    "title": "Applications",
+    "subtitle": "Review player applications",
+    "filterByAd": "Filter by Job Ad",
+    "allAds": "All Job Ads",
+    "inactive": "Inactive",
+    "empty": "No applications found",
+    "viewProfile": "View Profile",
+    "appliedFor": "Applied for: {title}",
+    "appliedOn": "Applied: {date}",
+    "coverLetter": "Cover Letter",
+    "accept": "Accept",
+    "reject": "Reject",
+    "age": "Age",
+    "city": "City",
+    "preferredFoot": "Preferred Foot",
+    "about": "About"
+  },
+  "clubProfile": {
+    "title": "Club Profile",
+    "subtitle": "Club Information",
+    "details": "Profile Details",
+    "clubName": "Club Name",
+    "city": "City",
+    "county": "County",
+    "league": "League",
+    "selectLeague": "Select League",
+    "description": "Description",
+    "about": "About"
+  },
+  "createJobAd": {
+    "title": "Create Job Ad",
+    "subtitle": "New advertisement",
+    "adTitle": "Title",
+    "position": "Position",
+    "selectPosition": "Select Position",
+    "description": "Description",
+    "submit": "Create Job Ad",
+    "positionsFailed": "Failed to load positions.",
+    "failed": "Failed to create job ad"
+  },
+  "messages": {
+    "title": "Messages",
+    "subtitle": "Conversations",
+    "inbox": "Inbox",
+    "empty": "No messages yet",
+    "conversationWith": "Conversation with {name}",
+    "placeholder": "Type a message...",
+    "send": "Send",
+    "selectConversation": "Select a conversation to start messaging"
+  },
+  "adminDashboard": {
+    "title": "Admin Dashboard",
+    "subtitle": "Platform overview and statistics",
+    "players": "Players",
+    "clubs": "Clubs",
+    "jobAds": "Job Ads",
+    "pendingClubs": "Pending Clubs",
+    "pendingRegistrations": "Pending Club Registrations",
+    "noPending": "No pending club registrations.",
+    "name": "Name",
+    "email": "Email",
+    "league": "League",
+    "city": "City",
+    "actions": "Actions",
+    "approve": "Approve",
+    "reject": "Reject",
+    "loadFailed": "Failed to load dashboard.",
+    "approveFailed": "Failed to approve club.",
+    "rejectFailed": "Failed to reject club."
+  },
+  "adminClubs": {
+    "title": "Pending Clubs",
+    "subtitle": "Review and approve or reject club registrations",
+    "noPending": "No pending club registrations.",
+    "name": "Name",
+    "email": "Email",
+    "league": "League",
+    "city": "City",
+    "actions": "Actions",
+    "approve": "Approve",
+    "reject": "Reject",
+    "loadFailed": "Failed to load pending clubs.",
+    "approveFailed": "Failed to approve club.",
+    "rejectFailed": "Failed to reject club."
+  },
+  "adminUsers": {
+    "title": "User Management",
+    "subtitle": "View and manage all platform users",
+    "searchPlaceholder": "Search by email...",
+    "allRoles": "All",
+    "empty": "No users found.",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "loadFailed": "Failed to load users.",
+    "deactivateFailed": "Failed to deactivate user.",
+    "reactivateFailed": "Failed to reactivate user."
+  },
+  "adminJobAds": {
+    "title": "Job Ad Moderation",
+    "subtitle": "View and manage all job advertisements",
+    "searchPlaceholder": "Search by title...",
+    "empty": "No job ads found.",
+    "adTitle": "Title",
+    "club": "Club",
+    "createdAt": "Created At",
+    "status": "Status",
+    "actions": "Actions",
+    "view": "View",
+    "delete": "Delete",
+    "posted": "Posted {date}",
+    "loadFailed": "Failed to load job ads.",
+    "deleteFailed": "Failed to delete job ad.",
+    "detailFailed": "Failed to load job ad details."
+  }
+}

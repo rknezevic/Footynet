@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { messageService } from '@/lib/message';
 import { Message } from '@/types';
 import UnifiedNavBar from '@/components/UnifiedNavBar';
+import { useTranslations, useFormatter } from 'next-intl';
 
 interface InboxMessage extends Message { otherUserName?: string; }
 
@@ -13,6 +14,8 @@ export default function MessagesPage() {
   const [selectedUserName, setSelectedUserName] = useState('');
   const [conversation, setConversation] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const t = useTranslations('messages');
+  const format = useFormatter();
 
   useEffect(() => { loadInbox(); }, []);
   useEffect(() => { if (selectedUserId) loadConversation(selectedUserId); }, [selectedUserId]);
@@ -40,14 +43,14 @@ export default function MessagesPage() {
     <div className="min-h-screen bg-neutral-50">
       <UnifiedNavBar />
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">Messages</h1>
-        <p className="text-sm text-neutral-500 mb-8">Conversations</p>
+        <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">{t('title')}</h1>
+        <p className="text-sm text-neutral-500 mb-8">{t('subtitle')}</p>
 
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-4 bg-white border border-neutral-200 rounded-lg p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">Inbox</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-400 mb-4">{t('inbox')}</h3>
             <div className="space-y-2">
-              {uniqueUsers.length === 0 ? <p className="text-sm text-neutral-400">No messages yet</p> : uniqueUsers.map((msg) => {
+              {uniqueUsers.length === 0 ? <p className="text-sm text-neutral-400">{t('empty')}</p> : uniqueUsers.map((msg) => {
                 const myId = localStorage.getItem('userId');
                 const otherUserId = msg.senderId === myId ? msg.receiverId : msg.senderId;
                 const displayName = (msg as InboxMessage).otherUserName || otherUserId.substring(0, 8);
@@ -66,7 +69,7 @@ export default function MessagesPage() {
             {selectedUserId ? (
               <>
                 <div className="border-b border-neutral-200 px-5 py-3">
-                  <p className="text-sm font-medium text-neutral-700">Conversation with {selectedUserName}</p>
+                  <p className="text-sm font-medium text-neutral-700">{t('conversationWith', { name: selectedUserName })}</p>
                 </div>
                 <div className="flex-1 overflow-y-auto p-5 space-y-3">
                   {conversation.map((msg) => {
@@ -75,20 +78,20 @@ export default function MessagesPage() {
                       <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-md px-4 py-2.5 rounded-lg ${isMe ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-900'}`}>
                           <p className="text-sm">{msg.content}</p>
-                          <p className={`text-[10px] mt-1 ${isMe ? 'text-neutral-400' : 'text-neutral-500'}`}>{new Date(msg.sentAt).toLocaleString()}</p>
+                          <p className={`text-[10px] mt-1 ${isMe ? 'text-neutral-400' : 'text-neutral-500'}`}>{format.dateTime(new Date(msg.sentAt), { dateStyle: 'short', timeStyle: 'short' })}</p>
                         </div>
                       </div>
                     );
                   })}
                 </div>
                 <form onSubmit={handleSend} className="border-t border-neutral-200 p-4 flex gap-3">
-                  <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." className="flex-1 px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" required />
-                  <button type="submit" className="bg-neutral-900 text-white px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">Send</button>
+                  <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder={t('placeholder')} className="flex-1 px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent" required />
+                  <button type="submit" className="bg-neutral-900 text-white px-5 py-2 text-sm font-medium rounded-md hover:bg-neutral-700 transition-colors">{t('send')}</button>
                 </form>
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center">
-                <p className="text-sm text-neutral-400">Select a conversation to start messaging</p>
+                <p className="text-sm text-neutral-400">{t('selectConversation')}</p>
               </div>
             )}
           </div>
