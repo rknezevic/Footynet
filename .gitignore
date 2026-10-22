@@ -28,3 +28,6 @@ appsettings.Development.json
 
 # Logs
 Footynet/Footynet/Logs/
+
+# Test results
+TestResults/

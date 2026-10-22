@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/Logs/
+**/.vs/
+**/*.user
+# Secrets must come from environment variables, never baked into the image
+**/appsettings.json
+**/appsettings.Development.json
+Dockerfile
+.dockerignore

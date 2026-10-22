@@ -15,17 +15,21 @@ using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using Serilog;
 
-// Configure Serilog
-Log.Logger = new LoggerConfiguration()
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog: console everywhere, rolling files only in Development
+// (container file systems in hosting are ephemeral; the platform collects console output)
+var loggerConfig = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
-    .WriteTo.File("Logs/footynet-.log", rollingInterval: RollingInterval.Day,
-        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-    .CreateLogger();
-
-var builder = WebApplication.CreateBuilder(args);
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}");
+if (builder.Environment.IsDevelopment())
+{
+    loggerConfig.WriteTo.File("Logs/footynet-.log", rollingInterval: RollingInterval.Day,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
+}
+Log.Logger = loggerConfig.CreateLogger();
 builder.Host.UseSerilog();
 
 builder.Services.AddDbContext<FootynetDbContext>(options =>
@@ -110,7 +114,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+        policy.WithOrigins(allowedOrigins is { Length: > 0 } ? allowedOrigins : ["http://localhost:3000"])
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
