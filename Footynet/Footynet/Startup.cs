@@ -143,7 +143,12 @@ if (app.Environment.IsDevelopment())
 
 
 
-app.UseHttpsRedirection();
+// The frontend calls the API over plain http in development (NEXT_PUBLIC_API_URL); redirecting
+// to https there would send a redirect without CORS headers and the browser would block it
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseSerilogRequestLogging();
 app.UseMiddleware<Footynet.Middleware.ExceptionMiddleware>();
 app.UseCors("AllowFrontend");

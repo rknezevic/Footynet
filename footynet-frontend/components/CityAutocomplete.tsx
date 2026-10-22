@@ -38,7 +38,8 @@ export default function CityAutocomplete({ value, county, onSelect, className }:
         const results = await locationService.suggest(val);
         setSuggestions(results);
         setOpen(results.length > 0);
-      } catch {
+      } catch (err) {
+        console.error('City suggestions failed', err);
         setSuggestions([]);
       }
       setLoading(false);
