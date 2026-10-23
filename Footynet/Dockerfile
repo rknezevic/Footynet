@@ -24,6 +24,9 @@ COPY --from=build /app/publish .
 #   ConnectionStrings__DefaultConnection, Jwt__Key, Mapbox__AccessToken,
 #   AdminSeed__Email, AdminSeed__Password, Cors__AllowedOrigins__0
 ENV ASPNETCORE_ENVIRONMENT=Production
+# W^X (write-xor-execute) memory protection crashes .NET with exit code 139 (SIGSEGV) on some
+# sandboxed container hosts; Microsoft's documented workaround is to turn it off
+ENV DOTNET_EnableWriteXorExecute=0
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
 
