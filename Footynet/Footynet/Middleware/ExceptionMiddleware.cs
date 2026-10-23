@@ -1,13 +1,11 @@
 using System.Net;
 using System.Text.Json;
-using Footynet.WebApi;
+using Footynet.Exceptions;
+using Footynet.Localization;
+using Footynet.Model;
 using Microsoft.Extensions.Localization;
 
 namespace Footynet.Middleware;
-
-// Thrown when an authenticated user tries something they are not allowed to do (403).
-// UnauthorizedAccessException maps to 401, which makes the frontend log the user out.
-public class ForbiddenException(string message) : Exception(message);
 
 public class ExceptionMiddleware
 {
@@ -43,7 +41,7 @@ public class ExceptionMiddleware
             InvalidOperationException ex => (HttpStatusCode.BadRequest, ex.Message),
             ArgumentException ex => (HttpStatusCode.BadRequest, ex.Message),
             KeyNotFoundException ex => (HttpStatusCode.NotFound, ex.Message),
-            _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred")
+            _ => (HttpStatusCode.InternalServerError, AppMessages.General.Unexpected)
         };
 
         if (statusCode == HttpStatusCode.InternalServerError)
@@ -54,11 +52,15 @@ public class ExceptionMiddleware
         context.Response.StatusCode = (int)statusCode;
         context.Response.ContentType = "application/json";
 
+        var localized = _localizer[message];
         var response = new
         {
             status = (int)statusCode,
-            // Exception messages are written in English and used as keys for translation
-            message = _localizer[message].Value
+            // App exceptions carry an AppMessages key; it is translated for the user and also returned
+            // as "code" so the frontend can react to specific errors. Other exceptions (e.g. thrown by
+            // the framework) have no resource entry and are passed through without a code.
+            message = localized.Value,
+            code = localized.ResourceNotFound ? null : message
         };
 
         await context.Response.WriteAsync(JsonSerializer.Serialize(response));

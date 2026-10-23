@@ -5,6 +5,7 @@ using Footynet.DTOs;
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Footynet.Service.Interfaces;
+using Footynet.Localization;
 
 namespace Footynet.Controllers;
 
@@ -30,7 +31,7 @@ public class ClubController : ControllerBase
     {
         var club = await _clubRepository.GetByIdAsync(GetUserId());
         if (club is not null && !club.IsApproved)
-            throw new UnauthorizedAccessException("Your club account is pending approval");
+            throw new UnauthorizedAccessException(AppMessages.Club.PendingApproval);
     }
 
     [HttpPost("job-ads")]
@@ -115,7 +116,7 @@ public class ClubController : ControllerBase
         await EnsureClubApproved();
         var profile = await _clubService.GetClubProfileAsync(GetUserId());
         if (profile == null)
-            throw new KeyNotFoundException("Club profile not found");
+            throw new KeyNotFoundException(AppMessages.Club.ProfileNotFound);
         return Ok(profile);
     }
 

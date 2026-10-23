@@ -2,6 +2,7 @@ using Footynet.DTOs;
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Footynet.Service.Interfaces;
+using Footynet.Localization;
 
 namespace Footynet.Service;
 
@@ -20,10 +21,10 @@ public class PlayerService : IPlayerService
     {
         var jobAd = await _jobAdRepository.GetByIdAsync(dto.JobAdId);
         if (jobAd == null)
-            throw new InvalidOperationException("Job ad not found");
+            throw new InvalidOperationException(AppMessages.JobAd.NotFound);
 
         if (jobAd.AdStatus != AdStatusType.Open)
-            throw new InvalidOperationException("Job ad is not open for applications");
+            throw new InvalidOperationException(AppMessages.JobAd.NotOpen);
 
         var application = new JobApplication
         {
@@ -60,7 +61,7 @@ public class PlayerService : IPlayerService
     {
         var player = await _playerRepository.GetByIdAsync(userId);
         if (player == null)
-            throw new InvalidOperationException("Player not found");
+            throw new InvalidOperationException(AppMessages.Player.NotFound);
 
         player.FirstName = dto.FirstName;
         player.LastName = dto.LastName;
@@ -95,7 +96,7 @@ public class PlayerService : IPlayerService
     {
         var player = await _playerRepository.GetByIdAsync(userId);
         if (player == null)
-            throw new InvalidOperationException("Player not found");
+            throw new InvalidOperationException(AppMessages.Player.NotFound);
 
         var items = await _playerRepository.GetPlayerApplicationsAsync(player.Id, page: page, pageSize: pageSize);
         var totalCount = await _playerRepository.GetPlayerApplicationsCountAsync(player.Id);
@@ -113,7 +114,7 @@ public class PlayerService : IPlayerService
         var application = await _playerRepository.GetApplicationAsync(playerId, applicationId);
         if (application == null)
         {
-            throw new InvalidOperationException("Job application not found");
+            throw new InvalidOperationException(AppMessages.Application.NotFound);
         }
         await _playerRepository.CancelApplicationAsync(application);
     }
@@ -122,7 +123,7 @@ public class PlayerService : IPlayerService
     {
         var player = await _playerRepository.GetByIdAsync(playerId);
         if (player == null)
-            throw new InvalidOperationException("Player not found");
+            throw new InvalidOperationException(AppMessages.Player.NotFound);
 
         await _playerRepository.DeactivateAccountAsync(playerId);
     }

@@ -1,4 +1,7 @@
+using Footynet.Localization;
+using Footynet.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace Footynet.Controllers;
 
@@ -8,9 +11,11 @@ public class LocationController : ControllerBase
 {
     private readonly HttpClient _httpClient;
     private readonly string _accessToken;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public LocationController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public LocationController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IStringLocalizer<SharedResource> localizer)
     {
+        _localizer = localizer;
         _httpClient = httpClientFactory.CreateClient();
         _accessToken = configuration["Mapbox:AccessToken"] ?? string.Empty;
     }
@@ -20,7 +25,7 @@ public class LocationController : ControllerBase
 
     private IActionResult NotConfigured() =>
         StatusCode(StatusCodes.Status503ServiceUnavailable,
-            new { message = "Mapbox:AccessToken is not configured in appsettings.json" });
+            new { message = _localizer[AppMessages.General.LocationNotConfigured].Value, code = AppMessages.General.LocationNotConfigured });
 
     [HttpGet("suggest")]
     public async Task<IActionResult> Suggest([FromQuery] string q, [FromQuery] string? sessionToken = null)

@@ -79,7 +79,8 @@
     "failed": "Prijava nije uspjela",
     "noAccount": "Nemate račun?",
     "register": "Registrirajte se",
-    "title": "Dobro došli natrag"
+    "title": "Dobro došli natrag",
+    "resendConfirmation": "Pošalji ponovno email za potvrdu"
   },
   "register": {
     "step": "Korak {step} od 2",
@@ -374,5 +375,22 @@
     "career": "Karijera",
     "noCareer": "Još nema navedenih klubova.",
     "present": "danas"
+  },
+  "checkEmail": {
+    "title": "Provjerite svoj email",
+    "sentTo": "Poslali smo link za potvrdu na",
+    "instructions": "Kliknite na link u emailu kako biste aktivirali račun. Link vrijedi 24 sata.",
+    "resend": "Pošalji ponovno",
+    "resendIn": "Ponovno slanje za {seconds} s",
+    "resent": "Ako račun postoji i još nije potvrđen, novi email je na putu.",
+    "spamHint": "Ne vidite ga? Provjerite mapu neželjene pošte.",
+    "backToLogin": "Natrag na prijavu"
+  },
+  "verifyEmail": {
+    "successTitle": "Email je potvrđen!",
+    "successText": "Vaš račun je aktivan. Preusmjeravamo vas na FootyNet...",
+    "errorTitle": "Potvrda nije uspjela",
+    "errorHint": "Prijavite se emailom i lozinkom kako biste zatražili novi link za potvrdu.",
+    "backToLogin": "Idi na prijavu"
   }
 }

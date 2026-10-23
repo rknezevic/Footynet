@@ -1,5 +1,6 @@
 using FluentValidation;
 using Footynet.DTOs;
+using Footynet.Localization;
 
 namespace Footynet.Validators;
 
@@ -8,36 +9,36 @@ public class UpdatePlayerProfileDtoValidator : AbstractValidator<UpdatePlayerPro
     public UpdatePlayerProfileDtoValidator()
     {
         RuleFor(x => x.FirstName)
-            .NotEmpty().WithMessage("First name is required")
-            .MaximumLength(50).WithMessage("First name must be under 50 characters");
+            .NotEmpty().WithMessage(AppMessages.Validation.FirstNameRequired)
+            .MaximumLength(50).WithMessage(AppMessages.Validation.FirstNameTooLong);
 
         RuleFor(x => x.LastName)
-            .NotEmpty().WithMessage("Last name is required")
-            .MaximumLength(50).WithMessage("Last name must be under 50 characters");
+            .NotEmpty().WithMessage(AppMessages.Validation.LastNameRequired)
+            .MaximumLength(50).WithMessage(AppMessages.Validation.LastNameTooLong);
 
         RuleFor(x => x.Age)
-            .InclusiveBetween(16, 50).WithMessage("Age must be between 16 and 50");
+            .InclusiveBetween(16, 50).WithMessage(AppMessages.Validation.AgeOutOfRange);
 
         RuleFor(x => x.City)
-            .NotEmpty().WithMessage("City is required")
-            .MaximumLength(100).WithMessage("City must be under 100 characters");
+            .NotEmpty().WithMessage(AppMessages.Validation.CityRequired)
+            .MaximumLength(100).WithMessage(AppMessages.Validation.CityTooLong);
 
         RuleFor(x => x.PrefeeredFootType)
-            .IsInEnum().WithMessage("Invalid preferred foot type");
+            .IsInEnum().WithMessage(AppMessages.Validation.InvalidFootType);
 
         RuleFor(x => x.PrimaryPosition)
-            .IsInEnum().WithMessage("Invalid position")
+            .IsInEnum().WithMessage(AppMessages.Validation.InvalidPosition)
             .When(x => x.PrimaryPosition != null);
 
         RuleFor(x => x.SecondaryPosition)
-            .IsInEnum().WithMessage("Invalid position")
+            .IsInEnum().WithMessage(AppMessages.Validation.InvalidPosition)
             .When(x => x.SecondaryPosition != null);
 
         RuleFor(x => x.Availability)
-            .IsInEnum().WithMessage("Invalid availability status");
+            .IsInEnum().WithMessage(AppMessages.Validation.InvalidAvailability);
 
         RuleFor(x => x.Career)
-            .Must(c => c.Count <= 20).WithMessage("You can add up to 20 clubs");
+            .Must(c => c.Count <= 20).WithMessage(AppMessages.Validation.TooManyClubs);
 
         RuleForEach(x => x.Career).SetValidator(new CareerEntryDtoValidator());
     }
@@ -50,20 +51,20 @@ public class CareerEntryDtoValidator : AbstractValidator<CareerEntryDto>
         var currentYear = DateTime.UtcNow.Year;
 
         RuleFor(x => x.ClubName)
-            .NotEmpty().WithMessage("Club name is required")
-            .MaximumLength(100).WithMessage("Club name must be under 100 characters");
+            .NotEmpty().WithMessage(AppMessages.Validation.ClubNameRequired)
+            .MaximumLength(100).WithMessage(AppMessages.Validation.ClubNameTooLong);
 
         RuleFor(x => x.FromYear)
-            .InclusiveBetween(1950, currentYear).WithMessage("Year must be between 1950 and the current year")
+            .InclusiveBetween(1950, currentYear).WithMessage(AppMessages.Validation.YearOutOfRange)
             .When(x => x.FromYear != null);
 
         RuleFor(x => x.ToYear)
-            .InclusiveBetween(1950, currentYear).WithMessage("Year must be between 1950 and the current year")
+            .InclusiveBetween(1950, currentYear).WithMessage(AppMessages.Validation.YearOutOfRange)
             .When(x => x.ToYear != null);
 
         RuleFor(x => x)
             .Must(x => x.FromYear == null || x.ToYear == null || x.FromYear <= x.ToYear)
-            .WithMessage("End year cannot be before start year")
+            .WithMessage(AppMessages.Validation.EndYearBeforeStart)
             .WithName("ToYear");
     }
 }
@@ -73,10 +74,10 @@ public class CreateApplicationDtoValidator : AbstractValidator<CreateApplication
     public CreateApplicationDtoValidator()
     {
         RuleFor(x => x.JobAdId)
-            .NotEqual(Guid.Empty).WithMessage("Job ad is required");
+            .NotEqual(Guid.Empty).WithMessage(AppMessages.Validation.JobAdRequired);
 
         RuleFor(x => x.CoverLetter)
-            .MaximumLength(2000).WithMessage("Cover letter must be under 2000 characters")
+            .MaximumLength(2000).WithMessage(AppMessages.Validation.CoverLetterTooLong)
             .When(x => x.CoverLetter != null);
     }
 }

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="General.Unexpected" xml:space="preserve">
+    <value>An unexpected error occurred</value>
+  </data>
+  <data name="General.ValidationFailed" xml:space="preserve">
+    <value>One or more validation errors occurred.</value>
+  </data>
+  <data name="General.NotAuthorized" xml:space="preserve">
+    <value>You are not allowed to do this</value>
+  </data>
+  <data name="General.UnknownUser" xml:space="preserve">
+    <value>Unknown user</value>
+  </data>
+  <data name="General.LocationNotConfigured" xml:space="preserve">
+    <value>City search is not configured (Mapbox:AccessToken)</value>
+  </data>
+  <data name="Auth.EmailTaken" xml:space="preserve">
+    <value>User with this email already exists!</value>
+  </data>
+  <data name="Auth.AdminRegistrationNotAllowed" xml:space="preserve">
+    <value>Admin registration not allowed</value>
+  </data>
+  <data name="Auth.InvalidRole" xml:space="preserve">
+    <value>Invalid role</value>
+  </data>
+  <data name="Auth.UnknownEmail" xml:space="preserve">
+    <value>User with that email doesn't exist</value>
+  </data>
+  <data name="Auth.WrongPassword" xml:space="preserve">
+    <value>Wrong password</value>
+  </data>
+  <data name="Auth.AccountDeactivated" xml:space="preserve">
+    <value>Account has been deactivated</value>
+  </data>
+  <data name="Auth.EmailNotConfirmed" xml:space="preserve">
+    <value>Please confirm your email address before signing in</value>
+  </data>
+  <data name="Auth.InvalidConfirmationLink" xml:space="preserve">
+    <value>This confirmation link is invalid or has expired</value>
+  </data>
+  <data name="Club.NotFound" xml:space="preserve">
+    <value>Club not found</value>
+  </data>
+  <data name="Club.ProfileNotFound" xml:space="preserve">
+    <value>Club profile not found</value>
+  </data>
+  <data name="Club.AlreadyApproved" xml:space="preserve">
+    <value>Club is already approved</value>
+  </data>
+  <data name="Club.NotPending" xml:space="preserve">
+    <value>Club is not in pending state</value>
+  </data>
+  <data name="Club.PendingApproval" xml:space="preserve">
+    <value>Your club account is pending approval</value>
+  </data>
+  <data name="Player.NotFound" xml:space="preserve">
+    <value>Player not found</value>
+  </data>
+  <data name="Player.ProfileNotFound" xml:space="preserve">
+    <value>Player profile not found</value>
+  </data>
+  <data name="JobAd.NotFound" xml:space="preserve">
+    <value>Job ad not found</value>
+  </data>
+  <data name="JobAd.NotFoundOrUnauthorized" xml:space="preserve">
+    <value>Job ad not found or unauthorized</value>
+  </data>
+  <data name="JobAd.NotOpen" xml:space="preserve">
+    <value>Job ad is not open for applications</value>
+  </data>
+  <data name="Application.NotFound" xml:space="preserve">
+    <value>Application not found</value>
+  </data>
+  <data name="User.NotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="User.AlreadyActive" xml:space="preserve">
+    <value>User is already active</value>
+  </data>
+  <data name="User.AlreadyDeactivated" xml:space="preserve">
+    <value>User is already deactivated</value>
+  </data>
+  <data name="User.CannotDeactivateSelf" xml:space="preserve">
+    <value>Cannot deactivate your own account</value>
+  </data>
+  <data name="Messaging.NotConnected" xml:space="preserve">
+    <value>You can only message users connected through an accepted application</value>
+  </data>
+  <data name="Messaging.ApplicationAccepted" xml:space="preserve">
+    <value>Congratulations! Your application for '{0}' has been accepted. Let's discuss further details.</value>
+  </data>
+  <data name="Validation.EmailRequired" xml:space="preserve">
+    <value>Email is required</value>
+  </data>
+  <data name="Validation.InvalidEmail" xml:space="preserve">
+    <value>Invalid email format</value>
+  </data>
+  <data name="Validation.PasswordRequired" xml:space="preserve">
+    <value>Password is required</value>
+  </data>
+  <data name="Validation.PasswordTooShort" xml:space="preserve">
+    <value>Password must be at least 6 characters</value>
+  </data>
+  <data name="Validation.InvalidRole" xml:space="preserve">
+    <value>Invalid role</value>
+  </data>
+  <data name="Validation.FirstNameRequired" xml:space="preserve">
+    <value>First name is required</value>
+  </data>
+  <data name="Validation.FirstNameTooLong" xml:space="preserve">
+    <value>First name must be under 50 characters</value>
+  </data>
+  <data name="Validation.LastNameRequired" xml:space="preserve">
+    <value>Last name is required</value>
+  </data>
+  <data name="Validation.LastNameTooLong" xml:space="preserve">
+    <value>Last name must be under 50 characters</value>
+  </data>
+  <data name="Validation.AgeRequired" xml:space="preserve">
+    <value>Age is required</value>
+  </data>
+  <data name="Validation.AgeOutOfRange" xml:space="preserve">
+    <value>Age must be between 16 and 50</value>
+  </data>
+  <data name="Validation.CityRequired" xml:space="preserve">
+    <value>City is required</value>
+  </data>
+  <data name="Validation.CityTooLong" xml:space="preserve">
+    <value>City must be under 100 characters</value>
+  </data>
+  <data name="Validation.ClubNameRequired" xml:space="preserve">
+    <value>Club name is required</value>
+  </data>
+  <data name="Validation.ClubNameTooLong" xml:space="preserve">
+    <value>Club name must be under 100 characters</value>
+  </data>
+  <data name="Validation.LeagueRequired" xml:space="preserve">
+    <value>League is required</value>
+  </data>
+  <data name="Validation.InvalidPhone" xml:space="preserve">
+    <value>Invalid phone number</value>
+  </data>
+  <data name="Validation.TitleRequired" xml:space="preserve">
+    <value>Title is required</value>
+  </data>
+  <data name="Validation.TitleTooLong" xml:space="preserve">
+    <value>Title must be under 100 characters</value>
+  </data>
+  <data name="Validation.DescriptionRequired" xml:space="preserve">
+    <value>Description is required</value>
+  </data>
+  <data name="Validation.DescriptionTooLong" xml:space="preserve">
+    <value>Description must be under 2000 characters</value>
+  </data>
+  <data name="Validation.CoverLetterTooLong" xml:space="preserve">
+    <value>Cover letter must be under 2000 characters</value>
+  </data>
+  <data name="Validation.InvalidPosition" xml:space="preserve">
+    <value>Invalid position</value>
+  </data>
+  <data name="Validation.InvalidFootType" xml:space="preserve">
+    <value>Invalid preferred foot type</value>
+  </data>
+  <data name="Validation.InvalidAvailability" xml:space="preserve">
+    <value>Invalid availability status</value>
+  </data>
+  <data name="Validation.TooManyClubs" xml:space="preserve">
+    <value>You can add up to 20 clubs</value>
+  </data>
+  <data name="Validation.YearOutOfRange" xml:space="preserve">
+    <value>Year must be between 1950 and the current year</value>
+  </data>
+  <data name="Validation.EndYearBeforeStart" xml:space="preserve">
+    <value>End year cannot be before start year</value>
+  </data>
+  <data name="Validation.JobAdRequired" xml:space="preserve">
+    <value>Job ad is required</value>
+  </data>
+  <data name="Validation.ReceiverRequired" xml:space="preserve">
+    <value>Receiver is required</value>
+  </data>
+  <data name="Validation.MessageRequired" xml:space="preserve">
+    <value>Message content is required</value>
+  </data>
+  <data name="Validation.MessageTooLong" xml:space="preserve">
+    <value>Message must be under 2000 characters</value>
+  </data>
+  <data name="Email.Greeting" xml:space="preserve">
+    <value>Hi {0},</value>
+  </data>
+  <data name="Email.Verification.Subject" xml:space="preserve">
+    <value>Confirm your FootyNet email address</value>
+  </data>
+  <data name="Email.Verification.Intro" xml:space="preserve">
+    <value>Thanks for signing up to FootyNet! Please confirm your email address to activate your account.</value>
+  </data>
+  <data name="Email.Verification.Button" xml:space="preserve">
+    <value>Confirm email address</value>
+  </data>
+  <data name="Email.Verification.Footer" xml:space="preserve">
+    <value>The link is valid for 24 hours. If you didn't create an account, you can ignore this email.</value>
+  </data>
+  <data name="Email.NewMessage.Subject" xml:space="preserve">
+    <value>New message from {0}</value>
+  </data>
+  <data name="Email.NewMessage.Intro" xml:space="preserve">
+    <value>{0} sent you a message on FootyNet:</value>
+  </data>
+  <data name="Email.NewMessage.Button" xml:space="preserve">
+    <value>Open conversation</value>
+  </data>
+  <data name="Email.NewMessage.Footer" xml:space="preserve">
+    <value>You get this email because you weren't online when the message arrived. We send at most one such email every 30 minutes.</value>
+  </data>
+</root>

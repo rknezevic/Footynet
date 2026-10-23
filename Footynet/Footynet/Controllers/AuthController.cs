@@ -29,6 +29,19 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("verify-email")]
+    public async Task<ActionResult<AuthResponseDto>> VerifyEmail(VerifyEmailDto dto)
+    {
+        return Ok(await _userService.VerifyEmailAsync(dto.Token));
+    }
+
+    [HttpPost("resend-verification")]
+    public async Task<IActionResult> ResendVerification(ResendVerificationDto dto)
+    {
+        await _userService.ResendConfirmationAsync(dto.Email);
+        return NoContent();
+    }
+
     [HttpGet("check-email")]
     [Microsoft.AspNetCore.Authorization.AllowAnonymous]
     public async Task<IActionResult> CheckEmail([FromQuery] string email)

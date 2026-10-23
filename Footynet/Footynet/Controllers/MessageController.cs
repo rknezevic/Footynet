@@ -1,13 +1,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Globalization;
 using System.Security.Claims;
+using Footynet.Model;
 using Footynet.Data;
 using Footynet.Hubs;
-using Footynet.Middleware;
+using Footynet.Exceptions;
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Footynet.Localization;
 
 namespace Footynet.Controllers;
 
@@ -19,12 +22,14 @@ public class MessageController : ControllerBase
     private readonly IMessageRepository _messageRepository;
     private readonly FootynetDbContext _context;
     private readonly IHubContext<ChatHub> _hub;
+    private readonly MessageEmailNotifier _emailNotifier;
 
-    public MessageController(IMessageRepository messageRepository, FootynetDbContext context, IHubContext<ChatHub> hub)
+    public MessageController(IMessageRepository messageRepository, FootynetDbContext context, IHubContext<ChatHub> hub, MessageEmailNotifier emailNotifier)
     {
         _messageRepository = messageRepository;
         _context = context;
         _hub = hub;
+        _emailNotifier = emailNotifier;
     }
 
     private Guid GetUserId() => Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -34,7 +39,7 @@ public class MessageController : ControllerBase
     {
         var senderId = GetUserId();
         if (!await _messageRepository.AreConnectedAsync(senderId, dto.ReceiverId))
-            throw new ForbiddenException("You can only message users connected through an accepted application");
+            throw new ForbiddenException(AppMessages.Messaging.NotConnected);
 
         var message = new Message
         {
@@ -51,6 +56,8 @@ public class MessageController : ControllerBase
         // Push to the receiver and to the sender's other open tabs, no polling needed
         await _hub.Clients.Users(dto.ReceiverId.ToString(), senderId.ToString())
             .SendAsync(ChatHub.ReceiveMessage, result);
+        // If the receiver isn't in the app right now, let them know by email (throttled)
+        await _emailNotifier.NotifyAsync(dto.ReceiverId, senderId, result.SenderName ?? "", created.Content);
 
         return Ok(result);
     }
@@ -129,7 +136,7 @@ public class MessageController : ControllerBase
     {
         Player p => $"{p.FirstName} {p.LastName}",
         Club c => c.Name,
-        _ => "Unknown"
+        _ => SharedResource.Get(AppMessages.General.UnknownUser, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)
     };
 }
 

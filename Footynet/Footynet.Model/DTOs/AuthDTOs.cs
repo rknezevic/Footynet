@@ -34,4 +34,16 @@ public class AuthResponseDto
     public RoleType Role { get; set; }
     public Guid UserId { get; set; }
     public bool? IsApproved { get; set; }
+    // True after registration: no token is issued until the email address is confirmed
+    public bool RequiresEmailConfirmation { get; set; }
+}
+
+public class VerifyEmailDto
+{
+    public string Token { get; set; } = string.Empty;
+}
+
+public class ResendVerificationDto
+{
+    public string Email { get; set; } = string.Empty;
 }

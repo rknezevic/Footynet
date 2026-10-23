@@ -34,4 +34,15 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
         return user;
     }
+
+    public async Task<User?> GetByEmailConfirmationTokenHashAsync(string tokenHash)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.EmailConfirmationTokenHash == tokenHash);
+    }
+
+    public async Task UpdateAsync(User user)
+    {
+        await _context.SaveChangesAsync();
+    }
 }

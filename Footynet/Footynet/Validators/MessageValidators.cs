@@ -1,5 +1,6 @@
 using FluentValidation;
 using Footynet.Controllers;
+using Footynet.Localization;
 
 namespace Footynet.Validators;
 
@@ -8,10 +9,10 @@ public class CreateMessageDtoValidator : AbstractValidator<CreateMessageDto>
     public CreateMessageDtoValidator()
     {
         RuleFor(x => x.ReceiverId)
-            .NotEqual(Guid.Empty).WithMessage("Receiver is required");
+            .NotEqual(Guid.Empty).WithMessage(AppMessages.Validation.ReceiverRequired);
 
         RuleFor(x => x.Content)
-            .NotEmpty().WithMessage("Message content is required")
-            .MaximumLength(2000).WithMessage("Message must be under 2000 characters");
+            .NotEmpty().WithMessage(AppMessages.Validation.MessageRequired)
+            .MaximumLength(2000).WithMessage(AppMessages.Validation.MessageTooLong);
     }
 }

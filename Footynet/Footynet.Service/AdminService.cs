@@ -2,6 +2,7 @@ using Footynet.DTOs;
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Footynet.Service.Interfaces;
+using Footynet.Localization;
 
 namespace Footynet.Service;
 
@@ -35,10 +36,10 @@ public class AdminService : IAdminService
     {
         var club = await _adminRepository.GetClubByIdAsync(clubId);
         if (club == null)
-            throw new KeyNotFoundException("Club not found");
+            throw new KeyNotFoundException(AppMessages.Club.NotFound);
 
         if (club.IsApproved)
-            throw new InvalidOperationException("Club is already approved");
+            throw new InvalidOperationException(AppMessages.Club.AlreadyApproved);
 
         club.IsApproved = true;
         await _adminRepository.UpdateClubAsync(club);
@@ -48,10 +49,10 @@ public class AdminService : IAdminService
     {
         var club = await _adminRepository.GetClubByIdAsync(clubId);
         if (club == null)
-            throw new KeyNotFoundException("Club not found");
+            throw new KeyNotFoundException(AppMessages.Club.NotFound);
 
         if (!club.IsActive || club.IsApproved)
-            throw new InvalidOperationException("Club is not in pending state");
+            throw new InvalidOperationException(AppMessages.Club.NotPending);
 
         club.IsActive = false;
         await _adminRepository.UpdateClubAsync(club);
@@ -72,14 +73,14 @@ public class AdminService : IAdminService
     public async Task DeactivateUserAsync(Guid userId, Guid adminId)
     {
         if (userId == adminId)
-            throw new InvalidOperationException("Cannot deactivate your own account");
+            throw new InvalidOperationException(AppMessages.User.CannotDeactivateSelf);
 
         var user = await _adminRepository.GetUserByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException("User not found");
+            throw new KeyNotFoundException(AppMessages.User.NotFound);
 
         if (!user.IsActive)
-            throw new InvalidOperationException("User is already deactivated");
+            throw new InvalidOperationException(AppMessages.User.AlreadyDeactivated);
 
         user.IsActive = false;
         await _adminRepository.UpdateUserAsync(user);
@@ -89,10 +90,10 @@ public class AdminService : IAdminService
     {
         var user = await _adminRepository.GetUserByIdAsync(userId);
         if (user == null)
-            throw new KeyNotFoundException("User not found");
+            throw new KeyNotFoundException(AppMessages.User.NotFound);
 
         if (user.IsActive)
-            throw new InvalidOperationException("User is already active");
+            throw new InvalidOperationException(AppMessages.User.AlreadyActive);
 
         user.IsActive = true;
         await _adminRepository.UpdateUserAsync(user);
@@ -117,7 +118,7 @@ public class AdminService : IAdminService
         // Use GetJobAdsAsync to verify existence first.
         var (items, _) = await _adminRepository.GetJobAdsAsync(null, 1, int.MaxValue);
         if (!items.Any(j => j.Id == jobAdId))
-            throw new KeyNotFoundException("Job ad not found");
+            throw new KeyNotFoundException(AppMessages.JobAd.NotFound);
 
         await _adminRepository.DeleteJobAdAsync(jobAdId);
     }

@@ -79,7 +79,8 @@
     "failed": "Login failed",
     "noAccount": "No account?",
     "register": "Register",
-    "title": "Welcome back"
+    "title": "Welcome back",
+    "resendConfirmation": "Resend confirmation email"
   },
   "register": {
     "step": "Step {step} of 2",
@@ -374,5 +375,22 @@
     "career": "Career",
     "noCareer": "No clubs listed yet.",
     "present": "present"
+  },
+  "checkEmail": {
+    "title": "Check your inbox",
+    "sentTo": "We sent a confirmation link to",
+    "instructions": "Click the link in the email to activate your account. The link is valid for 24 hours.",
+    "resend": "Resend email",
+    "resendIn": "Resend in {seconds}s",
+    "resent": "If the account exists and isn't confirmed yet, a new email is on its way.",
+    "spamHint": "Can't find it? Check your spam folder.",
+    "backToLogin": "Back to login"
+  },
+  "verifyEmail": {
+    "successTitle": "Email confirmed!",
+    "successText": "Your account is active. Taking you to FootyNet...",
+    "errorTitle": "Confirmation failed",
+    "errorHint": "Sign in with your email and password to request a new confirmation link.",
+    "backToLogin": "Go to login"
   }
 }

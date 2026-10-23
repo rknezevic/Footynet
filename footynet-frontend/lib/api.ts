@@ -52,6 +52,10 @@ api.interceptors.response.use(
     } else if (error.message) {
       errorMessage = error.message;
     }
-    return Promise.reject(new Error(errorMessage));
+    // Keep the HTTP status and the API's error code (see lib/errorCodes.ts) for callers that need them
+    const apiError = new Error(errorMessage) as Error & { status?: number; code?: string };
+    apiError.status = error.response?.status;
+    apiError.code = error.response?.data?.code ?? undefined;
+    return Promise.reject(apiError);
   }
 );

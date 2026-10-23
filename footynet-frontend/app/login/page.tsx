@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { LogIn } from 'lucide-react';
 import { authService } from '@/lib/auth';
+import { ErrorCodes } from '@/lib/errorCodes';
 import { useAuth } from '@/contexts/AuthContext';
 import { RoleType } from '@/types';
 import AuthLayout from '@/components/AuthLayout';
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [unconfirmed, setUnconfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { refreshAuth } = useAuth();
@@ -25,6 +27,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setUnconfirmed(false);
     setLoading(true);
 
     try {
@@ -41,6 +44,7 @@ export default function LoginPage() {
       router.push(redirectPath);
     } catch (err: any) {
       setError(err?.message || t('failed'));
+      setUnconfirmed(err?.code === ErrorCodes.emailNotConfirmed);
       setLoading(false);
     }
   };
@@ -50,7 +54,16 @@ export default function LoginPage() {
       <h1 className="text-3xl font-bold tracking-tight text-ink-900">{t('title')}</h1>
       <p className="mb-8 mt-2 text-ink-500">{t('subtitle')}</p>
 
-      {error && <div className="mb-6"><ErrorMessage message={error} /></div>}
+      {error && (
+        <div className="mb-6 space-y-2">
+          <ErrorMessage message={error} />
+          {unconfirmed && (
+            <Link href={`/check-email?email=${encodeURIComponent(email)}&fromLogin=1`} className="inline-block text-sm font-semibold text-pitch-700 hover:underline">
+              {t('resendConfirmation')}
+            </Link>
+          )}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <FormInput label={t('email')} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('emailPlaceholder')} autoComplete="email" required />

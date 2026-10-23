@@ -59,6 +59,8 @@ export interface AuthResponseDto {
   role: RoleType;
   userId: string;
   isApproved?: boolean;
+  // Set after registration; the user must confirm their email before getting a token
+  requiresEmailConfirmation?: boolean;
 }
 
 export interface PlayerProfileDto {

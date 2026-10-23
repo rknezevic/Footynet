@@ -2,6 +2,9 @@ using Footynet.DTOs;
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Footynet.Service.Interfaces;
+using Footynet.Localization;
+using Footynet.Model;
+using Footynet.Exceptions;
 
 namespace Footynet.Service;
 
@@ -48,10 +51,10 @@ public class ClubService : IClubService
     {
         var application = await _applicationRepository.GetByIdAsync(applicationId);
         if (application == null)
-            throw new InvalidOperationException("Application not found");
+            throw new InvalidOperationException(AppMessages.Application.NotFound);
 
         if (application.JobAd.ClubId != clubId)
-            throw new UnauthorizedAccessException("Not authorized");
+            throw new ForbiddenException(AppMessages.General.NotAuthorized);
 
         await _applicationRepository.UpdateStatusAsync(applicationId, StatusType.Accepted);
 
@@ -60,7 +63,8 @@ public class ClubService : IClubService
             Id = Guid.NewGuid(),
             SenderId = clubId,
             ReceiverId = application.PlayerId,
-            Content = $"Congratulations! Your application for '{application.JobAd.Title}' has been accepted. Let's discuss further details.",
+            // Written in the player's language, since the player is the one reading it
+            Content = SharedResource.Get(AppMessages.Messaging.ApplicationAccepted, application.Player.PreferredLanguage, application.JobAd.Title),
             SentAt = DateTime.UtcNow,
             IsRead = false
         };
@@ -72,10 +76,10 @@ public class ClubService : IClubService
     {
         var application = await _applicationRepository.GetByIdAsync(applicationId);
         if (application == null)
-            throw new InvalidOperationException("Application not found");
+            throw new InvalidOperationException(AppMessages.Application.NotFound);
 
         if (application.JobAd.ClubId != clubId)
-            throw new UnauthorizedAccessException("Not authorized");
+            throw new ForbiddenException(AppMessages.General.NotAuthorized);
 
         await _applicationRepository.UpdateStatusAsync(applicationId, StatusType.Rejected);
     }
@@ -109,7 +113,7 @@ public class ClubService : IClubService
     {
         var club = await _clubRepository.GetByIdAsync(clubId);
         if (club == null)
-            throw new InvalidOperationException("Club not found");
+            throw new InvalidOperationException(AppMessages.Club.NotFound);
 
         club.Name = dto.Name;
         club.Description = dto.Description;
@@ -125,7 +129,7 @@ public class ClubService : IClubService
     {
         var club = await _clubRepository.GetByIdAsync(clubId);
         if (club == null)
-            throw new InvalidOperationException("Club not found");
+            throw new InvalidOperationException(AppMessages.Club.NotFound);
 
         await _clubRepository.DeactivateAccountAsync(clubId);
     }

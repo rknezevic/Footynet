@@ -2,6 +2,7 @@
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Footynet.Service.Interfaces;
+using Footynet.Localization;
 
 namespace Footynet.Service
 {
@@ -35,7 +36,7 @@ namespace Footynet.Service
         {
             var jobAd = await _jobAdRepository.GetByIdAsync(id);
             if (jobAd == null || jobAd.ClubId != clubId)
-                throw new InvalidOperationException("Job ad not found or unauthorized");
+                throw new InvalidOperationException(AppMessages.JobAd.NotFoundOrUnauthorized);
 
             jobAd.Title = dto.Title;
             jobAd.Description = dto.Description;
@@ -50,7 +51,7 @@ namespace Footynet.Service
         {
             var jobAd = await _jobAdRepository.GetByIdAsync(id);
             if (jobAd == null || jobAd.ClubId != clubId)
-                throw new InvalidOperationException("Job ad not found or unauthorized");
+                throw new InvalidOperationException(AppMessages.JobAd.NotFoundOrUnauthorized);
 
             jobAd.AdStatus = AdStatusType.Closed;
             jobAd.UpdatedAt = DateTime.UtcNow;
@@ -62,7 +63,7 @@ namespace Footynet.Service
         {
             var jobAd = await _jobAdRepository.GetByIdAsync(id);
             if (jobAd == null || jobAd.ClubId != clubId)
-                throw new InvalidOperationException("Job ad not found or unauthorized");
+                throw new InvalidOperationException(AppMessages.JobAd.NotFoundOrUnauthorized);
 
             jobAd.AdStatus = AdStatusType.Open;
             jobAd.UpdatedAt = DateTime.UtcNow;

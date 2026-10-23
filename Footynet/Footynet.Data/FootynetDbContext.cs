@@ -66,6 +66,12 @@ public class FootynetDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
         modelBuilder.Entity<Club>().Property(c => c.Phone).HasMaxLength(30);
+        modelBuilder.Entity<User>(e =>
+        {
+            e.Property(u => u.EmailConfirmationTokenHash).HasMaxLength(64);
+            e.HasIndex(u => u.EmailConfirmationTokenHash);
+            e.Property(u => u.PreferredLanguage).HasMaxLength(5);
+        });
 
         modelBuilder.Entity<County>().HasData(LookupSeed.Counties);
         modelBuilder.Entity<League>().HasData(LookupSeed.Leagues);

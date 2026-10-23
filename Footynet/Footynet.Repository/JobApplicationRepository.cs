@@ -4,6 +4,7 @@ using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Dapper;
+using Footynet.Localization;
 
 namespace Footynet.Repository;
 
@@ -91,7 +92,7 @@ public class JobApplicationRepository : IJobApplicationRepository
     {
         var application = await _context.JobApplications.FindAsync(applicationId);
         if (application == null)
-            throw new InvalidOperationException("Application not found");
+            throw new InvalidOperationException(AppMessages.Application.NotFound);
 
         application.Status = status;
         await _context.SaveChangesAsync();

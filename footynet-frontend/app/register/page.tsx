@@ -10,7 +10,6 @@ import { api } from '@/lib/api';
 import LeagueOptions from '@/components/LeagueOptions';
 import { lookupService, League } from '@/lib/lookup';
 import { RoleType, PreferredFootType } from '@/types';
-import { useAuth } from '@/contexts/AuthContext';
 import AuthLayout from '@/components/AuthLayout';
 import Button from '@/components/Button';
 import ErrorMessage from '@/components/ErrorMessage';
@@ -29,7 +28,6 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
-  const { refreshAuth } = useAuth();
 
   // Shared
   const [city, setCity] = useState('');
@@ -78,15 +76,10 @@ export default function RegisterPage() {
           ? { firstName, lastName, age, prefeeredFootType: preferredFootType }
           : { name, leagueId })
       };
-      const response = await authService.register(registerData);
-      authService.saveAuth(response);
-      refreshAuth();
-      if (response.role === RoleType.Club) {
-        router.push(response.isApproved === false ? '/pending-approval' : '/club/dashboard');
-      } else {
-        // Players get an optional step to add positions, availability and their clubs
-        router.push('/player/complete-profile');
-      }
+      await authService.register(registerData);
+      // The account is usable only after the email is confirmed; the link in the email signs the
+      // user in and continues to the complete-profile step (players) or pending approval (clubs)
+      router.push(`/check-email?email=${encodeURIComponent(email)}`);
     } catch (err: any) {
       setError(err?.message || t('failed'));
       setSubmitting(false);

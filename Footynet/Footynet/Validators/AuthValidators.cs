@@ -1,6 +1,7 @@
 using FluentValidation;
 using Footynet.DTOs;
 using Footynet.Models;
+using Footynet.Localization;
 
 namespace Footynet.Validators;
 
@@ -9,11 +10,11 @@ public class LoginDtoValidator : AbstractValidator<LoginDto>
     public LoginDtoValidator()
     {
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required")
-            .EmailAddress().WithMessage("Invalid email format");
+            .NotEmpty().WithMessage(AppMessages.Validation.EmailRequired)
+            .EmailAddress().WithMessage(AppMessages.Validation.InvalidEmail);
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Password is required");
+            .NotEmpty().WithMessage(AppMessages.Validation.PasswordRequired);
     }
 }
 
@@ -22,43 +23,43 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
     public RegisterDtoValidator()
     {
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required")
-            .EmailAddress().WithMessage("Invalid email format");
+            .NotEmpty().WithMessage(AppMessages.Validation.EmailRequired)
+            .EmailAddress().WithMessage(AppMessages.Validation.InvalidEmail);
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Password is required")
-            .MinimumLength(6).WithMessage("Password must be at least 6 characters");
+            .NotEmpty().WithMessage(AppMessages.Validation.PasswordRequired)
+            .MinimumLength(6).WithMessage(AppMessages.Validation.PasswordTooShort);
 
         RuleFor(x => x.Role)
-            .IsInEnum().WithMessage("Invalid role");
+            .IsInEnum().WithMessage(AppMessages.Validation.InvalidRole);
 
         When(x => x.Role == RoleType.Player, () =>
         {
             RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage("First name is required")
-                .MaximumLength(50).WithMessage("First name must be under 50 characters");
+                .NotEmpty().WithMessage(AppMessages.Validation.FirstNameRequired)
+                .MaximumLength(50).WithMessage(AppMessages.Validation.FirstNameTooLong);
 
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("Last name is required")
-                .MaximumLength(50).WithMessage("Last name must be under 50 characters");
+                .NotEmpty().WithMessage(AppMessages.Validation.LastNameRequired)
+                .MaximumLength(50).WithMessage(AppMessages.Validation.LastNameTooLong);
 
             RuleFor(x => x.Age)
-                .NotNull().WithMessage("Age is required")
-                .InclusiveBetween(16, 50).WithMessage("Age must be between 16 and 50");
+                .NotNull().WithMessage(AppMessages.Validation.AgeRequired)
+                .InclusiveBetween(16, 50).WithMessage(AppMessages.Validation.AgeOutOfRange);
 
             RuleFor(x => x.City)
-                .NotEmpty().WithMessage("City is required");
+                .NotEmpty().WithMessage(AppMessages.Validation.CityRequired);
         });
 
         When(x => x.Role == RoleType.Club, () =>
         {
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Club name is required")
-                .MaximumLength(100).WithMessage("Club name must be under 100 characters");
+                .NotEmpty().WithMessage(AppMessages.Validation.ClubNameRequired)
+                .MaximumLength(100).WithMessage(AppMessages.Validation.ClubNameTooLong);
 
             RuleFor(x => x.LeagueId)
-                .NotNull().WithMessage("League is required")
-                .NotEqual(Guid.Empty).WithMessage("League is required");
+                .NotNull().WithMessage(AppMessages.Validation.LeagueRequired)
+                .NotEqual(Guid.Empty).WithMessage(AppMessages.Validation.LeagueRequired);
         });
     }
 }

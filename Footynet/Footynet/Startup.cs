@@ -10,8 +10,11 @@ using Footynet.Service;
 using Footynet.Service.Interfaces;
 using Footynet.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Footynet.Email;
 using Footynet.Hubs;
-using Footynet.WebApi;
+using Footynet.Service.Email;
+using Footynet.Localization;
+using Footynet.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -87,9 +90,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<PresenceTracker>();
+builder.Services.AddScoped<MessageEmailNotifier>();
 
-// Localization: the frontend sends Accept-Language (hr/en); messages are translated with
-// IStringLocalizer<SharedResource> using Resources/SharedResource.hr.resx (English text is the key)
+// Email: SMTP when Email:Host is configured, otherwise emails are only logged (local development)
+builder.Services.Configure<AppOptions>(builder.Configuration.GetSection("App"));
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.AddSingleton<EmailQueue>();
+builder.Services.AddSingleton<IEmailQueue>(sp => sp.GetRequiredService<EmailQueue>());
+if (string.IsNullOrWhiteSpace(builder.Configuration["Email:Host"]))
+    builder.Services.AddSingleton<IEmailSender, LoggingEmailSender>();
+else
+    builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
+builder.Services.AddHostedService<EmailBackgroundService>();
+
+// Localization: the frontend sends Accept-Language (hr/en). Code uses AppMessages keys; texts are in
+// Footynet.Model/Resources/SharedResource.resx (English) and SharedResource.hr.resx (Croatian)
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 var supportedCultures = new[] { "hr", "en" };
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -113,9 +129,12 @@ builder.Services.AddControllers()
                 .ToDictionary(
                     e => e.Key,
                     e => e.Value!.Errors.Select(err => localizer[err.ErrorMessage].Value).ToArray());
+            // The first failing rule's key doubles as the error code
+            var firstKey = context.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault();
             var message = errors.Values.SelectMany(m => m).FirstOrDefault()
-                ?? localizer["One or more validation errors occurred."].Value;
-            return new BadRequestObjectResult(new { status = 400, message, errors });
+                ?? localizer[AppMessages.General.ValidationFailed].Value;
+            var code = firstKey != null && !localizer[firstKey].ResourceNotFound ? firstKey : AppMessages.General.ValidationFailed;
+            return new BadRequestObjectResult(new { status = 400, message, code, errors });
         };
     });
 builder.Services.AddHttpClient();
@@ -226,7 +245,8 @@ using (var scope = app.Services.CreateScope())
         {
             Id = Guid.NewGuid(),
             Email = adminEmail!,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword)
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword),
+            EmailConfirmed = true
         };
         context.Users.Add(admin);
         await context.SaveChangesAsync();

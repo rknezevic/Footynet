@@ -12,6 +12,16 @@ export const authService = {
     return response.data;
   },
 
+  // Confirms the email with the token from the link; returns a normal login response
+  async verifyEmail(token: string): Promise<AuthResponseDto> {
+    const response = await api.post<AuthResponseDto>('/Auth/verify-email', { token });
+    return response.data;
+  },
+
+  async resendVerification(email: string): Promise<void> {
+    await api.post('/Auth/resend-verification', { email });
+  },
+
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');

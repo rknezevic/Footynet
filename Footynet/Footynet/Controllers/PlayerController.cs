@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Footynet.DTOs;
 using Footynet.Service.Interfaces;
+using Footynet.Localization;
 
 namespace Footynet.Controllers;
 
@@ -32,7 +33,7 @@ public class PlayerController : ControllerBase
     {
         var profile = await _playerService.GetPlayerProfileAsync(GetUserId());
         if (profile == null)
-            throw new KeyNotFoundException("Player profile not found");
+            throw new KeyNotFoundException(AppMessages.Player.ProfileNotFound);
         return Ok(profile);
     }
 
