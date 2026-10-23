@@ -31,3 +31,6 @@ Footynet/Footynet/Logs/
 
 # Test results
 TestResults/
+
+# Local test accounts
+*.local.txt

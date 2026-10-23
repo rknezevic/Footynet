@@ -47,7 +47,7 @@ function MessagesView() {
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   // The open conversation, readable inside the SignalR callback without re-subscribing
   const selectedRef = useRef<Conversation | null>(null);
   selectedRef.current = selected;
@@ -95,7 +95,10 @@ function MessagesView() {
   }), [onMessage, myId, refreshUnread]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    // Scroll only the message list (scrollIntoView would also scroll the whole page). An instant jump
+    // is used on purpose: smooth scrolling doesn't finish while the tab is in the background.
+    const list = listRef.current;
+    if (list) list.scrollTop = list.scrollHeight;
   }, [conversation]);
 
   const handleSend = async (e: React.FormEvent) => {
@@ -132,11 +135,15 @@ function MessagesView() {
         </span>
       </div>
 
-      <div className="grid h-[calc(100vh-15rem)] min-h-[28rem] overflow-hidden rounded-2xl border border-ink-200/70 bg-white shadow-card md:grid-cols-[20rem_1fr]">
+      {/* Fixed-height chat window: the single grid row and both columns use min-h-0 so long
+          conversations scroll inside the message list instead of stretching the layout and
+          pushing the input out of view (grid/flex children default to min-height: auto).
+          On mobile the navbar has a second row of links, hence the larger offset. */}
+      <div className="grid h-[calc(100dvh-18rem)] min-h-[28rem] md:h-[calc(100dvh-15rem)] grid-rows-[minmax(0,1fr)] overflow-hidden rounded-2xl border border-ink-200/70 bg-white shadow-card md:grid-cols-[20rem_1fr]">
         {/* Conversation list (hidden on mobile while a conversation is open) */}
-        <aside className={`flex-col border-r border-ink-100 ${selected ? 'hidden md:flex' : 'flex'}`}>
+        <aside className={`min-h-0 flex-col border-r border-ink-100 ${selected ? 'hidden md:flex' : 'flex'}`}>
           <h2 className="eyebrow border-b border-ink-100 px-5 py-4">{t('inbox')}</h2>
-          <div className="flex-1 overflow-y-auto p-2">
+          <div className="min-h-0 flex-1 overflow-y-auto p-2">
             {inbox.length === 0 ? (
               <EmptyState icon={MessageCircle} title={t('empty')} description={t('emptyHint')} />
             ) : inbox.map(item => {
@@ -169,10 +176,10 @@ function MessagesView() {
         </aside>
 
         {/* Open conversation */}
-        <section className={`flex-col ${selected ? 'flex' : 'hidden md:flex'}`}>
+        <section className={`min-h-0 flex-col ${selected ? 'flex' : 'hidden md:flex'}`}>
           {selected ? (
             <>
-              <header className="flex items-center gap-3 border-b border-ink-100 px-5 py-3">
+              <header className="flex shrink-0 items-center gap-3 border-b border-ink-100 px-5 py-3">
                 <button onClick={() => setSelected(null)} className="rounded-lg p-1.5 text-ink-500 hover:bg-ink-100 md:hidden" aria-label={t('back')}>
                   <ArrowLeft className="h-5 w-5" />
                 </button>
@@ -180,7 +187,7 @@ function MessagesView() {
                 <p className="font-semibold text-ink-900">{selectedName}</p>
               </header>
 
-              <div className="flex-1 space-y-2 overflow-y-auto bg-ink-50/60 px-4 py-5 sm:px-6">
+              <div ref={listRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain bg-ink-50/60 px-4 py-5 sm:px-6">
                 {conversation.length === 0 && <p className="py-10 text-center text-sm text-ink-400">{t('startConversation')}</p>}
                 {conversation.map(msg => {
                   const isMe = msg.senderId === myId;
@@ -197,11 +204,10 @@ function MessagesView() {
                     </div>
                   );
                 })}
-                <div ref={bottomRef} />
               </div>
 
-              {error && <div className="px-4 pt-3"><ErrorMessage message={error} /></div>}
-              <form onSubmit={handleSend} className="flex gap-2 border-t border-ink-100 p-3 sm:p-4">
+              {error && <div className="shrink-0 px-4 pt-3"><ErrorMessage message={error} /></div>}
+              <form onSubmit={handleSend} className="flex shrink-0 gap-2 border-t border-ink-100 p-3 sm:p-4">
                 <input
                   type="text"
                   value={newMessage}
