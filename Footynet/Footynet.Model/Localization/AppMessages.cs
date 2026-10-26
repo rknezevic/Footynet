@@ -13,6 +13,7 @@ public static class AppMessages
         public const string NotAuthorized = "General.NotAuthorized";
         public const string UnknownUser = "General.UnknownUser";
         public const string LocationNotConfigured = "General.LocationNotConfigured";
+        public const string TooManyRequests = "General.TooManyRequests";
     }
 
     public static class Auth
@@ -20,11 +21,12 @@ public static class AppMessages
         public const string EmailTaken = "Auth.EmailTaken";
         public const string AdminRegistrationNotAllowed = "Auth.AdminRegistrationNotAllowed";
         public const string InvalidRole = "Auth.InvalidRole";
-        public const string UnknownEmail = "Auth.UnknownEmail";
-        public const string WrongPassword = "Auth.WrongPassword";
+        // Same message for an unknown email and a wrong password, so login can't be used to find accounts
+        public const string InvalidCredentials = "Auth.InvalidCredentials";
         public const string AccountDeactivated = "Auth.AccountDeactivated";
         public const string EmailNotConfirmed = "Auth.EmailNotConfirmed";
         public const string InvalidConfirmationLink = "Auth.InvalidConfirmationLink";
+        public const string InvalidResetLink = "Auth.InvalidResetLink";
     }
 
     public static class Club
@@ -69,12 +71,23 @@ public static class AppMessages
         public const string ApplicationAccepted = "Messaging.ApplicationAccepted";
     }
 
+    public static class Photo
+    {
+        public const string Missing = "Photo.Missing";
+        public const string TooLarge = "Photo.TooLarge";
+        public const string InvalidType = "Photo.InvalidType";
+    }
+
     public static class Validation
     {
         public const string EmailRequired = "Validation.EmailRequired";
         public const string InvalidEmail = "Validation.InvalidEmail";
         public const string PasswordRequired = "Validation.PasswordRequired";
         public const string PasswordTooShort = "Validation.PasswordTooShort";
+        public const string PasswordNeedsUppercase = "Validation.PasswordNeedsUppercase";
+        public const string PasswordNeedsDigit = "Validation.PasswordNeedsDigit";
+        public const string PasswordsDoNotMatch = "Validation.PasswordsDoNotMatch";
+        public const string TermsNotAccepted = "Validation.TermsNotAccepted";
         public const string InvalidRole = "Validation.InvalidRole";
         public const string FirstNameRequired = "Validation.FirstNameRequired";
         public const string FirstNameTooLong = "Validation.FirstNameTooLong";
@@ -94,6 +107,8 @@ public static class AppMessages
         public const string DescriptionTooLong = "Validation.DescriptionTooLong";
         public const string CoverLetterTooLong = "Validation.CoverLetterTooLong";
         public const string InvalidPosition = "Validation.InvalidPosition";
+        public const string TooManyPositions = "Validation.TooManyPositions";
+        public const string DuplicatePositions = "Validation.DuplicatePositions";
         public const string InvalidFootType = "Validation.InvalidFootType";
         public const string InvalidAvailability = "Validation.InvalidAvailability";
         public const string TooManyClubs = "Validation.TooManyClubs";
@@ -113,6 +128,10 @@ public static class AppMessages
         public const string VerificationIntro = "Email.Verification.Intro";
         public const string VerificationButton = "Email.Verification.Button";
         public const string VerificationFooter = "Email.Verification.Footer";
+        public const string PasswordResetSubject = "Email.PasswordReset.Subject";
+        public const string PasswordResetIntro = "Email.PasswordReset.Intro";
+        public const string PasswordResetButton = "Email.PasswordReset.Button";
+        public const string PasswordResetFooter = "Email.PasswordReset.Footer";
         // {0} = sender name
         public const string NewMessageSubject = "Email.NewMessage.Subject";
         public const string NewMessageIntro = "Email.NewMessage.Intro";

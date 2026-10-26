@@ -45,12 +45,12 @@ export default function PlayerDashboard() {
   if (!profile) return <PageShell><Loading /></PageShell>;
 
   const fullName = `${profile.firstName} ${profile.lastName}`;
-  const positions = [profile.primaryPosition, profile.secondaryPosition].filter(p => p !== null).map(p => labels.position(p));
+  const positions = profile.positions.map(p => labels.position(p));
 
   return (
     <PageShell>
       <PageHeader
-        leading={<Avatar name={fullName} size="xl" tone="light" />}
+        leading={<Avatar name={fullName} photo={profile.photoUrl} size="xl" tone="light" />}
         title={t('welcome', { name: profile.firstName })}
         subtitle={t('subtitle')}
       />
@@ -61,7 +61,7 @@ export default function PlayerDashboard() {
           action={<Link href="/player/profile" className="inline-flex items-center gap-1 text-sm font-medium text-pitch-700 hover:text-pitch-800"><Pencil className="h-3.5 w-3.5" />{t('edit')}</Link>}
         >
           <div className="mb-4 flex items-center gap-3">
-            <Avatar name={fullName} size="lg" />
+            <Avatar name={fullName} photo={profile.photoUrl} size="lg" />
             <div>
               <p className="font-display text-lg font-semibold text-ink-900">{fullName}</p>
               <p className="flex items-center gap-1 text-sm text-ink-500"><MapPin className="h-3.5 w-3.5" />{profile.city || '—'}</p>
@@ -95,7 +95,7 @@ export default function PlayerDashboard() {
               {jobs.map(job => (
                 <li key={job.id}>
                   <Link href={`/player/jobs/${job.id}`} className="group flex items-center gap-4 rounded-xl px-2 py-3 transition-colors hover:bg-ink-50">
-                    <Avatar name={job.clubName} />
+                    <Avatar name={job.clubName} photo={job.clubPhotoUrl} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold text-ink-900 group-hover:text-pitch-700">{job.title}</p>
                       <p className="truncate text-sm text-ink-500">{job.clubName} · {job.leagueName}</p>

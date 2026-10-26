@@ -118,9 +118,8 @@ function MessagesView() {
     }
   };
 
-  const selectedName = selected
-    ? inbox.find(i => i.otherUserId === selected.userId)?.otherUserName || selected.name
-    : '';
+  const selectedItem = selected ? inbox.find(i => i.otherUserId === selected.userId) : undefined;
+  const selectedName = selected ? selectedItem?.otherUserName || selected.name : '';
 
   return (
     <PageShell>
@@ -154,7 +153,7 @@ function MessagesView() {
                   onClick={() => setSelected({ userId: item.otherUserId, name: item.otherUserName })}
                   className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-colors ${active ? 'bg-pitch-50' : 'hover:bg-ink-50'}`}
                 >
-                  <Avatar name={item.otherUserName} />
+                  <Avatar name={item.otherUserName} photo={item.otherUserPhotoUrl} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline justify-between gap-2">
                       <p className={`truncate text-sm ${item.unreadCount ? 'font-bold text-ink-900' : 'font-semibold text-ink-800'}`}>{item.otherUserName}</p>
@@ -183,7 +182,7 @@ function MessagesView() {
                 <button onClick={() => setSelected(null)} className="rounded-lg p-1.5 text-ink-500 hover:bg-ink-100 md:hidden" aria-label={t('back')}>
                   <ArrowLeft className="h-5 w-5" />
                 </button>
-                <Avatar name={selectedName || '?'} />
+                <Avatar name={selectedName || '?'} photo={selectedItem?.otherUserPhotoUrl} />
                 <p className="font-semibold text-ink-900">{selectedName}</p>
               </header>
 

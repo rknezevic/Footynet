@@ -9,6 +9,10 @@ public class JobAdDto
     public string Description { get; set; } = string.Empty;
     public Guid ClubId { get; set; }
     public string ClubName { get; set; } = string.Empty;
+    // Filled from the query; exposed only through ClubPhotoUrl
+    [System.Text.Json.Serialization.JsonIgnore]
+    public DateTime? ClubPhotoUpdatedAt { get; set; }
+    public string? ClubPhotoUrl => PhotoUrls.For(ClubId, ClubPhotoUpdatedAt);
     public string LeagueName { get; set; } = string.Empty;
     public PositionType RequiredPosition { get; set; }
     public string RequiredPositionName => RequiredPosition.ToString();

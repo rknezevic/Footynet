@@ -67,7 +67,12 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <FormInput label={t('email')} type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('emailPlaceholder')} autoComplete="email" required />
-        <FormInput label={t('password')} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" required />
+        <div>
+          <FormInput label={t('password')} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" required />
+          <div className="mt-2 text-right">
+            <Link href="/forgot-password" className="text-sm font-semibold text-pitch-700 hover:text-pitch-800 hover:underline">{t('forgotPassword')}</Link>
+          </div>
+        </div>
         <Button type="submit" size="lg" className="w-full" disabled={loading}>
           <LogIn className="h-4 w-4" />
           {loading ? t('signingIn') : t('signIn')}

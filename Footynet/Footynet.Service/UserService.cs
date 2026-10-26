@@ -17,6 +17,7 @@ public class UserService : IUserService
 {
     private static readonly TimeSpan ConfirmationLifetime = TimeSpan.FromHours(24);
     private static readonly TimeSpan ResendCooldown = TimeSpan.FromSeconds(60);
+    private static readonly TimeSpan ResetLifetime = TimeSpan.FromHours(1);
 
     private readonly IUserRepository _userRepository;
     private readonly IJwtService _jwtService;
@@ -70,6 +71,7 @@ public class UserService : IUserService
 
         user.EmailConfirmed = false;
         user.PreferredLanguage = CurrentLanguage();
+        user.TermsAcceptedAt = DateTime.UtcNow;
         var token = IssueConfirmationToken(user);
 
         await _userRepository.CreateAsync(user);
@@ -87,11 +89,8 @@ public class UserService : IUserService
     public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
     {
         var user = await _userRepository.GetByEmailAsync(dto.Email);
-        if (user == null)
-            throw new UnauthorizedAccessException(AppMessages.Auth.UnknownEmail);
-
-        if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-            throw new UnauthorizedAccessException(AppMessages.Auth.WrongPassword);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            throw new UnauthorizedAccessException(AppMessages.Auth.InvalidCredentials);
 
         if (!user.IsActive)
             throw new UnauthorizedAccessException(AppMessages.Auth.AccountDeactivated);
@@ -142,6 +141,48 @@ public class UserService : IUserService
         SendConfirmationEmail(user, token);
     }
 
+    public async Task ForgotPasswordAsync(string email)
+    {
+        // Like resend: always "succeeds", so it doesn't reveal which emails have an account
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null || !user.IsActive)
+            return;
+        if (user.PasswordResetSentAt > DateTime.UtcNow - ResendCooldown)
+            return;
+
+        var token = NewToken();
+        user.PasswordResetTokenHash = HashToken(token);
+        user.PasswordResetExpiresAt = DateTime.UtcNow.Add(ResetLifetime);
+        user.PasswordResetSentAt = DateTime.UtcNow;
+        await _userRepository.UpdateAsync(user);
+
+        var link = $"{_appOptions.FrontendUrl.TrimEnd('/')}/reset-password?token={Uri.EscapeDataString(token)}";
+        _emailQueue.Enqueue(EmailTemplates.PasswordReset(user.Email, user.PreferredLanguage ?? CurrentLanguage(), DisplayName(user), link));
+    }
+
+    public async Task ResetPasswordAsync(ResetPasswordDto dto)
+    {
+        var user = string.IsNullOrWhiteSpace(dto.Token)
+            ? null
+            : await _userRepository.GetByPasswordResetTokenHashAsync(HashToken(dto.Token));
+
+        if (user == null || user.PasswordResetExpiresAt < DateTime.UtcNow)
+            throw new InvalidOperationException(AppMessages.Auth.InvalidResetLink);
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        // The link is single-use
+        user.PasswordResetTokenHash = null;
+        user.PasswordResetExpiresAt = null;
+        // Opening the link proves the user owns the address
+        if (!user.EmailConfirmed)
+        {
+            user.EmailConfirmed = true;
+            user.EmailConfirmationTokenHash = null;
+            user.EmailConfirmationExpiresAt = null;
+        }
+        await _userRepository.UpdateAsync(user);
+    }
+
     public async Task<User?> GetUserByIdAsync(Guid id)
     {
         return await _userRepository.GetByIdAsync(id);
@@ -168,13 +209,17 @@ public class UserService : IUserService
     // Generates a new random token, stores only its hash on the user and returns the raw token for the link
     private static string IssueConfirmationToken(User user)
     {
-        var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
-            .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        var token = NewToken();
         user.EmailConfirmationTokenHash = HashToken(token);
         user.EmailConfirmationExpiresAt = DateTime.UtcNow.Add(ConfirmationLifetime);
         user.EmailConfirmationSentAt = DateTime.UtcNow;
         return token;
     }
+
+    // 256 random bits, URL-safe
+    private static string NewToken() =>
+        Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
+            .TrimEnd('=').Replace('+', '-').Replace('/', '_');
 
     private static string HashToken(string token) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token))).ToLowerInvariant();

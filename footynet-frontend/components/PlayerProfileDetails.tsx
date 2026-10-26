@@ -10,9 +10,7 @@ export default function PlayerProfileDetails({ profile }: { profile: PlayerProfi
   const t = useTranslations('playerDetails');
   const labels = useEnumLabels();
 
-  const positions = [profile.primaryPosition, profile.secondaryPosition]
-    .filter(p => p !== null && p !== undefined)
-    .map(p => labels.position(p));
+  const positions = profile.positions.map(p => labels.position(p));
 
   const facts = [
     { icon: Shirt, label: t('positions'), value: positions.length ? positions.join(' · ') : '—' },

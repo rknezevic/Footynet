@@ -21,6 +21,19 @@ public static class EmailTemplates
             $"{greeting}\n\n{intro}\n\n{link}\n\n{footer}");
     }
 
+    public static EmailMessage PasswordReset(string to, string? language, string displayName, string link)
+    {
+        string T(string key, params object[] args) => SharedResource.Get(key, language, args);
+
+        var greeting = T(AppMessages.Email.Greeting, displayName);
+        var intro = T(AppMessages.Email.PasswordResetIntro);
+        var footer = T(AppMessages.Email.PasswordResetFooter);
+
+        return new EmailMessage(to, T(AppMessages.Email.PasswordResetSubject),
+            Layout(greeting, intro, T(AppMessages.Email.PasswordResetButton), link, footer, null),
+            $"{greeting}\n\n{intro}\n\n{link}\n\n{footer}");
+    }
+
     public static EmailMessage NewMessage(string to, string? language, string recipientName, string senderName, string preview, string link)
     {
         string T(string key, params object[] args) => SharedResource.Get(key, language, args);

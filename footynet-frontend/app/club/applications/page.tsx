@@ -106,7 +106,7 @@ export default function ClubApplications() {
           {allApplications.map(app => (
             <Card key={app.id}>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                <Avatar name={fullName(app.player)} size="lg" />
+                <Avatar name={fullName(app.player)} photo={app.player.photoUrl} size="lg" />
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 flex flex-wrap items-center gap-2">
                     <h3 className="text-lg font-semibold text-ink-900">{fullName(app.player)}</h3>
@@ -148,7 +148,7 @@ export default function ClubApplications() {
       {viewingPlayer && (
         <Modal
           size="lg"
-          title={<span className="flex items-center gap-3"><Avatar name={fullName(viewingPlayer)} />{fullName(viewingPlayer)}</span>}
+          title={<span className="flex items-center gap-3"><Avatar name={fullName(viewingPlayer)} photo={viewingPlayer.photoUrl} />{fullName(viewingPlayer)}</span>}
           onClose={() => setViewingPlayer(null)}
           footer={<Button variant="secondary" onClick={() => setViewingPlayer(null)}>{tCommon('close')}</Button>}
         >

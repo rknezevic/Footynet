@@ -11,7 +11,7 @@ interface ButtonProps {
 }
 
 const VARIANTS = {
-  primary: 'bg-pitch-600 text-white shadow-sm shadow-pitch-600/20 hover:bg-pitch-700 active:bg-pitch-800',
+  primary: 'bg-pitch-700 text-white shadow-sm shadow-pitch-700/20 hover:bg-pitch-800 active:bg-pitch-900',
   secondary: 'bg-white text-ink-700 border border-ink-200 shadow-sm hover:bg-ink-50 hover:border-ink-300',
   danger: 'bg-white text-red-600 border border-red-200 shadow-sm hover:bg-red-50 hover:border-red-300',
   ghost: 'text-ink-600 hover:bg-ink-100 hover:text-ink-900',
@@ -29,7 +29,7 @@ export default function Button({ children, onClick, type = 'button', variant = '
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center justify-center rounded-lg font-semibold transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-pitch-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg font-semibold transition-colors focus:outline-none focus-visible:ring-[3px] focus-visible:ring-pitch-600 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
     >
       {children}
     </button>

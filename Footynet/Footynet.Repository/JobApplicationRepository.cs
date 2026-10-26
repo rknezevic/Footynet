@@ -27,7 +27,7 @@ public class JobApplicationRepository : IJobApplicationRepository
         var sql = $@"
             SELECT ja.*, 
                    p.""Id"", p.""FirstName"", p.""LastName"", p.""Age"", p.""City"", p.""County"" AS CountyName, p.""Description"", p.""PrefeeredFootType"",
-                   p.""PrimaryPosition"", p.""SecondaryPosition"", p.""Availability""
+                   p.""Availability"", p.""PhotoUpdatedAt""
             FROM ""JobApplications"" ja
             JOIN ""Users"" p ON ja.""PlayerId"" = p.""Id""
             JOIN ""JobAds"" ad ON ja.""JobAdId"" = ad.""Id""
@@ -49,7 +49,7 @@ public class JobApplicationRepository : IJobApplicationRepository
             splitOn: "Id"
         );
 
-        // Load the career history of all listed players in one query
+        // Load the career history and positions of all listed players, one query each
         var list = applications.ToList();
         var playerIds = list.Select(a => a.PlayerId).Distinct().ToList();
         if (playerIds.Count > 0)
@@ -57,8 +57,14 @@ public class JobApplicationRepository : IJobApplicationRepository
             var career = await _context.PlayerCareerEntries
                 .Where(c => playerIds.Contains(c.PlayerId))
                 .ToListAsync();
+            var positions = await _context.PlayerPositions
+                .Where(p => playerIds.Contains(p.PlayerId))
+                .ToListAsync();
             foreach (var application in list)
+            {
                 application.Player.CareerEntries = career.Where(c => c.PlayerId == application.PlayerId).ToList();
+                application.Player.Positions = positions.Where(p => p.PlayerId == application.PlayerId).ToList();
+            }
         }
 
         return list;

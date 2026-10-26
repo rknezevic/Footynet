@@ -18,14 +18,16 @@ public class PlayerProfileDto
     public string County { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public PrefeeredFootType PrefeeredFootType { get; set; }
-    public PositionType? PrimaryPosition { get; set; }
-    public PositionType? SecondaryPosition { get; set; }
+    // In the player's chosen order; the first one is the main position
+    public List<PositionType> Positions { get; set; } = [];
     public AvailabilityStatus Availability { get; set; }
     public List<CareerEntryDto> Career { get; set; } = [];
+    public string? PhotoUrl { get; set; }
 
     public static PlayerProfileDto From(Player player) => new()
     {
         Id = player.Id,
+        PhotoUrl = PhotoUrls.For(player.Id, player.PhotoUpdatedAt),
         FirstName = player.FirstName,
         LastName = player.LastName,
         Age = player.Age,
@@ -33,8 +35,7 @@ public class PlayerProfileDto
         PrefeeredFootType = player.PrefeeredFootType,
         City = player.City,
         County = player.CountyName,
-        PrimaryPosition = player.PrimaryPosition,
-        SecondaryPosition = player.SecondaryPosition,
+        Positions = player.Positions.OrderBy(p => p.SortOrder).Select(p => p.Position).ToList(),
         Availability = player.Availability,
         Career = player.CareerEntries
             .OrderBy(c => c.SortOrder)
@@ -59,8 +60,8 @@ public class UpdatePlayerProfileDto
     public PrefeeredFootType PrefeeredFootType { get; set; }
     public string City { get; set; } = string.Empty;
     public string County { get; set; } = string.Empty;
-    public PositionType? PrimaryPosition { get; set; }
-    public PositionType? SecondaryPosition { get; set; }
+    // Replaces all positions, in the given order (first = main position)
+    public List<PositionType> Positions { get; set; } = [];
     public AvailabilityStatus Availability { get; set; }
     // Replaces the whole career list, in the given order
     public List<CareerEntryDto> Career { get; set; } = [];

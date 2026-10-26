@@ -17,7 +17,7 @@ namespace Footynet.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -889,6 +889,22 @@ namespace Footynet.Data.Migrations
                     b.ToTable("PlayerCareerEntries");
                 });
 
+            modelBuilder.Entity("Footynet.Models.PlayerPosition", b =>
+                {
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PlayerId", "Position");
+
+                    b.ToTable("PlayerPositions");
+                });
+
             modelBuilder.Entity("Footynet.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -925,9 +941,25 @@ namespace Footynet.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("PasswordResetExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("PasswordResetSentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PasswordResetTokenHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime?>("PhotoUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("PreferredLanguage")
                         .HasMaxLength(5)
                         .HasColumnType("character varying(5)");
+
+                    b.Property<DateTime?>("TermsAcceptedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserType")
                         .IsRequired()
@@ -938,11 +970,35 @@ namespace Footynet.Data.Migrations
 
                     b.HasIndex("EmailConfirmationTokenHash");
 
+                    b.HasIndex("PasswordResetTokenHash");
+
                     b.ToTable("Users");
 
                     b.HasDiscriminator<string>("UserType").HasValue("User");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Footynet.Models.UserPhoto", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("UserPhotos");
                 });
 
             modelBuilder.Entity("Footynet.Models.Admin", b =>
@@ -1022,12 +1078,6 @@ namespace Footynet.Data.Migrations
                     b.Property<int>("PrefeeredFootType")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("PrimaryPosition")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SecondaryPosition")
-                        .HasColumnType("integer");
-
                     b.HasDiscriminator().HasValue("Player");
                 });
 
@@ -1101,6 +1151,26 @@ namespace Footynet.Data.Migrations
                     b.Navigation("Player");
                 });
 
+            modelBuilder.Entity("Footynet.Models.PlayerPosition", b =>
+                {
+                    b.HasOne("Footynet.Models.Player", "Player")
+                        .WithMany("Positions")
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("Footynet.Models.UserPhoto", b =>
+                {
+                    b.HasOne("Footynet.Models.User", null)
+                        .WithOne()
+                        .HasForeignKey("Footynet.Models.UserPhoto", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Footynet.Models.Club", b =>
                 {
                     b.HasOne("Footynet.Models.League", "League")
@@ -1132,6 +1202,8 @@ namespace Footynet.Data.Migrations
                     b.Navigation("Applications");
 
                     b.Navigation("CareerEntries");
+
+                    b.Navigation("Positions");
                 });
 #pragma warning restore 612, 618
         }

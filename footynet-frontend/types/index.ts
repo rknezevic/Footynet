@@ -15,12 +15,29 @@ export enum PreferredFootType {
   Left = 1
 }
 
+// Same numbers as the backend's PositionType (the first four kept their original values)
 export enum PositionType {
   Goalkeeper = 0,
-  Defender = 1,
-  Midfielder = 2,
-  Forward = 3
+  CenterBack = 1,
+  CentralMidfielder = 2,
+  Striker = 3,
+  RightBack = 4,
+  LeftBack = 5,
+  DefensiveMidfielder = 6,
+  AttackingMidfielder = 7,
+  RightWinger = 8,
+  LeftWinger = 9
 }
+
+// Positions grouped by line, in team-sheet order (group keys are translated in playerExtras.groups)
+export const POSITION_GROUPS: { key: string; positions: PositionType[] }[] = [
+  { key: 'goalkeeper', positions: [PositionType.Goalkeeper] },
+  { key: 'defence', positions: [PositionType.RightBack, PositionType.CenterBack, PositionType.LeftBack] },
+  { key: 'midfield', positions: [PositionType.DefensiveMidfielder, PositionType.CentralMidfielder, PositionType.AttackingMidfielder] },
+  { key: 'attack', positions: [PositionType.RightWinger, PositionType.LeftWinger, PositionType.Striker] },
+];
+
+export const MAX_POSITIONS = 4;
 
 export enum AvailabilityStatus {
   LookingForClub = 0,
@@ -42,7 +59,9 @@ export interface LoginDto {
 export interface RegisterDto {
   email: string;
   password: string;
+  confirmPassword: string;
   role: RoleType;
+  acceptTerms: boolean;
   firstName?: string;
   lastName?: string;
   age?: number;
@@ -52,6 +71,12 @@ export interface RegisterDto {
   prefeeredFootType?: PreferredFootType;
   name?: string;
   leagueId?: string;
+}
+
+export interface ResetPasswordDto {
+  token: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export interface AuthResponseDto {
@@ -72,10 +97,11 @@ export interface PlayerProfileDto {
   county: string;
   description: string;
   prefeeredFootType: PreferredFootType;
-  primaryPosition: PositionType | null;
-  secondaryPosition: PositionType | null;
+  // First one is the main position
+  positions: PositionType[];
   availability: AvailabilityStatus;
   career: CareerEntry[];
+  photoUrl?: string | null;
 }
 
 export interface UpdatePlayerProfileDto {
@@ -86,8 +112,7 @@ export interface UpdatePlayerProfileDto {
   prefeeredFootType: PreferredFootType;
   city: string;
   county: string;
-  primaryPosition: PositionType | null;
-  secondaryPosition: PositionType | null;
+  positions: PositionType[];
   availability: AvailabilityStatus;
   career: CareerEntry[];
 }
@@ -101,6 +126,7 @@ export interface ClubProfileDto {
   leagueName: string;
   leagueId: string;
   phone?: string | null;
+  photoUrl?: string | null;
 }
 
 export interface UpdateClubProfileDto {
@@ -118,6 +144,7 @@ export interface JobAdDto {
   description: string;
   clubId: string;
   clubName: string;
+  clubPhotoUrl?: string | null;
   leagueName: string;
   requiredPosition: string;
   requiredPositionName: string;
@@ -160,6 +187,7 @@ export interface Message {
 export interface InboxItem extends Message {
   otherUserId: string;
   otherUserName: string;
+  otherUserPhotoUrl?: string | null;
   unreadCount: number;
 }
 

@@ -15,7 +15,7 @@ export function useEnumLabels() {
   };
 
   return {
-    // Accepts the enum name ("Defender") or its numeric value (1)
+    // Accepts the enum name ("CenterBack") or its numeric value (1)
     position: (value: string | number | undefined | null) =>
       label('positions', typeof value === 'number' ? PositionType[value] : value),
     status: (status: StatusType) => label('status', StatusType[status]),

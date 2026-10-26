@@ -48,7 +48,7 @@ export default function PlayerApplicationsPage() {
           {applications.map((app) => (
             <Card key={app.id} hover>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                <Avatar name={app.clubName} size="lg" />
+                <Avatar name={app.clubName} photo={app.clubPhotoUrl} size="lg" />
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 flex flex-wrap items-center gap-2">
                     <h3 className="text-lg font-semibold text-ink-900">{app.title}</h3>

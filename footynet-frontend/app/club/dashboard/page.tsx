@@ -100,7 +100,7 @@ export default function ClubDashboard() {
   return (
     <PageShell>
       <PageHeader
-        leading={<Avatar name={profile.name} size="xl" tone="light" />}
+        leading={<Avatar name={profile.name} photo={profile.photoUrl} size="xl" tone="light" />}
         title={profile.name}
         subtitle={[profile.city, profile.leagueName].filter(Boolean).join(' · ')}
         actions={<Link href="/club/job-ads/create"><Button variant="secondary"><Plus className="h-4 w-4" />{t('createNew')}</Button></Link>}

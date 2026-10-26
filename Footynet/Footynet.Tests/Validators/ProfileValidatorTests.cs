@@ -13,7 +13,7 @@ public class ProfileValidatorTests
         LastName = "Horvat",
         Age = 22,
         City = "Split",
-        PrimaryPosition = PositionType.Midfielder,
+        Positions = [PositionType.CentralMidfielder, PositionType.AttackingMidfielder],
         Availability = AvailabilityStatus.LookingForClub,
         Career = [new CareerEntryDto { ClubName = "NK Primjer", FromYear = 2018, ToYear = 2021 }]
     };
@@ -22,6 +22,39 @@ public class ProfileValidatorTests
     public void ValidPlayerProfile_Passes()
     {
         new UpdatePlayerProfileDtoValidator().TestValidate(ValidPlayer()).ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void MoreThanFourPositions_Fails()
+    {
+        var dto = ValidPlayer();
+        dto.Positions = [PositionType.RightBack, PositionType.CenterBack, PositionType.LeftBack, PositionType.DefensiveMidfielder, PositionType.CentralMidfielder];
+
+        new UpdatePlayerProfileDtoValidator().TestValidate(dto).ShouldHaveValidationErrorFor(x => x.Positions);
+    }
+
+    [Fact]
+    public void DuplicatePositions_Fail()
+    {
+        var dto = ValidPlayer();
+        dto.Positions = [PositionType.Striker, PositionType.Striker];
+
+        new UpdatePlayerProfileDtoValidator().TestValidate(dto).ShouldHaveValidationErrorFor(x => x.Positions);
+    }
+
+    [Fact]
+    public void UnknownPosition_Fails()
+    {
+        var dto = ValidPlayer();
+        dto.Positions = [(PositionType)42];
+
+        new UpdatePlayerProfileDtoValidator().TestValidate(dto).ShouldHaveValidationErrorFor("Positions[0]");
+    }
+
+    [Fact]
+    public void PitchOrderListsEveryPositionOnce()
+    {
+        Assert.Equal(Enum.GetValues<PositionType>().OrderBy(p => p), Positions.PitchOrder.OrderBy(p => p));
     }
 
     [Fact]

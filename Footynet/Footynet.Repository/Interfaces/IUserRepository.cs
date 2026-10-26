@@ -8,5 +8,6 @@ public interface IUserRepository
     Task<User?> GetByIdAsync(Guid id);
     Task<User> CreateAsync(User user);
     Task<User?> GetByEmailConfirmationTokenHashAsync(string tokenHash);
+    Task<User?> GetByPasswordResetTokenHashAsync(string tokenHash);
     Task UpdateAsync(User user);
 }

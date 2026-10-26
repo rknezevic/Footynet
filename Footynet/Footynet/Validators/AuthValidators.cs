@@ -26,12 +26,16 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
             .NotEmpty().WithMessage(AppMessages.Validation.EmailRequired)
             .EmailAddress().WithMessage(AppMessages.Validation.InvalidEmail);
 
-        RuleFor(x => x.Password)
-            .NotEmpty().WithMessage(AppMessages.Validation.PasswordRequired)
-            .MinimumLength(6).WithMessage(AppMessages.Validation.PasswordTooShort);
+        RuleFor(x => x.Password).NewPassword();
+
+        RuleFor(x => x.ConfirmPassword)
+            .Equal(x => x.Password).WithMessage(AppMessages.Validation.PasswordsDoNotMatch);
 
         RuleFor(x => x.Role)
             .IsInEnum().WithMessage(AppMessages.Validation.InvalidRole);
+
+        RuleFor(x => x.AcceptTerms)
+            .Equal(true).WithMessage(AppMessages.Validation.TermsNotAccepted);
 
         When(x => x.Role == RoleType.Player, () =>
         {
@@ -62,4 +66,39 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
                 .NotEqual(Guid.Empty).WithMessage(AppMessages.Validation.LeagueRequired);
         });
     }
+}
+
+public class ForgotPasswordDtoValidator : AbstractValidator<ForgotPasswordDto>
+{
+    public ForgotPasswordDtoValidator()
+    {
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage(AppMessages.Validation.EmailRequired)
+            .EmailAddress().WithMessage(AppMessages.Validation.InvalidEmail);
+    }
+}
+
+public class ResetPasswordDtoValidator : AbstractValidator<ResetPasswordDto>
+{
+    public ResetPasswordDtoValidator()
+    {
+        RuleFor(x => x.Token)
+            .NotEmpty().WithMessage(AppMessages.Auth.InvalidResetLink);
+
+        RuleFor(x => x.Password).NewPassword();
+
+        RuleFor(x => x.ConfirmPassword)
+            .Equal(x => x.Password).WithMessage(AppMessages.Validation.PasswordsDoNotMatch);
+    }
+}
+
+public static class PasswordRules
+{
+    // Rules for a new password (registration and reset). Kept in sync with the checklist
+    // on the frontend (footynet-frontend/lib/password.ts)
+    public static IRuleBuilderOptions<T, string> NewPassword<T>(this IRuleBuilder<T, string> rule) => rule
+        .NotEmpty().WithMessage(AppMessages.Validation.PasswordRequired)
+        .MinimumLength(8).WithMessage(AppMessages.Validation.PasswordTooShort)
+        .Matches("[A-Z]").WithMessage(AppMessages.Validation.PasswordNeedsUppercase)
+        .Matches("[0-9]").WithMessage(AppMessages.Validation.PasswordNeedsDigit);
 }

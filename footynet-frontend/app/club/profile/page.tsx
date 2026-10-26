@@ -18,6 +18,7 @@ import FormSelect from '@/components/FormSelect';
 import FormTextarea from '@/components/FormTextarea';
 import CityAutocomplete from '@/components/CityAutocomplete';
 import Loading from '@/components/Loading';
+import PhotoUploader from '@/components/PhotoUploader';
 
 export default function ClubProfilePage() {
   const [profile, setProfile] = useState<ClubProfileDto | null>(null);
@@ -78,11 +79,15 @@ export default function ClubProfilePage() {
   return (
     <PageShell width="medium">
       <PageHeader
-        leading={<Avatar name={profile.name} size="xl" tone="light" />}
+        leading={<Avatar name={profile.name} photo={profile.photoUrl} size="xl" tone="light" />}
         title={profile.name}
         subtitle={t('subtitle')}
         actions={!editing && <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" />{tCommon('edit')}</Button>}
       />
+
+      <Card className="mb-6">
+        <PhotoUploader name={profile.name} photo={profile.photoUrl} kind="club" onChange={photoUrl => setProfile({ ...profile, photoUrl })} />
+      </Card>
 
       {editing ? (
         <form onSubmit={handleSave}>

@@ -34,6 +34,7 @@ public class JobAdRepository : IJobAdRepository
     {
         return await _context.JobAds
             .Include(p => p.Club)
+            .ThenInclude(c => c.League)
             .Include(p => p.Applications)
             .ThenInclude(a => a.Player)
             .FirstOrDefaultAsync(p => p.Id == id);
@@ -60,7 +61,7 @@ public class JobAdRepository : IJobAdRepository
         var orderBy = sortDescending ? "DESC" : "ASC";
         var sql = $@"
             SELECT ja.""Id"", ja.""Title"", ja.""Description"", 
-                   c.""Name"" as ClubName, l.""Name"" as LeagueName, 
+                   c.""Name"" as ClubName, c.""PhotoUpdatedAt"" as ClubPhotoUpdatedAt, l.""Name"" as LeagueName, 
                    ja.""RequiredPosition"",
                    ja.""CreatedAt""
             FROM ""JobAds"" ja
@@ -83,7 +84,7 @@ public class JobAdRepository : IJobAdRepository
     {
         var sql = @"
             SELECT ja.""Id"", ja.""Title"", ja.""Description"",
-                   c.""Name"" as ClubName, l.""Name"" as LeagueName,
+                   c.""Name"" as ClubName, c.""PhotoUpdatedAt"" as ClubPhotoUpdatedAt, l.""Name"" as LeagueName,
                    ja.""RequiredPosition"",
                    a.""Status"" as ApplicationStatus
             FROM ""JobAds"" ja
@@ -100,7 +101,7 @@ public class JobAdRepository : IJobAdRepository
     {
         var sql = @"
             SELECT ja.""Id"", ja.""Title"", ja.""Description"",
-                   c.""Name"" as ClubName, l.""Name"" as LeagueName,
+                   c.""Name"" as ClubName, c.""PhotoUpdatedAt"" as ClubPhotoUpdatedAt, l.""Name"" as LeagueName,
                    ja.""RequiredPosition"",
                    a.""Status"" as ApplicationStatus
             FROM ""JobAds"" ja

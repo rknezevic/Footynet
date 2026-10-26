@@ -20,6 +20,7 @@ import CityAutocomplete from '@/components/CityAutocomplete';
 import Loading from '@/components/Loading';
 import PlayerProfileDetails from '@/components/PlayerProfileDetails';
 import PlayerExtrasFields, { PlayerExtras } from '@/components/PlayerExtrasFields';
+import PhotoUploader from '@/components/PhotoUploader';
 
 export default function PlayerProfilePage() {
   const [profile, setProfile] = useState<PlayerProfileDto | null>(null);
@@ -50,7 +51,7 @@ export default function PlayerProfilePage() {
     setCounty(data.county);
     setDescription(data.description);
     setPreferredFootType(data.prefeeredFootType);
-    setExtras({ primaryPosition: data.primaryPosition, secondaryPosition: data.secondaryPosition, availability: data.availability, career: data.career });
+    setExtras({ positions: data.positions, availability: data.availability, career: data.career });
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -83,13 +84,17 @@ export default function PlayerProfilePage() {
   return (
     <PageShell width="medium">
       <PageHeader
-        leading={<Avatar name={fullName} size="xl" tone="light" />}
+        leading={<Avatar name={fullName} photo={profile.photoUrl} size="xl" tone="light" />}
         title={fullName}
         subtitle={t('subtitle', { age: profile.age })}
         actions={!editing && (
           <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" />{t('edit')}</Button>
         )}
       />
+
+      <Card className="mb-6">
+        <PhotoUploader name={fullName} photo={profile.photoUrl} kind="player" onChange={photoUrl => setProfile({ ...profile, photoUrl })} />
+      </Card>
 
       {editing ? (
         <form onSubmit={handleSave} className="space-y-6">

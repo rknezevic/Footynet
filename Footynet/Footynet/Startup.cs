@@ -15,6 +15,7 @@ using Footynet.Hubs;
 using Footynet.Service.Email;
 using Footynet.Localization;
 using Footynet.Model;
+using Footynet.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -138,6 +139,7 @@ builder.Services.AddControllers()
         };
     });
 builder.Services.AddHttpClient();
+builder.Services.AddFootynetRateLimits();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginDtoValidator>();
 builder.Services.AddEndpointsApiExplorer();
@@ -209,10 +211,15 @@ if (app.Environment.IsDevelopment())
 
 
 
+// Real client IP and scheme from the hosting proxy (see RateLimits); must run first
+app.UseForwardedHeaders();
+app.UseSecurityHeaders();
+
 // The frontend calls the API over plain http in development (NEXT_PUBLIC_API_URL); redirecting
 // to https there would send a redirect without CORS headers and the browser would block it
 if (!app.Environment.IsDevelopment())
 {
+    app.UseHsts();
     app.UseHttpsRedirection();
 }
 app.UseSerilogRequestLogging();
@@ -220,6 +227,8 @@ app.UseSerilogRequestLogging();
 app.UseRequestLocalization();
 app.UseMiddleware<Footynet.Middleware.ExceptionMiddleware>();
 app.UseCors("AllowFrontend");
+// After CORS, so a 429 still carries CORS headers and the frontend can show the message
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 

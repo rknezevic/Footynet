@@ -27,6 +27,9 @@
   <data name="General.LocationNotConfigured" xml:space="preserve">
     <value>Pretraga mjesta nije konfigurirana (Mapbox:AccessToken)</value>
   </data>
+  <data name="General.TooManyRequests" xml:space="preserve">
+    <value>Previše pokušaja. Pričekajte nekoliko minuta pa pokušajte ponovno.</value>
+  </data>
   <data name="Auth.EmailTaken" xml:space="preserve">
     <value>Korisnik s ovom email adresom već postoji!</value>
   </data>
@@ -36,11 +39,8 @@
   <data name="Auth.InvalidRole" xml:space="preserve">
     <value>Neispravna uloga</value>
   </data>
-  <data name="Auth.UnknownEmail" xml:space="preserve">
-    <value>Korisnik s tom email adresom ne postoji</value>
-  </data>
-  <data name="Auth.WrongPassword" xml:space="preserve">
-    <value>Pogrešna lozinka</value>
+  <data name="Auth.InvalidCredentials" xml:space="preserve">
+    <value>Neispravan email ili lozinka</value>
   </data>
   <data name="Auth.AccountDeactivated" xml:space="preserve">
     <value>Račun je deaktiviran</value>
@@ -50,6 +50,9 @@
   </data>
   <data name="Auth.InvalidConfirmationLink" xml:space="preserve">
     <value>Link za potvrdu nije ispravan ili je istekao</value>
+  </data>
+  <data name="Auth.InvalidResetLink" xml:space="preserve">
+    <value>Link za promjenu lozinke nije ispravan ili je istekao. Zatražite novi.</value>
   </data>
   <data name="Club.NotFound" xml:space="preserve">
     <value>Klub nije pronađen</value>
@@ -102,6 +105,15 @@
   <data name="Messaging.ApplicationAccepted" xml:space="preserve">
     <value>Čestitamo! Vaša prijava za oglas '{0}' je prihvaćena. Javite se da dogovorimo detalje.</value>
   </data>
+  <data name="Photo.Missing" xml:space="preserve">
+    <value>Odaberite sliku</value>
+  </data>
+  <data name="Photo.TooLarge" xml:space="preserve">
+    <value>Slika je prevelika (najviše 1 MB)</value>
+  </data>
+  <data name="Photo.InvalidType" xml:space="preserve">
+    <value>Podržane su samo JPEG, PNG i WebP slike</value>
+  </data>
   <data name="Validation.EmailRequired" xml:space="preserve">
     <value>Email je obavezan</value>
   </data>
@@ -112,7 +124,19 @@
     <value>Lozinka je obavezna</value>
   </data>
   <data name="Validation.PasswordTooShort" xml:space="preserve">
-    <value>Lozinka mora imati barem 6 znakova</value>
+    <value>Lozinka mora imati barem 8 znakova</value>
+  </data>
+  <data name="Validation.PasswordNeedsUppercase" xml:space="preserve">
+    <value>Lozinka mora sadržavati barem jedno veliko slovo</value>
+  </data>
+  <data name="Validation.PasswordNeedsDigit" xml:space="preserve">
+    <value>Lozinka mora sadržavati barem jedan broj</value>
+  </data>
+  <data name="Validation.PasswordsDoNotMatch" xml:space="preserve">
+    <value>Lozinke se ne podudaraju</value>
+  </data>
+  <data name="Validation.TermsNotAccepted" xml:space="preserve">
+    <value>Morate prihvatiti Uvjete korištenja i Pravila privatnosti</value>
   </data>
   <data name="Validation.InvalidRole" xml:space="preserve">
     <value>Neispravna uloga</value>
@@ -171,6 +195,12 @@
   <data name="Validation.InvalidPosition" xml:space="preserve">
     <value>Neispravna pozicija</value>
   </data>
+  <data name="Validation.TooManyPositions" xml:space="preserve">
+    <value>Možete odabrati najviše 4 pozicije</value>
+  </data>
+  <data name="Validation.DuplicatePositions" xml:space="preserve">
+    <value>Svaka pozicija može se odabrati samo jednom</value>
+  </data>
   <data name="Validation.InvalidFootType" xml:space="preserve">
     <value>Neispravna jača noga</value>
   </data>
@@ -212,6 +242,18 @@
   </data>
   <data name="Email.Verification.Footer" xml:space="preserve">
     <value>Link vrijedi 24 sata. Ako niste otvorili račun, slobodno zanemarite ovu poruku.</value>
+  </data>
+  <data name="Email.PasswordReset.Subject" xml:space="preserve">
+    <value>Promjena lozinke za FootyNet</value>
+  </data>
+  <data name="Email.PasswordReset.Intro" xml:space="preserve">
+    <value>Primili smo zahtjev za promjenu vaše lozinke. Kliknite gumb ispod i odaberite novu.</value>
+  </data>
+  <data name="Email.PasswordReset.Button" xml:space="preserve">
+    <value>Odaberi novu lozinku</value>
+  </data>
+  <data name="Email.PasswordReset.Footer" xml:space="preserve">
+    <value>Link vrijedi 1 sat i može se iskoristiti jednom. Ako niste vi zatražili promjenu, zanemarite ovu poruku; lozinka ostaje ista.</value>
   </data>
   <data name="Email.NewMessage.Subject" xml:space="preserve">
     <value>Nova poruka od: {0}</value>

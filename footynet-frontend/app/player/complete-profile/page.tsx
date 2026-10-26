@@ -11,6 +11,7 @@ import Button from '@/components/Button';
 import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import PlayerExtrasFields, { PlayerExtras } from '@/components/PlayerExtrasFields';
+import PhotoUploader from '@/components/PhotoUploader';
 
 // Optional step right after registration: positions, availability and previous clubs
 export default function CompleteProfilePage() {
@@ -18,7 +19,7 @@ export default function CompleteProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<PlayerProfileDto | null>(null);
   const [extras, setExtras] = useState<PlayerExtras>({
-    primaryPosition: null, secondaryPosition: null, availability: AvailabilityStatus.LookingForClub, career: [],
+    positions: [], availability: AvailabilityStatus.LookingForClub, career: [],
   });
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -26,7 +27,7 @@ export default function CompleteProfilePage() {
   useEffect(() => {
     playerService.getProfile().then(p => {
       setProfile(p);
-      setExtras({ primaryPosition: p.primaryPosition, secondaryPosition: p.secondaryPosition, availability: p.availability, career: p.career });
+      setExtras({ positions: p.positions, availability: p.availability, career: p.career });
     }).catch(() => router.push('/login'));
   }, [router]);
 
@@ -67,6 +68,12 @@ export default function CompleteProfilePage() {
       {error && <div className="mb-6"><ErrorMessage message={error} /></div>}
 
       <form onSubmit={handleSave} className="space-y-6">
+        <PhotoUploader
+          name={`${profile.firstName} ${profile.lastName}`}
+          photo={profile.photoUrl}
+          kind="player"
+          onChange={photoUrl => setProfile({ ...profile, photoUrl })}
+        />
         <PlayerExtrasFields value={extras} onChange={setExtras} />
         <div className="flex flex-col-reverse gap-3 border-t border-ink-100 pt-6 sm:flex-row sm:justify-end">
           <Button variant="ghost" size="lg" onClick={() => router.push('/player/jobs')}>{t('skip')}</Button>

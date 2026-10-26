@@ -30,7 +30,7 @@ public class LookupController : ControllerBase
     [HttpGet("positions")]
     public ActionResult<IEnumerable<object>> GetPositions()
     {
-        var positions = Enum.GetValues<PositionType>()
+        var positions = Positions.PitchOrder
             .Select(p => new { Id = (int)p, Name = p.ToString() });
         return Ok(positions);
     }

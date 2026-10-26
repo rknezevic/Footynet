@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import colors from "tailwindcss/colors";
+import plugin from "tailwindcss/plugin";
 
 const config: Config = {
   content: [
@@ -36,6 +37,12 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // hover styles only on devices with a real hover-capable pointer (no sticky hover on touch)
+    plugin(({ addVariant }) => {
+      addVariant('fine-hover', '@media (hover: hover) and (pointer: fine) { &:hover }');
+      addVariant('group-fine-hover', '@media (hover: hover) and (pointer: fine) { :merge(.group):hover & }');
+    }),
+  ],
 };
 export default config;

@@ -1,5 +1,5 @@
 import { api } from './api';
-import { LoginDto, RegisterDto, AuthResponseDto } from '@/types';
+import { LoginDto, RegisterDto, AuthResponseDto, ResetPasswordDto } from '@/types';
 
 export const authService = {
   async login(data: LoginDto): Promise<AuthResponseDto> {
@@ -20,6 +20,15 @@ export const authService = {
 
   async resendVerification(email: string): Promise<void> {
     await api.post('/Auth/resend-verification', { email });
+  },
+
+  // Always succeeds (unless rate limited), whether or not the email has an account
+  async forgotPassword(email: string): Promise<void> {
+    await api.post('/Auth/forgot-password', { email });
+  },
+
+  async resetPassword(data: ResetPasswordDto): Promise<void> {
+    await api.post('/Auth/reset-password', data);
   },
 
   logout() {

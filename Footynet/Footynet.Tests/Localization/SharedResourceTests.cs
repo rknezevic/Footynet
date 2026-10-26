@@ -41,13 +41,13 @@ public class SharedResourceTests
     }
 
     [Theory]
-    [InlineData("hr", "Pogrešna lozinka")]
-    [InlineData("en", "Wrong password")]
+    [InlineData("hr", "Neispravan email ili lozinka")]
+    [InlineData("en", "Incorrect email or password")]
     public void Localizer_TranslatesKeyForRequestCulture(string culture, string expected)
     {
         var localizer = CreateLocalizer();
 
-        Assert.Equal(expected, WithCulture(culture, () => localizer[AppMessages.Auth.WrongPassword].Value));
+        Assert.Equal(expected, WithCulture(culture, () => localizer[AppMessages.Auth.InvalidCredentials].Value));
     }
 
     [Fact]

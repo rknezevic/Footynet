@@ -171,6 +171,93 @@ public class UserServiceTests
     }
 
     [Fact]
+    public async Task Login_UnknownEmailAndWrongPassword_GiveTheSameError()
+    {
+        var player = ConfirmedPlayer();
+        _userRepository.Setup(r => r.GetByEmailAsync(player.Email)).ReturnsAsync(player);
+
+        var unknown = await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+            _service.LoginAsync(new LoginDto { Email = "nepostoji@example.com", Password = "ispravna" }));
+        var wrong = await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+            _service.LoginAsync(new LoginDto { Email = player.Email, Password = "kriva" }));
+
+        Assert.Equal(AppMessages.Auth.InvalidCredentials, unknown.Message);
+        Assert.Equal(unknown.Message, wrong.Message);
+    }
+
+    [Fact]
+    public async Task Register_RecordsTermsAcceptance()
+    {
+        await _service.RegisterAsync(new RegisterDto { Email = "igrac@example.com", Password = "Lozinka123", Role = RoleType.Player, FirstName = "Ivan", AcceptTerms = true });
+
+        var created = (User)_userRepository.Invocations.Single(i => i.Method.Name == nameof(IUserRepository.CreateAsync)).Arguments[0];
+        Assert.NotNull(created.TermsAcceptedAt);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_SendsLinkAndStoresOnlyHash()
+    {
+        var player = ConfirmedPlayer();
+        _userRepository.Setup(r => r.GetByEmailAsync(player.Email)).ReturnsAsync(player);
+
+        await _service.ForgotPasswordAsync(player.Email);
+
+        var email = Assert.Single(_sentEmails);
+        Assert.Contains("https://footynet.test/reset-password?token=", email.TextBody);
+        Assert.NotNull(player.PasswordResetTokenHash);
+        Assert.NotEqual(TokenFromLastEmail(), player.PasswordResetTokenHash);
+        Assert.True(player.PasswordResetExpiresAt > DateTime.UtcNow);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_UnknownEmailOrCooldown_SendsNothing()
+    {
+        var player = ConfirmedPlayer();
+        player.PasswordResetSentAt = DateTime.UtcNow.AddSeconds(-10);
+        _userRepository.Setup(r => r.GetByEmailAsync(player.Email)).ReturnsAsync(player);
+
+        await _service.ForgotPasswordAsync("nepostoji@example.com");
+        await _service.ForgotPasswordAsync(player.Email);
+
+        Assert.Empty(_sentEmails);
+    }
+
+    [Fact]
+    public async Task ResetPassword_ValidToken_ChangesPasswordOnce()
+    {
+        var player = ConfirmedPlayer();
+        _userRepository.Setup(r => r.GetByEmailAsync(player.Email)).ReturnsAsync(player);
+        await _service.ForgotPasswordAsync(player.Email);
+        var token = TokenFromLastEmail();
+        _userRepository.Setup(r => r.GetByPasswordResetTokenHashAsync(It.IsAny<string>()))
+            .ReturnsAsync((string hash) => hash == player.PasswordResetTokenHash ? player : null);
+
+        await _service.ResetPasswordAsync(new ResetPasswordDto { Token = token, Password = "NovaLozinka1", ConfirmPassword = "NovaLozinka1" });
+
+        Assert.True(BCrypt.Net.BCrypt.Verify("NovaLozinka1", player.PasswordHash));
+        Assert.Null(player.PasswordResetTokenHash);
+        // The same link can't be used a second time
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.ResetPasswordAsync(new ResetPasswordDto { Token = token, Password = "Treca12345", ConfirmPassword = "Treca12345" }));
+    }
+
+    [Fact]
+    public async Task ResetPassword_ExpiredToken_Throws()
+    {
+        var player = ConfirmedPlayer();
+        var oldHash = player.PasswordHash;
+        player.PasswordResetTokenHash = "hash";
+        player.PasswordResetExpiresAt = DateTime.UtcNow.AddMinutes(-1);
+        _userRepository.Setup(r => r.GetByPasswordResetTokenHashAsync(It.IsAny<string>())).ReturnsAsync(player);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.ResetPasswordAsync(new ResetPasswordDto { Token = "bilo-sto", Password = "NovaLozinka1", ConfirmPassword = "NovaLozinka1" }));
+
+        Assert.Equal(AppMessages.Auth.InvalidResetLink, ex.Message);
+        Assert.Equal(oldHash, player.PasswordHash);
+    }
+
+    [Fact]
     public async Task Login_DeactivatedUser_Throws()
     {
         var player = ConfirmedPlayer();

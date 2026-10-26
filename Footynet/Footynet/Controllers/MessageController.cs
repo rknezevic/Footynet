@@ -116,6 +116,7 @@ public class MessageController : ControllerBase
                 m.IsRead,
                 OtherUserId = otherUserId,
                 OtherUserName = DisplayName(users.FirstOrDefault(u => u.Id == otherUserId)),
+                OtherUserPhotoUrl = PhotoUrls.For(otherUserId, users.FirstOrDefault(u => u.Id == otherUserId)?.PhotoUpdatedAt),
                 UnreadCount = unreadBySender.GetValueOrDefault(otherUserId)
             };
         }));

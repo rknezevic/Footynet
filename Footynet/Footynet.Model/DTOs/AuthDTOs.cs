@@ -12,7 +12,10 @@ public class RegisterDto
 {
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
+    public string ConfirmPassword { get; set; } = string.Empty;
     public RoleType Role { get; set; }
+    // Must be true: the user accepts the Terms of Use and Privacy Policy
+    public bool AcceptTerms { get; set; }
 
     // Player fields
     public string? FirstName { get; set; }
@@ -46,4 +49,17 @@ public class VerifyEmailDto
 public class ResendVerificationDto
 {
     public string Email { get; set; } = string.Empty;
+}
+
+public class ForgotPasswordDto
+{
+    public string Email { get; set; } = string.Empty;
+}
+
+public class ResetPasswordDto
+{
+    // Raw token from the link in the email
+    public string Token { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string ConfirmPassword { get; set; } = string.Empty;
 }

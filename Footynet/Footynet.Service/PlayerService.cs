@@ -70,8 +70,9 @@ public class PlayerService : IPlayerService
         player.PrefeeredFootType = dto.PrefeeredFootType;
         player.City = dto.City;
         player.CountyName = dto.County;
-        player.PrimaryPosition = dto.PrimaryPosition;
-        player.SecondaryPosition = dto.SecondaryPosition;
+        player.Positions.Clear();
+        foreach (var (position, index) in dto.Positions.Select((p, i) => (p, i)))
+            player.Positions.Add(new PlayerPosition { Position = position, SortOrder = index });
         player.Availability = dto.Availability;
 
         // The career list is replaced as a whole; removed entries are deleted by EF (orphan removal)

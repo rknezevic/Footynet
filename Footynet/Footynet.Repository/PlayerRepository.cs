@@ -23,6 +23,7 @@ public class PlayerRepository : IPlayerRepository
     {
         return await _context.Users.OfType<Player>()
             .Include(p => p.CareerEntries)
+            .Include(p => p.Positions)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
@@ -73,7 +74,7 @@ public class PlayerRepository : IPlayerRepository
         var offset = (page - 1) * pageSize;
         var sql = @"
             SELECT ja.""Id"", ja.""Title"", ja.""Description"",
-                   ja.""ClubId"", c.""Name"" as ClubName, l.""Name"" as LeagueName,
+                   ja.""ClubId"", c.""Name"" as ClubName, c.""PhotoUpdatedAt"" as ClubPhotoUpdatedAt, l.""Name"" as LeagueName,
                    ja.""RequiredPosition"",
                    a.""Status"" as ApplicationStatus,
                    ja.""CreatedAt""

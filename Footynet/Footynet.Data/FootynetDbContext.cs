@@ -17,6 +17,8 @@ public class FootynetDbContext : DbContext
     public DbSet<County> Counties { get; set; }
     public DbSet<League> Leagues { get; set; }
     public DbSet<PlayerCareerEntry> PlayerCareerEntries { get; set; }
+    public DbSet<UserPhoto> UserPhotos { get; set; }
+    public DbSet<PlayerPosition> PlayerPositions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -70,7 +72,25 @@ public class FootynetDbContext : DbContext
         {
             e.Property(u => u.EmailConfirmationTokenHash).HasMaxLength(64);
             e.HasIndex(u => u.EmailConfirmationTokenHash);
+            e.Property(u => u.PasswordResetTokenHash).HasMaxLength(64);
+            e.HasIndex(u => u.PasswordResetTokenHash);
             e.Property(u => u.PreferredLanguage).HasMaxLength(5);
+        });
+
+        modelBuilder.Entity<PlayerPosition>(e =>
+        {
+            e.HasKey(p => new { p.PlayerId, p.Position });
+            e.HasOne(p => p.Player)
+                .WithMany(p => p.Positions)
+                .HasForeignKey(p => p.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UserPhoto>(e =>
+        {
+            e.HasKey(p => p.UserId);
+            e.Property(p => p.ContentType).HasMaxLength(32);
+            e.HasOne<User>().WithOne().HasForeignKey<UserPhoto>(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<County>().HasData(LookupSeed.Counties);

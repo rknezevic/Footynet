@@ -13,7 +13,9 @@ public class RegisterDtoValidatorTests
     {
         Email = "igrac@example.com",
         Password = "Lozinka123",
+        ConfirmPassword = "Lozinka123",
         Role = RoleType.Player,
+        AcceptTerms = true,
         FirstName = "Ivan",
         LastName = "Horvat",
         Age = 22,
@@ -24,7 +26,9 @@ public class RegisterDtoValidatorTests
     {
         Email = "klub@example.com",
         Password = "Lozinka123",
+        ConfirmPassword = "Lozinka123",
         Role = RoleType.Club,
+        AcceptTerms = true,
         Name = "NK Primjer",
         LeagueId = Guid.NewGuid()
     };
@@ -52,13 +56,46 @@ public class RegisterDtoValidatorTests
         _validator.TestValidate(dto).ShouldHaveValidationErrorFor(x => x.Email);
     }
 
-    [Fact]
-    public void ShortPassword_Fails()
+    [Theory]
+    [InlineData("Kratka1")]      // too short
+    [InlineData("lozinka123")]   // no uppercase letter
+    [InlineData("LozinkaBez")]   // no digit
+    public void WeakPassword_Fails(string password)
     {
         var dto = ValidPlayer();
-        dto.Password = "123";
+        dto.Password = password;
+        dto.ConfirmPassword = password;
 
         _validator.TestValidate(dto).ShouldHaveValidationErrorFor(x => x.Password);
+    }
+
+    [Fact]
+    public void TermsNotAccepted_Fails()
+    {
+        var dto = ValidClub();
+        dto.AcceptTerms = false;
+
+        _validator.TestValidate(dto).ShouldHaveValidationErrorFor(x => x.AcceptTerms);
+    }
+
+    [Theory]
+    [InlineData("Lozinka123", "Lozinka123", true)]
+    [InlineData("lozinka123", "lozinka123", false)]   // same password rules as registration
+    [InlineData("Lozinka123", "Lozinka124", false)]   // confirmation must match
+    public void ResetPassword_UsesRegistrationRules(string password, string confirm, bool valid)
+    {
+        var result = new ResetPasswordDtoValidator().TestValidate(new ResetPasswordDto { Token = "t", Password = password, ConfirmPassword = confirm });
+
+        Assert.Equal(valid, result.IsValid);
+    }
+
+    [Fact]
+    public void MismatchedConfirmation_Fails()
+    {
+        var dto = ValidPlayer();
+        dto.ConfirmPassword = "Lozinka124";
+
+        _validator.TestValidate(dto).ShouldHaveValidationErrorFor(x => x.ConfirmPassword);
     }
 
     [Theory]

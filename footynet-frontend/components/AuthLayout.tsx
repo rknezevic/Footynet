@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { CheckCircle2 } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -13,7 +14,7 @@ export default function AuthLayout({ children, wide = false }: { children: React
 
   return (
     <div className="grid min-h-screen lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-pitch-800 via-pitch-700 to-pitch-500 p-12 text-white lg:flex lg:flex-col lg:justify-between">
+      <aside className="relative hidden overflow-hidden bg-[#052E22] p-12 text-white lg:flex lg:flex-col lg:justify-between">
         <div className="pitch-pattern pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="relative"><Logo variant="light" size="lg" /></div>
         <div className="relative">
@@ -27,7 +28,11 @@ export default function AuthLayout({ children, wide = false }: { children: React
             ))}
           </ul>
         </div>
-        <p className="relative text-xs text-pitch-100/70">© {new Date().getFullYear()} FootyNet</p>
+        <p className="relative flex gap-4 text-xs text-pitch-100/70">
+          <span>© {new Date().getFullYear()} FootyNet</span>
+          <Link href="/privacy" className="hover:text-white hover:underline">{t('privacy')}</Link>
+          <Link href="/terms" className="hover:text-white hover:underline">{t('terms')}</Link>
+        </p>
       </aside>
 
       <main className="flex flex-col px-4 py-6 sm:px-8">

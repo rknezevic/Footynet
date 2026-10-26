@@ -27,6 +27,9 @@
   <data name="General.LocationNotConfigured" xml:space="preserve">
     <value>City search is not configured (Mapbox:AccessToken)</value>
   </data>
+  <data name="General.TooManyRequests" xml:space="preserve">
+    <value>Too many attempts. Please wait a few minutes and try again.</value>
+  </data>
   <data name="Auth.EmailTaken" xml:space="preserve">
     <value>User with this email already exists!</value>
   </data>
@@ -36,11 +39,8 @@
   <data name="Auth.InvalidRole" xml:space="preserve">
     <value>Invalid role</value>
   </data>
-  <data name="Auth.UnknownEmail" xml:space="preserve">
-    <value>User with that email doesn't exist</value>
-  </data>
-  <data name="Auth.WrongPassword" xml:space="preserve">
-    <value>Wrong password</value>
+  <data name="Auth.InvalidCredentials" xml:space="preserve">
+    <value>Incorrect email or password</value>
   </data>
   <data name="Auth.AccountDeactivated" xml:space="preserve">
     <value>Account has been deactivated</value>
@@ -50,6 +50,9 @@
   </data>
   <data name="Auth.InvalidConfirmationLink" xml:space="preserve">
     <value>This confirmation link is invalid or has expired</value>
+  </data>
+  <data name="Auth.InvalidResetLink" xml:space="preserve">
+    <value>This password reset link is invalid or has expired. Request a new one.</value>
   </data>
   <data name="Club.NotFound" xml:space="preserve">
     <value>Club not found</value>
@@ -102,6 +105,15 @@
   <data name="Messaging.ApplicationAccepted" xml:space="preserve">
     <value>Congratulations! Your application for '{0}' has been accepted. Let's discuss further details.</value>
   </data>
+  <data name="Photo.Missing" xml:space="preserve">
+    <value>Please choose an image</value>
+  </data>
+  <data name="Photo.TooLarge" xml:space="preserve">
+    <value>The image is too large (max 1 MB)</value>
+  </data>
+  <data name="Photo.InvalidType" xml:space="preserve">
+    <value>Only JPEG, PNG and WebP images are supported</value>
+  </data>
   <data name="Validation.EmailRequired" xml:space="preserve">
     <value>Email is required</value>
   </data>
@@ -112,7 +124,19 @@
     <value>Password is required</value>
   </data>
   <data name="Validation.PasswordTooShort" xml:space="preserve">
-    <value>Password must be at least 6 characters</value>
+    <value>Password must be at least 8 characters</value>
+  </data>
+  <data name="Validation.PasswordNeedsUppercase" xml:space="preserve">
+    <value>Password must contain at least one uppercase letter</value>
+  </data>
+  <data name="Validation.PasswordNeedsDigit" xml:space="preserve">
+    <value>Password must contain at least one number</value>
+  </data>
+  <data name="Validation.PasswordsDoNotMatch" xml:space="preserve">
+    <value>Passwords do not match</value>
+  </data>
+  <data name="Validation.TermsNotAccepted" xml:space="preserve">
+    <value>You must accept the Terms of Use and Privacy Policy</value>
   </data>
   <data name="Validation.InvalidRole" xml:space="preserve">
     <value>Invalid role</value>
@@ -171,6 +195,12 @@
   <data name="Validation.InvalidPosition" xml:space="preserve">
     <value>Invalid position</value>
   </data>
+  <data name="Validation.TooManyPositions" xml:space="preserve">
+    <value>You can choose up to 4 positions</value>
+  </data>
+  <data name="Validation.DuplicatePositions" xml:space="preserve">
+    <value>Each position can be chosen only once</value>
+  </data>
   <data name="Validation.InvalidFootType" xml:space="preserve">
     <value>Invalid preferred foot type</value>
   </data>
@@ -212,6 +242,18 @@
   </data>
   <data name="Email.Verification.Footer" xml:space="preserve">
     <value>The link is valid for 24 hours. If you didn't create an account, you can ignore this email.</value>
+  </data>
+  <data name="Email.PasswordReset.Subject" xml:space="preserve">
+    <value>Reset your FootyNet password</value>
+  </data>
+  <data name="Email.PasswordReset.Intro" xml:space="preserve">
+    <value>We received a request to reset your password. Click the button below to choose a new one.</value>
+  </data>
+  <data name="Email.PasswordReset.Button" xml:space="preserve">
+    <value>Choose a new password</value>
+  </data>
+  <data name="Email.PasswordReset.Footer" xml:space="preserve">
+    <value>The link is valid for 1 hour and can be used once. If you didn't ask for this, ignore this email; your password stays the same.</value>
   </data>
   <data name="Email.NewMessage.Subject" xml:space="preserve">
     <value>New message from {0}</value>

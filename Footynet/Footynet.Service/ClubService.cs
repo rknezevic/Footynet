@@ -105,7 +105,8 @@ public class ClubService : IClubService
             County = club.CountyName,
             LeagueName = club.League?.Name ?? "",
             LeagueId = club.LeagueId,
-            Phone = club.Phone
+            Phone = club.Phone,
+            PhotoUrl = PhotoUrls.For(club.Id, club.PhotoUpdatedAt)
         };
     }
 

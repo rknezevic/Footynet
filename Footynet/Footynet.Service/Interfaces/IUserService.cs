@@ -9,6 +9,8 @@ public interface IUserService
     Task<AuthResponseDto> LoginAsync(LoginDto dto);
     Task<AuthResponseDto> VerifyEmailAsync(string token);
     Task ResendConfirmationAsync(string email);
+    Task ForgotPasswordAsync(string email);
+    Task ResetPasswordAsync(ResetPasswordDto dto);
     Task<User?> GetUserByIdAsync(Guid id);
     Task<User?> GetUserByEmailAsync(string email);
 }

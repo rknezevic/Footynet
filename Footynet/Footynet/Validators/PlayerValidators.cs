@@ -1,4 +1,5 @@
 using FluentValidation;
+using Footynet.Models;
 using Footynet.DTOs;
 using Footynet.Localization;
 
@@ -26,13 +27,12 @@ public class UpdatePlayerProfileDtoValidator : AbstractValidator<UpdatePlayerPro
         RuleFor(x => x.PrefeeredFootType)
             .IsInEnum().WithMessage(AppMessages.Validation.InvalidFootType);
 
-        RuleFor(x => x.PrimaryPosition)
-            .IsInEnum().WithMessage(AppMessages.Validation.InvalidPosition)
-            .When(x => x.PrimaryPosition != null);
+        RuleFor(x => x.Positions)
+            .Must(p => p.Count <= Positions.MaxPerPlayer).WithMessage(AppMessages.Validation.TooManyPositions)
+            .Must(p => p.Distinct().Count() == p.Count).WithMessage(AppMessages.Validation.DuplicatePositions);
 
-        RuleFor(x => x.SecondaryPosition)
-            .IsInEnum().WithMessage(AppMessages.Validation.InvalidPosition)
-            .When(x => x.SecondaryPosition != null);
+        RuleForEach(x => x.Positions)
+            .IsInEnum().WithMessage(AppMessages.Validation.InvalidPosition);
 
         RuleFor(x => x.Availability)
             .IsInEnum().WithMessage(AppMessages.Validation.InvalidAvailability);

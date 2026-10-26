@@ -20,4 +20,5 @@ public class ClubProfileDto
     public string LeagueName { get; set; } = string.Empty;
     public Guid LeagueId { get; set; }
     public string? Phone { get; set; }
+    public string? PhotoUrl { get; set; }
 }

@@ -15,10 +15,20 @@ public abstract class User
     public DateTime? EmailConfirmationExpiresAt { get; set; }
     public DateTime? EmailConfirmationSentAt { get; set; }
 
+    // Password reset ("forgot password"): stored the same way as the confirmation token
+    public string? PasswordResetTokenHash { get; set; }
+    public DateTime? PasswordResetExpiresAt { get; set; }
+    public DateTime? PasswordResetSentAt { get; set; }
+
+    // When the user accepted the Terms of Use and Privacy Policy at registration (GDPR record of consent)
+    public DateTime? TermsAcceptedAt { get; set; }
+
     // "hr" or "en"; used for emails, which are sent outside of any request
     public string? PreferredLanguage { get; set; }
     // Throttles "new message" email notifications
     public DateTime? LastMessageEmailAt { get; set; }
+    // Set when the user has a profile picture (see UserPhoto)
+    public DateTime? PhotoUpdatedAt { get; set; }
     public abstract RoleType Role { get; }
 }
 

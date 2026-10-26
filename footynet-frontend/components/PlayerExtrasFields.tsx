@@ -1,22 +1,19 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import FormSelect from '@/components/FormSelect';
+import { Check, Star } from 'lucide-react';
 import CareerEditor from '@/components/CareerEditor';
 import { useEnumLabels } from '@/i18n/useEnumLabels';
-import { AvailabilityStatus, CareerEntry, PositionType } from '@/types';
+import { AvailabilityStatus, CareerEntry, PositionType, POSITION_GROUPS, MAX_POSITIONS } from '@/types';
 
 export interface PlayerExtras {
-  primaryPosition: PositionType | null;
-  secondaryPosition: PositionType | null;
+  // In the order the player picked them; the first one is the main position
+  positions: PositionType[];
   availability: AvailabilityStatus;
   career: CareerEntry[];
 }
 
-const POSITIONS = [PositionType.Goalkeeper, PositionType.Defender, PositionType.Midfielder, PositionType.Forward];
 const AVAILABILITY = [AvailabilityStatus.LookingForClub, AvailabilityStatus.OpenToOffers, AvailabilityStatus.NotAvailable];
-
-const parsePosition = (v: string) => (v === '' ? null : (parseInt(v, 10) as PositionType));
 
 // Positions, availability and career; used on the profile page and in the post-registration step
 export default function PlayerExtrasFields({ value, onChange }: { value: PlayerExtras; onChange: (v: PlayerExtras) => void }) {
@@ -24,18 +21,57 @@ export default function PlayerExtrasFields({ value, onChange }: { value: PlayerE
   const labels = useEnumLabels();
   const set = (patch: Partial<PlayerExtras>) => onChange({ ...value, ...patch });
 
+  const togglePosition = (p: PositionType) => {
+    if (value.positions.includes(p)) set({ positions: value.positions.filter(x => x !== p) });
+    else if (value.positions.length < MAX_POSITIONS) set({ positions: [...value.positions, p] });
+  };
+  const full = value.positions.length >= MAX_POSITIONS;
+
   return (
     <div className="space-y-5">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <FormSelect label={t('primaryPosition')} value={value.primaryPosition ?? ''} onChange={e => set({ primaryPosition: parsePosition(e.target.value) })}>
-          <option value="">{t('notSet')}</option>
-          {POSITIONS.map(p => <option key={p} value={p}>{labels.position(p)}</option>)}
-        </FormSelect>
-        <FormSelect label={t('secondaryPosition')} value={value.secondaryPosition ?? ''} onChange={e => set({ secondaryPosition: parsePosition(e.target.value) })}>
-          <option value="">{t('notSet')}</option>
-          {POSITIONS.filter(p => p !== value.primaryPosition).map(p => <option key={p} value={p}>{labels.position(p)}</option>)}
-        </FormSelect>
-      </div>
+      <fieldset>
+        <div className="mb-1.5 flex items-baseline justify-between gap-3">
+          <legend className="field-label mb-0">{t('positions')}</legend>
+          <span className="text-xs text-ink-500">{t('positionsHint', { max: MAX_POSITIONS })}</span>
+        </div>
+        <div className="space-y-3 rounded-xl border border-ink-200 p-3">
+          {POSITION_GROUPS.map(group => (
+            <div key={group.key}>
+              <div className="mb-1.5 text-xs font-medium text-ink-500">{t(`groups.${group.key}`)}</div>
+              <div className="flex flex-wrap gap-2">
+                {group.positions.map(p => {
+                  const index = value.positions.indexOf(p);
+                  const selected = index >= 0;
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => togglePosition(p)}
+                      disabled={!selected && full}
+                      aria-pressed={selected}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40 ${
+                        selected
+                          ? 'border-pitch-600 bg-pitch-50 text-pitch-800'
+                          : 'border-ink-200 bg-white text-ink-700 hover:border-ink-300'
+                      }`}
+                    >
+                      {selected && (index === 0
+                        ? <Star className="h-3.5 w-3.5 fill-current" aria-label={t('main')} />
+                        : <Check className="h-3.5 w-3.5" aria-hidden="true" />)}
+                      {labels.position(p)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+        {value.positions.length > 0 && (
+          <p className="mt-1.5 text-xs text-ink-500">
+            {t('mainPosition', { position: labels.position(value.positions[0]) })}
+          </p>
+        )}
+      </fieldset>
 
       <div>
         <span className="field-label">{t('availability')}</span>

@@ -46,10 +46,13 @@ public class JobAdsController : ControllerBase
             ad.Description,
             ad.ClubId,
             RequiredPosition = ad.RequiredPosition.ToString(),
+            RequiredPositionName = ad.RequiredPosition.ToString(),
             ad.CreatedAt,
             ad.UpdatedAt,
             AdStatus = ad.AdStatus.ToString(),
-            ClubName = ad.Club?.Name
+            ClubName = ad.Club?.Name,
+            LeagueName = ad.Club?.League?.Name,
+            ClubPhotoUrl = ad.Club == null ? null : PhotoUrls.For(ad.ClubId, ad.Club.PhotoUpdatedAt)
         });
     }
 }

@@ -56,7 +56,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
       </Link>
 
       <PageHeader
-        leading={<Avatar name={job.clubName} size="xl" tone="light" />}
+        leading={<Avatar name={job.clubName} photo={job.clubPhotoUrl} size="xl" tone="light" />}
         title={job.title}
         subtitle={`${job.clubName} · ${job.leagueName}`}
       />

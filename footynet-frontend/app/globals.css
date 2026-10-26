@@ -17,7 +17,7 @@
   .field {
     @apply w-full rounded-lg border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900
       placeholder:text-ink-400 shadow-sm transition
-      focus:outline-none focus:border-pitch-500 focus:ring-4 focus:ring-pitch-500/15
+      focus:outline-none focus:border-pitch-600 focus:ring-4 focus:ring-pitch-600/20
       disabled:bg-ink-50 disabled:text-ink-500;
   }
 
@@ -35,6 +35,9 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up,
   .animate-pulse,
+  .hero-in,
+  .hero-fade,
+  .role-choice-selected,
   .hover-lift {
     animation: none !important;
     transition: none !important;
@@ -58,3 +61,34 @@
       repeating-linear-gradient(90deg, rgb(255 255 255 / 0.035) 0 48px, transparent 48px 96px);
   }
 }
+
+/* Landing page */
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+/* Runs from first paint only; 'backwards' leaves no transform behind afterwards */
+.hero-in {
+  animation: hero-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes hero-fade-kf { from { opacity: 0; } to { opacity: 1; } }
+.hero-fade { animation: hero-fade-kf 500ms ease-out backwards; }
+
+/* Role choice preview: the selected border settles in after the panel appears */
+@keyframes choice-select { from { border-color: rgb(203 213 225); } to { border-color: rgb(4 120 87); } }
+[data-revealed-choice] .role-choice-selected { animation: choice-select 300ms 500ms ease-out backwards; }
+
+/* Pitch markings with the centre circle under the empty label column (trust panel) */
+.pitch-pattern-left {
+  background-image:
+    radial-gradient(circle at 20% 60%, transparent 0 88px, rgb(255 255 255 / 0.08) 89px 90px, transparent 91px),
+    linear-gradient(90deg, transparent calc(20% - 1px), rgb(255 255 255 / 0.07) calc(20% - 1px) 20%, transparent 20%),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.03) 0 48px, transparent 48px 96px);
+}
+/* Mowing stripes only (closing panel) */
+.pitch-stripes {
+  background-image: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.04) 0 48px, transparent 48px 96px);
+}
+.landing-anchor { scroll-margin-top: 80px; }
+.bar-grow { transform-origin: bottom; }

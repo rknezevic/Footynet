@@ -96,7 +96,7 @@ export default function PlayerJobsPage() {
             <Link key={job.id} href={`/player/jobs/${job.id}`} className="group">
               <Card hover className="flex h-full flex-col">
                 <div className="mb-4 flex items-start gap-3">
-                  <Avatar name={job.clubName} size="lg" />
+                  <Avatar name={job.clubName} photo={job.clubPhotoUrl} size="lg" />
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate text-lg font-semibold text-ink-900 group-hover:text-pitch-700">{job.title}</h3>
                     <p className="truncate text-sm text-ink-500">{job.clubName}</p>

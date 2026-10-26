@@ -1,5 +1,12 @@
+'use client';
+
+import { useState } from 'react';
+import { photoSrc } from '@/lib/photo';
+
 interface AvatarProps {
   name: string;
+  // Photo path from the API (e.g. profile.photoUrl); initials are shown when missing
+  photo?: string | null;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   // "light" for use on the green header background
   tone?: 'default' | 'light';
@@ -30,7 +37,23 @@ function initials(name: string) {
   return (first + last).toUpperCase();
 }
 
-export default function Avatar({ name, size = 'md', tone = 'default' }: AvatarProps) {
+export default function Avatar({ name, photo, size = 'md', tone = 'default' }: AvatarProps) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const src = photoSrc(photo);
+  const ring = tone === 'light' ? 'ring-2 ring-white/40' : '';
+
+  if (src && src !== failedSrc) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- small API-served avatar; next/image would need the API host configured
+      <img
+        src={src}
+        alt=""
+        className={`shrink-0 rounded-full bg-ink-100 object-cover ${SIZES[size]} ${ring}`}
+        onError={() => setFailedSrc(src)}
+      />
+    );
+  }
+
   const hash = [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 0);
   const colors = tone === 'light'
     ? 'bg-white/20 text-white ring-2 ring-white/40 backdrop-blur'
