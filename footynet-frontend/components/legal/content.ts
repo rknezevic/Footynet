@@ -3,8 +3,8 @@ import type { Locale } from '@/i18n/config';
 // Who runs FootyNet, shown in the Privacy Policy and Terms of Use.
 // TODO before going live: fill in the real operator name and a contact email you read.
 export const OPERATOR = {
-  name: '[Ime i prezime / naziv]',
-  email: '[kontakt@email]',
+  name: '[Robert Knežević]',
+  email: '[knezevic3112@gmail.com]',
 };
 
 export const LAST_UPDATED: Record<Locale, string> = {

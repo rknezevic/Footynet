@@ -1,0 +1,54 @@
+{
+  "originalRequest": "okey continue",
+  "subject": "FootyNet, a football player recruitment platform connecting players with clubs (Next.js 15, React 19, Tailwind, en/hr i18n)",
+  "pageType": "Public landing page at / for an existing multi-role web application, alongside a visual upgrade of the shared design system used by the auth screens, app shell and dashboards",
+  "scope": "Continue the in-progress design work: the landing page at / is implemented with nine content sections plus navigation and footer, and the shared tokens (primary emerald-700, emerald-600 focus ring, monogram logo tile, auth side panel) are already updated. This turn advances the same brief rather than starting a new one, so the remaining work is repairing the discrepancies found in visual review against the selected references, at desktop and mobile.",
+  "primaryGoal": "Raise FootyNet to professional product quality: a public landing page that explains the player-club value clearly and converts to registration, with a consistent, accessible design system carried into the app",
+  "audience": "Amateur and semi-professional football players looking for clubs; club staff recruiting players; platform admins. Primarily Croatian and English speakers, on mobile and desktop.",
+  "offer": "One place where players show their profile and career and apply to club job ads, and clubs post opportunities, review applicants and message them in real time",
+  "primaryAction": "Register (as player or club), with Sign in as the secondary action",
+  "creativeControl": "High: continue using judgment to repair reference fidelity, spacing, hierarchy and accessibility without asking, while keeping the established FootyNet identity and the already-approved section order",
+  "requiredContent": [
+    "Hero: one statement of what FootyNet does, with Register and Sign in, beside a dominant media field holding the product's own interface",
+    "How it works for players: build profile, find a position, talk to the club",
+    "How it works for clubs: get approved, post a position, review applicants, message players",
+    "Product preview: an example player profile, job ad, availability and applicants view",
+    "Feature highlights: live chat, career history, availability, email alerts",
+    "Trust and process: club approval by admins, email confirmation, applications going straight to the club",
+    "Role split: separate registration actions for players and clubs",
+    "FAQ: eligibility, club approval, cost, languages, messaging, availability, mobile use",
+    "Closing call to action to register",
+    "Navigation (hero rail, compact top bar, mobile menu sheet) and footer with language choice"
+  ],
+  "constraints": [
+    "Keep existing Next.js App Router routes, API integration, auth flows and business logic intact",
+    "All user-facing copy stays in messages/en.json and messages/hr.json; both languages must fit without overflow",
+    "Keep Tailwind and the pitch/ink token aliases as the single place to re-theme",
+    "Respect prefers-reduced-motion; no transforms on ancestors of sticky or fixed elements",
+    "Interactive targets must be at least 44x44 CSS pixels at every reviewed viewport",
+    "No invented statistics, testimonials, real club names or partnerships; example data stays visibly labelled",
+    "No stock photography is available, so every media frame holds native HTML/CSS product interface, never a decorative SVG or fake dashboard"
+  ],
+  "brandInputs": [
+    "Brand accent: pitch emerald; primary fill emerald-700 #047857 with white text, hover emerald-800, focus ring emerald-600 #059669",
+    "Neutral: ink slate; canvas slate-50, white surfaces, deep pitch-green #052E22 and near-black #03140F panels",
+    "Outfit for display headings, wordmark and numbers; Inter for body and UI",
+    "FootyNet wordmark with 'Net' in the accent colour, plus a solid emerald monogram tile (the emoji was replaced)",
+    "Pitch-pattern markings used only on the hero media frame, the trust panel and the closing CTA",
+    "lucide-react is the only icon source",
+    "Existing components reused in the vignettes: Avatar, AvailabilityBadge, Badge, Button, form field styles"
+  ],
+  "assumptions": [
+    "'Continue' refers to the FootyNet landing page and design-system work already in progress, not a new subject",
+    "The nine-section order (hero, players, clubs, product preview, features, trust, role split, FAQ, closing CTA) is settled and should be preserved",
+    "Visible entrance and scroll animations stay: a hero entrance on load, distinct one-time reveals for later sections, and interaction feedback, all respecting reduced motion",
+    "Example identities (NK Example, HNK Primjer, NK Uzor, Luka M., Ivan K., Marko P., Ivana K.) and the example job ads, ages, career seasons and applicant chart remain illustrative and stay visibly labelled as example data",
+    "Nav anchor links and the hero wordmark need larger hit areas to meet the 44px minimum flagged in the DOM audit",
+    "The mobile 'Build a profile like this' link is too narrow and needs a wider or full-width target"
+  ],
+  "unresolved": [
+    "Whether pricing exists for clubs or players (the FAQ states only that registration asks for no payment details)",
+    "Whether a dark mode is wanted for the app (not planned)"
+  ],
+  "explicitAnswers": []
+}

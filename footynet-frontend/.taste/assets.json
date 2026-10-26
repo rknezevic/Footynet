@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "id": "hero_job_board_panel",
+      "kind": "component",
+      "status": "needed",
+      "purpose": "Hero media frame 1: an 'Open positions near you' job board built in HTML/CSS on a deep pitch-green ground with pitch markings. It replaces the karo photograph with FootyNet's own interface.",
+      "requirements": [
+        "Build implements it locally with the existing components/Avatar.tsx and components/AvailabilityBadge.tsx, lucide-react icons and Tailwind. No screenshot, raster or new dependency",
+        "Frame is fixed at 16:9 on desktop and about 1.17:1 on mobile via CSS aspect-ratio. It has a #052E22 ground with the pitch-pattern utility and radius 0",
+        "A white 12px-radius card sits right of centre at about 62% of the frame width and holds 3 example job rows: 'Left back · 4th league · Split · Training Tue/Thu', 'Goalkeeper · County league · Zagreb · Starts January', 'Striker · 3rd league · Osijek · Trial this month'. Each row has club initials (NK Example, HNK Primjer, NK Uzor), a status pill and an emerald-700 'Apply' button",
+        "Inner controls are illustrative: aria-hidden, tabindex -1, pointer-events none. A visually hidden one-sentence description and a visible white/70% 'Example data' tag in the lower-left corner",
+        "All strings come from messages/en.json and messages/hr.json; Croatian must fit without overflow",
+        "Motion: the card rises 20px and fades in on load, and rows follow at 70ms intervals. Under reduced motion everything renders in its final state"
+      ],
+      "role": "component",
+      "sectionIds": [
+        "hero"
+      ],
+      "aspectRatio": "16:9",
+      "composition": "Deep-green field with pitch markings. A white job-board card sits offset right of centre at 62% width, with its 3 rows vertically centred. The 'Example data' tag is in the lower-left corner. No text from the hero rail overlaps the frame."
+    },
+    {
+      "id": "hero_applicant_panel",
+      "kind": "component",
+      "status": "needed",
+      "purpose": "Hero media frame 2: an 'Applicants for your squad' list built in HTML/CSS, running past the fold beneath frame 1.",
+      "requirements": [
+        "Built locally with Avatar, AvailabilityBadge, lucide-react and Tailwind; no raster or new dependency",
+        "Frame is fixed at 16:9 on desktop and about 1.17:1 on mobile. It has a #052E22 ground without pitch markings",
+        "A white card lists 3 example applicants (Luka M., Ivan K., Marko P.), each with initials, position, preferred foot, age and a 'Message' button",
+        "The top 40% of the frame must read well on its own, because the medium layout shows only that much above the fold",
+        "Inner controls are inert and aria-hidden, with a hidden description and a visible 'Example data' tag. Strings are in en/hr messages",
+        "Motion: it follows frame 1 by 120ms with the same rise-and-fade. Under reduced motion it renders in its final state"
+      ],
+      "role": "component",
+      "sectionIds": [
+        "hero"
+      ],
+      "aspectRatio": "16:9",
+      "composition": "Deep-green field. The applicant card is anchored in the upper half so its header and first two rows show above the fold. The 'Example data' tag is in the lower-left corner."
+    },
+    {
+      "id": "player_step_ui_tiles",
+      "kind": "component",
+      "status": "needed",
+      "purpose": "Three 1:1 interface tiles for the meridian-04-services player steps (profile, browse, chat), replacing the reference photographs.",
+      "requirements": [
+        "Built locally with existing form-field styles (.field), Avatar, AvailabilityBadge, lucide-react and Tailwind; no raster or new dependency",
+        "Each tile is a 1:1 emerald-50 ground on desktop and about 1.43:1 with an 8px radius on mobile. Its white vignette card covers about 70% of the tile, offset to a corner so the centre stays clear for the 64px #052E22 ArrowUpRight badge linking to /register",
+        "Tile 1: filled profile fields (Position: Central midfielder, Preferred foot: Right, City: Zagreb) and 2 career seasons. Tile 2: two job-ad cards, the first in the 'Applied' state. Tile 3: one club bubble in white, one player bubble in emerald-700 with white text, and an input",
+        "Vignette controls are inert and aria-hidden. A 12px slate-500 'Example data' tag sits under the last column. Strings are in en/hr messages",
+        "Motion: tiles rise 24px with a 90ms stagger, and each vignette slides 12px up 60ms after its tile. Each runs once via IntersectionObserver"
+      ],
+      "role": "component",
+      "sectionIds": [
+        "players_steps"
+      ],
+      "aspectRatio": "1:1",
+      "composition": "Light emerald square. The white vignette sits off-centre (top-left, bottom-right or left, varying per tile) so the circular arrow badge at the exact centre never covers key content."
+    },
+    {
+      "id": "club_step_ui_cards",
+      "kind": "component",
+      "status": "needed",
+      "purpose": "Four interface vignettes inside the xodexdesign-03-projects 2x2 dark card grid (approval, post, review, message), replacing the reference photographs.",
+      "requirements": [
+        "Built locally with Avatar, AvailabilityBadge, lucide-react (ShieldCheck, ArrowUpRight) and Tailwind; no raster or new dependency",
+        "Each card is about 1.39:1 on desktop, 1.1:1 on medium and 4:5 on compact. It has a #064E3B to #052E22 ground, 12px radius and a 1px white/10% border",
+        "The vignette stays inside the middle 55% height band so the 40px white title at the top-left, the 48px glass arrow at the top-right and the bottom glass meta bar ('Step n') remain clear",
+        "Card 1: 'Club account: In review' with 3-step progress (Registered, Email confirmed, Admin review). Card 2: a job-ad form (Left back, 4th league, Split) with an emerald-700 'Publish' button. Card 3: three applicant rows with availability pills. Card 4: a two-bubble chat and an input",
+        "Vignettes are inert and aria-hidden. The visible 'Example data' tag sits below the grid next to the closing note. Strings are in en/hr messages",
+        "Motion: each vignette scales 0.96 to 1 and fades in 80ms after its card, and the meta bar slides up 100ms later. Runs once; reduced motion renders it static"
+      ],
+      "role": "component",
+      "sectionIds": [
+        "clubs_steps"
+      ],
+      "aspectRatio": "139:100",
+      "composition": "Dark green card. The title is at the top-left and the arrow at the top-right. The vignette is centred horizontally in the middle band. The glass meta bar is inset 14px at the bottom."
+    },
+    {
+      "id": "product_preview_bento",
+      "kind": "component",
+      "status": "needed",
+      "purpose": "Native fabrica-10-case-study bento: an example player profile on a dark card, a job ad with chat snippet, an availability ring, and an applicants bar chart, all labelled as example data.",
+      "requirements": [
+        "Built locally with the existing Avatar and AvailabilityBadge components, lucide-react and Tailwind; no screenshots and no new dependency",
+        "Three-column grid at 47/22/25 with two stacked right cards, 12px gaps, 24px radius and no shadow on a slate-100 canvas",
+        "The large card has a #052E22 ground. A native profile card (96px 'LM' Avatar, Luka M., Central midfielder, Right foot, Zagreb, 'Available now', 3 career rows) fills its right 52%. The 104px white FootyNet wordmark overlaps the profile card's left edge by about 8%",
+        "The bar chart has six native bars (1,2,1,3,2,6). The last bar is emerald-700 and the rest slate-200, with a visible 'Example data' label. No stars, testimonials or real metrics",
+        "All strings come from messages/en.json and messages/hr.json",
+        "Motion: the large card appears first, then the other cards slide 20px in from the right (stagger capped at 240ms), then the bars grow from scaleY 0.2 to 1 anchored at the bottom. Reduced motion renders the final state"
+      ],
+      "role": "component",
+      "sectionIds": [
+        "product_preview"
+      ],
+      "aspectRatio": "2:1",
+      "composition": "Wide bento. The dark card on the left has its label at the top-left, the plus icon at the top-right, the wordmark centre-left over the profile card on the right, the link at the bottom-left and the tagline at the bottom-right. The middle card is the job ad and chat. On the right, the ring card sits above the chart card."
+    },
+    {
+      "id": "feature_career_card",
+      "kind": "component",
+      "status": "needed",
+      "purpose": "Tall 3:5 tile in the fabrica-04-benefits layout. It shows a native player card with a career timeline in place of the reference portrait.",
+      "requirements": [
+        "Built locally with Avatar, AvailabilityBadge and Tailwind; no raster or new dependency",
+        "Fixed at 3:5 on desktop and 4:5 on compact, with a deep-green ground and 16px radius",
+        "Content: an 88px 'IK' Avatar, 'Ivana K. · Winger · Left foot', an availability pill, and a vertical timeline of 4 example seasons with club initials and league names joined by a 2px emerald-300 line. An 'Example data' tag sits at the bottom",
+        "Inert and aria-hidden, with a hidden description. Strings are in en/hr messages",
+        "Motion: the ground fades in, then timeline rows rise 8px at 70ms intervals. Runs once; reduced motion renders it static"
+      ],
+      "role": "component",
+      "sectionIds": [
+        "features"
+      ],
+      "aspectRatio": "3:5",
+      "composition": "Tall dark-green tile. The player header (avatar, name, badge) sits in the upper third, the timeline fills the middle and the 'Example data' tag is at the bottom. Contents are centred with 24px inner padding."
+    },
+    {
+      "id": "role_split_choice_panel",
+      "kind": "component",
+      "status": "needed",
+      "purpose": "Media frame on the right side of the cipher-security-02-about role split: a faithful preview of the register page's Player or Club choice, in place of the shield illustration.",
+      "requirements": [
+        "Built locally with lucide-react (User, Shield, Check) and Tailwind; no raster or new dependency",
+        "A 5:4 frame with 16px radius on a #064E3B ground. It holds two side-by-side option cards: 'Player' (selected, with a 2px emerald-700 border, emerald-50 fill and check icon) and 'Club', plus a muted 'Continue' button",
+        "Not interactive: aria-hidden and inert, with a hidden description. The real choice happens through the two visible Register buttons",
+        "Strings are in en/hr messages and must fit the Croatian labels",
+        "Motion: option cards rise 12px in sequence, then the selected border shifts from slate-300 to emerald-700 over 300ms. Runs once; reduced motion shows the selected state immediately"
+      ],
+      "role": "component",
+      "sectionIds": [
+        "role_split"
+      ],
+      "aspectRatio": "5:4",
+      "composition": "Dark green frame. Two option cards are centred side by side in the upper 60%, with the Continue button centred below. Even padding of about 10% on all sides."
+    },
+    {
+      "id": "font_outfit",
+      "kind": "font",
+      "status": "ready",
+      "purpose": "Outfit variable font (weights 100-900; the brand uses 500, 600 and 700) for display headlines, section headings, the wordmark and numbers.",
+      "requirements": [
+        "Already loaded via next/font/google in app/layout.tsx (--font-outfit). This local copy can be used with next/font/local if self-hosting is preferred",
+        "Build must verify a loaded Outfit FontFace in document.fonts and that document.fonts.check('600 16px Outfit') returns true",
+        "Use the latin-ext subset for Croatian diacritics",
+        "Keep OFL.txt next to the font file"
+      ],
+      "role": "font",
+      "sectionIds": [
+        "hero",
+        "players_steps",
+        "clubs_steps",
+        "product_preview",
+        "features",
+        "trust",
+        "role_split",
+        "faq",
+        "closing_cta",
+        "footer"
+      ],
+      "source": {
+        "kind": "external",
+        "reference": "https://github.com/google/fonts/tree/main/ofl/outfit",
+        "license": "SIL Open Font License 1.1, Copyright 2021 The Outfit Project Authors; license text saved at public/fonts/outfit/OFL.txt"
+      },
+      "destination": "public/fonts/outfit/Outfit-VariableFont_wght.ttf"
+    },
+    {
+      "id": "font_inter",
+      "kind": "font",
+      "status": "ready",
+      "purpose": "Inter variable font (optical size plus weights 100-900; the brand uses 400, 500 and 600) for body copy, UI controls, labels, vignette text and chat.",
+      "requirements": [
+        "Already loaded via next/font/google in app/layout.tsx (--font-inter). This local copy can be used with next/font/local if self-hosting is preferred",
+        "Build must verify a loaded Inter FontFace in document.fonts and that document.fonts.check('400 16px Inter') returns true",
+        "Use the latin-ext subset for Croatian diacritics",
+        "Keep OFL.txt next to the font file"
+      ],
+      "role": "font",
+      "sectionIds": [
+        "hero",
+        "players_steps",
+        "clubs_steps",
+        "product_preview",
+        "features",
+        "trust",
+        "role_split",
+        "faq",
+        "closing_cta",
+        "footer"
+      ],
+      "source": {
+        "kind": "external",
+        "reference": "https://github.com/google/fonts/tree/main/ofl/inter",
+        "license": "SIL Open Font License 1.1, Copyright 2020 The Inter Project Authors; license text saved at public/fonts/inter/OFL.txt"
+      },
+      "destination": "public/fonts/inter/Inter-VariableFont_opsz,wght.ttf"
+    }
+  ]
+}

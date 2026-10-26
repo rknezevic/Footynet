@@ -1,0 +1,293 @@
+{
+  "version": 1,
+  "foundation": {
+    "strategy": "preserve",
+    "existingAssets": [
+      "tailwind.config.ts: pitch = Tailwind emerald, ink = Tailwind slate, shadow-card, shadow-lift, fade-in-up keyframe, fine-hover and group-fine-hover variants",
+      "app/globals.css: .field, .field-label, .eyebrow, .hover-lift, .pitch-pattern, .pitch-pattern-left, .pitch-stripes, .hero-in, .hero-fade, .landing-anchor, .bar-grow, and a prefers-reduced-motion block covering hero-in, hero-fade and role-choice-selected",
+      "app/layout.tsx: Inter (--font-inter) and Outfit (--font-outfit) via next/font/google with latin and latin-ext subsets",
+      "public/fonts/outfit/Outfit-VariableFont_wght.ttf and public/fonts/inter/Inter-VariableFont_opsz,wght.ttf, each with OFL.txt",
+      "components/Logo.tsx: solid emerald-700 tile holding a white 'F' monogram beside the two-tone 'Footy' + 'Net' wordmark",
+      "components/landing/LandingPage.tsx, components/landing/Vignettes.tsx and components/landing/reveal.ts: nine landing sections, native product vignettes and the one-time reveal lifecycle",
+      "components/Button.tsx with the emerald-700 fill and emerald-600 focus ring, plus Avatar, AvailabilityBadge, Badge and AuthLayout with its deep pitch-green side panel",
+      "lucide-react 0.469.0"
+    ],
+    "assetActions": [
+      {
+        "asset": "pitch emerald accent with the emerald-700 primary fill and emerald-600 focus ring",
+        "action": "protect",
+        "reason": "Verified in tailwind.config.ts and components/Button.tsx; the deeper step is what makes white button text pass contrast, so the mapping must not drift back"
+      },
+      {
+        "asset": "ink slate neutral and the surface ladder (slate-50 canvas, white surface, #052E22 and #03140F panels)",
+        "action": "preserve",
+        "reason": "Already carries the references' light-to-dark section rhythm and is used across every landing section"
+      },
+      {
+        "asset": "Outfit display face",
+        "action": "preserve",
+        "reason": "Locked by the brief and loaded in app/layout.tsx with latin-ext for Croatian diacritics; the typography draw does not apply to a verified existing brand face"
+      },
+      {
+        "asset": "Inter body face",
+        "action": "preserve",
+        "reason": "Locked by the brief, loaded with latin-ext, and used for all UI, body and vignette text"
+      },
+      {
+        "asset": "FootyNet wordmark and emerald monogram tile in components/Logo.tsx",
+        "action": "preserve",
+        "reason": "The emoji was already replaced by a solid tile that renders identically on every OS; it is the brand's only mark"
+      },
+      {
+        "asset": "Pitch-line panel utilities (.pitch-pattern, .pitch-pattern-left, .pitch-stripes)",
+        "action": "preserve",
+        "reason": "The signature device is in place on exactly three surfaces and must not spread onto white sections"
+      },
+      {
+        "asset": "Nav anchor links and the hero wordmark link hit areas",
+        "action": "evolve",
+        "reason": "The DOM audit measured 32-36px tall targets at both viewports, below the 44px minimum; the padded target grows while the visible type stays the same"
+      },
+      {
+        "asset": "Mobile 'Build a profile like this' link in the product preview card",
+        "action": "evolve",
+        "reason": "The DOM audit measured it at 33.7px wide at 390px because the link shrank inside a flex row; it needs a full-width or min-width target"
+      },
+      {
+        "asset": "lucide-react icon set",
+        "action": "protect",
+        "reason": "The only installed icon system; hand-drawn SVG icons stay out of the brand language"
+      },
+      {
+        "asset": "shadow-card, shadow-lift and the hover-lift utility",
+        "action": "preserve",
+        "reason": "Shadow already marks interactive cards and vignettes while static panels use borders, which keeps the hierarchy readable"
+      }
+    ],
+    "lockedDecisions": [
+      "Primary action fill is emerald-700 #047857 with white text, hover emerald-800 #065F46",
+      "Focus ring is emerald-600 #059669 at 3px with a 2px offset",
+      "Neutral is Tailwind slate (ink); canvas slate-50, surfaces white, dark panels #052E22 and #03140F",
+      "Outfit is the display face for headings, the wordmark and numbers; Inter is the body and UI face",
+      "Wordmark is 'FootyNet' with 'Net' in the accent colour, beside the emerald monogram tile",
+      "Icons come only from lucide-react",
+      "Light theme is the product default; no dark mode",
+      "The pitch and ink token aliases in tailwind.config.ts stay the single re-theme point",
+      "All copy lives in messages/en.json and messages/hr.json and must fit in both languages",
+      "Respect prefers-reduced-motion; no transforms on ancestors of sticky or fixed elements",
+      "Every visible interactive target is at least 44x44 CSS pixels at every viewport",
+      "Example data stays visibly labelled and never implies a real club, player or metric"
+    ],
+    "assumptions": [
+      "The randomized typography draw (Syne, Lora, Paytone One, Roboto Mono) is not applied, because Outfit and Inter are verified existing brand faces locked by the brief",
+      "The newly selected reference set refines details inside the already-approved nine-section order rather than replacing it",
+      "References built on photography contribute their frame geometry, caption placement and surface treatment only; their media slot holds FootyNet's own interface, because no photography is available",
+      "The ariyana testimonial and meridian metrics compositions contribute layout language only; no testimonial or statistic may be shown, since none is verified",
+      "Larger hit areas come from padding and min-height on the existing link and button styles, so the reference type scale and spacing rhythm are unchanged"
+    ]
+  },
+  "creativeDirection": {
+    "summary": "FootyNet reads as a matchday-clear recruiting tool: a light, tidy product interface framed by a few deep pitch-green panels, confident Outfit headlines, and the product's own screens used as the imagery. The landing page carries the energy; the app stays calm and dense.",
+    "traits": [
+      {
+        "quality": "Clear: one primary action per view, a strong heading ladder, readable lists and rows",
+        "boundary": "not so sparse that status, filters or the next step disappear"
+      },
+      {
+        "quality": "Grounded in grassroots football: positions, leagues, seasons, trials and availability stated in plain words",
+        "boundary": "not elite-stadium glamour or betting-app urgency"
+      },
+      {
+        "quality": "Confident type: large tight Outfit headlines, often a bright clause followed by a muted one",
+        "boundary": "not all-caps shouting, monospace or condensed display type"
+      },
+      {
+        "quality": "Honest: approval, email confirmation and example data are stated plainly and labelled",
+        "boundary": "not invented statistics, testimonials, club logos or star ratings"
+      }
+    ],
+    "productiveTension": "Calm, data-dense light product screens against a few deep pitch-green high-contrast panels with monumental type; the tool is quiet, the invitation is loud.",
+    "signatureDevice": {
+      "description": "Pitch-line panel: a deep pitch-green surface carrying faint white pitch markings (centre circle, halfway line, 48px mowing stripes) from the existing pitch-pattern utilities, used as the framing ground for the hero media field, the trust panel and the closing CTA.",
+      "status": "candidate",
+      "invariants": [
+        "Only on deep green (#052E22 to #03140F) surfaces, never on white and never on a card",
+        "Lines at 6-10% white, 1-2px strokes, mowing stripes at 48px",
+        "Geometry is a real pitch element (centre circle, halfway line, penalty-box corner), never random lines",
+        "At most three uses per page, and never inside dense app screens such as tables or chat",
+        "The centre circle sits behind an empty column, never under body text",
+        "Text on it is white or emerald-200; a primary button on it keeps the emerald-700 fill with white text plus a white outline for separation"
+      ]
+    },
+    "restraint": "Emerald appears as the primary fill, the focus ring, the active and selected state, the availability status, and the deep-green signature panels. Cards do not each take their own colour, and decorative gradients stay out.",
+    "avoid": [
+      "Emoji or hand-drawn SVG used as icons or as the logo",
+      "Gradient tiles, gradient text and decorative blobs",
+      "Shadow plus hover-lift on every card; static panels take a border or nothing",
+      "Three-equal-icon feature rows with no content inside them",
+      "Invented numbers, user counts, club logos, star ratings or testimonials, including inside any metrics-shaped or testimonial-shaped layout",
+      "All-caps body text or monospace UI copy",
+      "Neon lime, navy-and-cyan SaaS palettes, or the references' orange and black accents",
+      "White text on emerald-500 or emerald-600 fills",
+      "Hover-only information on job rows, cards or table rows",
+      "Hairline grid systems or card-edge rails that no reference actually shows"
+    ]
+  },
+  "colorPalette": [
+    {
+      "name": "Light Canvas",
+      "value": "#F2F7FF",
+      "usage": "Dominant. canvas token in the light theme."
+    },
+    {
+      "name": "Light Surface",
+      "value": "#FCFDFF",
+      "usage": "Dominant. surface token in the light theme."
+    },
+    {
+      "name": "Light Surface alt",
+      "value": "#DCE7F7",
+      "usage": "Supporting. surface alt token in the light theme."
+    },
+    {
+      "name": "Light Text",
+      "value": "#0D1218",
+      "usage": "Semantic. text token in the light theme."
+    },
+    {
+      "name": "Light Text muted",
+      "value": "#484D55",
+      "usage": "Semantic. text muted token in the light theme."
+    },
+    {
+      "name": "Light Divider",
+      "value": "#BCC5D1",
+      "usage": "Semantic. divider token in the light theme."
+    },
+    {
+      "name": "Light Control border",
+      "value": "#606A78",
+      "usage": "Semantic. control border token in the light theme."
+    },
+    {
+      "name": "Light Accent",
+      "value": "#047857",
+      "usage": "Sparse accent. accent token in the light theme."
+    },
+    {
+      "name": "Light Accent hover",
+      "value": "#065F46",
+      "usage": "Semantic. accent hover token in the light theme."
+    },
+    {
+      "name": "Light On accent",
+      "value": "#FFFFFF",
+      "usage": "Semantic. on accent token in the light theme."
+    },
+    {
+      "name": "Light Accent text",
+      "value": "#004F38",
+      "usage": "Sparse accent. accent text token in the light theme."
+    },
+    {
+      "name": "Light Focus ring",
+      "value": "#059669",
+      "usage": "Semantic. focus ring token in the light theme."
+    }
+  ],
+  "typefaces": [
+    {
+      "family": "Outfit",
+      "source": "Existing brand font, loaded via next/font/google in app/layout.tsx (--font-outfit) with latin and latin-ext; local file at public/fonts/outfit/Outfit-VariableFont_wght.ttf, OFL, https://fonts.google.com/specimen/Outfit",
+      "roles": [
+        "landing headlines: hero statement 19-20px in the rail, section headings clamp(40px, 4.8vw, 72px), closing CTA clamp(56px, 5vw, 80px), all at tracking -0.03em and line-height 1.02-1.05",
+        "card and step titles 28-40px",
+        "app page titles 24-30px",
+        "wordmark and the monogram tile",
+        "numbers, counts and badge figures"
+      ],
+      "weights": [
+        500,
+        600,
+        700
+      ]
+    },
+    {
+      "family": "Inter",
+      "source": "Existing brand font, loaded via next/font/google in app/layout.tsx (--font-inter) with latin and latin-ext; local file at public/fonts/inter/Inter-VariableFont_opsz,wght.ttf, OFL, https://fonts.google.com/specimen/Inter",
+      "roles": [
+        "body copy 15-20px, never below 16px on mobile",
+        "buttons, nav links, labels, form fields and table text",
+        "chat bubbles and vignette data rows",
+        "small labels at 13px in sentence case, with caps reserved for the FOOTYNET brand label and the micro-rule label"
+      ],
+      "weights": [
+        400,
+        500,
+        600
+      ]
+    }
+  ],
+  "interfaceDirection": "Spacing on a 4px base using 8/12/16/24/32/48/96/128; landing sections at 80-112px vertical padding on desktop and 64-80px on mobile, app pages at 24-32px. Widths: landing content max 1200px, hero and footer to 1440px with 40px gutters (24px on mobile), prose max 640px, FAQ column 72% on desktop and 84% at medium. Surfaces: slate-50 canvas, white cards with a 1px slate-200 border, slate-100 for grouped or selected rows, and deep pitch-green panels for the hero media field, the trust block, the role split and the closing CTA, keeping the references' light-dark-light sequence. Radius: 8px controls, 12px cards and vignettes, 16-24px landing media frames, full pill only for status badges and the closing CTA button. Shadows: shadow-lift on vignette cards that sit on green, shadow-card on interactive cards, borders alone on static panels. Cards group a real unit (a job ad, an applicant, a step with its own interface, a feature with a live example); ordinary prose is never boxed, and the trust list stays open editorial text on the green panel as in the ollef-style values block. Media frames hold native product interface, not photography: the karo hero keeps a narrow left rail beside a dominant stacked media field; lexedge-style cards keep a media area above a bottom meta bar; fabrica and nubo showreel frames keep one large rounded centred frame; mello keeps one dominant tile beside smaller ones. Controls: 48px landing and 40px app height, primary emerald-700 with white text and emerald-800 hover, secondary white with a slate-300 border, ghost links emerald-700 on light and emerald-300 on dark with an always-on underline on dark panels. Focus is a 3px emerald-600 ring with a 2px offset (emerald-300 on dark). Every link, anchor, icon button and wordmark gets padding or min-height so its hit area reaches 44x44px even when the visible text is smaller, and links inside flex rows carry a min-width or full-width so they cannot collapse. Active nav: emerald-800 text with a 2px emerald-700 underline. Tables: 48px rows, sticky header, no zebra, slate-50 row hover, emerald-800 on emerald-50 status pills. Empty states: a lucide icon in a 48px emerald-50 circle, one explaining line, one primary action.",
+  "imageDirection": {
+    "summary": "The product is the imagery. Every media frame holds FootyNet's own interface built in HTML and CSS, placed in the reference's frame geometry, with a visible example-data label.",
+    "subjects": [
+      "Job board with three open positions, each showing club initials, league, city, training days and an Apply action",
+      "Applicant list with avatar initials, position, preferred foot, age and a Message action",
+      "Player profile with avatar, position, foot, city, availability badge and a career timeline",
+      "Job-ad form with filled position, league and city fields and a Publish action",
+      "Club approval status with a three-step progress (registered, email confirmed, admin review)",
+      "Chat thread with a club bubble, an emerald player bubble and a message input",
+      "Availability badges and an applicants-per-day bar chart drawn from example values",
+      "Register role chooser showing the player and club options with the player card selected"
+    ],
+    "treatment": "White 12-24px-radius cards with shadow-lift, set inside deep pitch-green or emerald-50 frames at fixed aspect ratios so nothing shifts while fonts load. Vignettes are inert and aria-hidden with a visually hidden sentence describing them, and each frame carries a visible 'Example data' / 'Primjer podataka' tag. Dark frames keep body text at white or white/70% and never place small text over the pitch markings.",
+    "avoid": [
+      "Stock or generated photography of people, pitches or equipment",
+      "Decorative SVG illustrations, abstract shapes, sonar graphics or schematic diagrams used as filler",
+      "Rasterized screenshots of interfaces that can be built natively",
+      "Fake device mockups with glare or perspective",
+      "Identifiable real club crests, kits, sponsors or player names",
+      "Charts or counters presenting unverified numbers as real metrics"
+    ]
+  },
+  "motionDirection": {
+    "summary": "Visible, purposeful motion: the hero assembles on load, later sections each reveal once in their own way as they enter, and controls give crisp direct feedback. Everything animates opacity and transform only, runs once, and renders final under reduced motion.",
+    "principles": [
+      "Hero entrance establishes reading order; trigger: page load; the rail wordmark, statement, link groups and Register rise 16px and fade with an 80ms stagger while each media frame fades its green ground and lifts its white vignette card 20px; 600-750ms; strong ease-out cubic-bezier(0.16, 1, 0.3, 1)",
+      "Hero board rows explain content inside an already-moving frame; trigger: load, 420ms after the frame; the three job rows fade in at 70ms intervals with opacity only, so no transform nests inside the card's own entrance; 500ms; ease-out",
+      "Player step tiles explain a sequence; trigger: each tile group entering the viewport once via IntersectionObserver at threshold 0 with a positive bottom rootMargin, then unobserved; tiles rise 20px and fade with a 90ms stagger and the inner vignette follows its ground; 600-620ms; ease-out",
+      "Club cards introduce paired steps; trigger: each card row entering once; the two cards in a row fade and rise 20px 80ms apart while the inner vignette scales from 0.96 to 1, keeping the title and the glass meta bar readable throughout; 600ms; ease-out",
+      "Product preview assembles the product; trigger: the bento group entering once; the large dark card fades and rises 12px first, then the job-ad and right-hand cards slide 20px in from the right with the total stagger capped at 240ms, after which the chart bars grow from scaleY 0.2 to 1 anchored at the bottom; 500-650ms; ease-out",
+      "Trust and feature lists clarify structure; trigger: each list item or card entering once; items fade and rise 12px in sequence at 70-90ms while the static label and rule stay put; 450-560ms; gentle ease-out cubic-bezier(0.22, 1, 0.36, 1)",
+      "Role choice shows a decision being made; trigger: the choice panel entering once; the panel fades, its two option cards rise 12px in sequence, then the selected card's border settles from slate-300 to emerald-700; 300ms for the border inside a 650ms panel entrance; ease-out",
+      "Direct feedback confirms interaction; trigger: hover on fine pointers, focus and press on buttons, nav links, cards and rows; background-color, border-color, box-shadow and a 1px translateY on named properties only; 120-200ms; ease-out",
+      "Disclosure keeps continuity; trigger: click or keyboard toggle on a FAQ row, the mobile menu or a modal; the panel animates grid-template-rows 0fr to 1fr with an opacity fade while the Plus rotates 45deg or the chevron flips, and a modal rises 8px on the dialog itself, never on an ancestor of a fixed element; 200-260ms; ease-in-out",
+      "Reduced motion and script failure stay readable; trigger: prefers-reduced-motion or no JavaScript; every section renders in its final visible state, observers disconnect, owned animations cancel and only colour feedback remains; 0ms; no easing"
+    ],
+    "avoid": [
+      "transition: all",
+      "Scale-from-zero or blur-in entrances",
+      "The same fade-up applied to every section",
+      "Reveals that reset on scroll-out, resize or rerender",
+      "A global opacity:0 reveal class that hides content when scripting fails",
+      "Transforms on ancestors of the sticky top bar, the mobile sheet or a modal",
+      "Nested reveal transforms inside an element that is already animating",
+      "Scroll-jacking, parallax or perpetual floating",
+      "Large clip-path, filter or blur animations",
+      "Hover-only information, and any motion inside dense app tables or chat beyond feedback"
+    ]
+  },
+  "voice": {
+    "summary": "Direct, warm and practical, like a good club secretary: short sentences, real football words (trial, squad, position, season, league, availability), a clear next step, and the same meaning in Croatian and English. Headlines pair a plain statement with a muted second clause.",
+    "avoid": [
+      "Hype words such as revolutionary, ultimate or game-changing",
+      "Invented numbers, guarantees of signing, or success claims",
+      "Corporate jargon and startup slang",
+      "Stacked puns or a joke in every heading",
+      "All-caps sentences outside the single brand label",
+      "Copy whose meaning differs between en and hr",
+      "Internal notes such as pending, to be supplied or not connected in visible copy"
+    ]
+  }
+}
