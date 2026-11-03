@@ -11,7 +11,7 @@
 I built it as my graduation thesis and kept developing it into a deployed full-stack app: an ASP.NET Core Web API, a Next.js frontend, PostgreSQL, Docker and a GitHub Actions CI/CD pipeline.
 
 <!-- TODO: add the live demo link here, e.g.  **Live demo:** https://...  -->
-
+https://footynet-ten.vercel.app/
 <!-- TODO: add 2–4 screenshots (landing page, job ads, chat, admin dashboard), e.g.
 ![Job ads](docs/screenshots/job-ads.png)
 -->
