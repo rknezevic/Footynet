@@ -87,6 +87,9 @@
   <data name="Application.NotFound" xml:space="preserve">
     <value>Prijava nije pronađena</value>
   </data>
+  <data name="Application.AlreadyApplied" xml:space="preserve">
+    <value>Već ste se prijavili na ovaj oglas</value>
+  </data>
   <data name="User.NotFound" xml:space="preserve">
     <value>Korisnik nije pronađen</value>
   </data>

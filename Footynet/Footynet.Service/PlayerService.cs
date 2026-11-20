@@ -26,25 +26,39 @@ public class PlayerService : IPlayerService
         if (jobAd.AdStatus != AdStatusType.Open)
             throw new InvalidOperationException(AppMessages.JobAd.NotOpen);
 
-        var application = new JobApplication
-        {
-            Id = Guid.NewGuid(),
-            PlayerId = playerId,
-            JobAdId = dto.JobAdId,
-            CoverLetter = dto.CoverLetter,
-            AppliedAt = DateTime.UtcNow,
-            Status = StatusType.Pending
-        };
+        // A player has at most one application per ad (unique index). Applying again after
+        // cancelling reopens that application instead of adding a second one.
+        var application = await _playerRepository.GetApplicationForJobAdAsync(playerId, dto.JobAdId);
+        if (application != null && application.Status != StatusType.Cancelled)
+            throw new InvalidOperationException(AppMessages.Application.AlreadyApplied);
 
-        var created = await _playerRepository.CreateApplicationAsync(application);
+        if (application != null)
+        {
+            application.Status = StatusType.Pending;
+            application.CoverLetter = dto.CoverLetter;
+            application.AppliedAt = DateTime.UtcNow;
+            await _playerRepository.UpdateApplicationAsync(application);
+        }
+        else
+        {
+            application = await _playerRepository.CreateApplicationAsync(new JobApplication
+            {
+                Id = Guid.NewGuid(),
+                PlayerId = playerId,
+                JobAdId = dto.JobAdId,
+                CoverLetter = dto.CoverLetter,
+                AppliedAt = DateTime.UtcNow,
+                Status = StatusType.Pending
+            });
+        }
 
         return new JobApplicationResponseDto
         {
-            Id = created.Id,
-            PlayerId = created.PlayerId,
-            JobAdId = created.JobAdId,
-            AppliedAt = created.AppliedAt,
-            Status = created.Status.ToString()
+            Id = application.Id,
+            PlayerId = application.PlayerId,
+            JobAdId = application.JobAdId,
+            AppliedAt = application.AppliedAt,
+            Status = application.Status.ToString()
         };
     }
 

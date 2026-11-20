@@ -70,6 +70,7 @@ public class FootynetDbContext : DbContext
         modelBuilder.Entity<Club>().Property(c => c.Phone).HasMaxLength(30);
         modelBuilder.Entity<User>(e =>
         {
+            e.HasIndex(u => u.Email).IsUnique();
             e.Property(u => u.EmailConfirmationTokenHash).HasMaxLength(64);
             e.HasIndex(u => u.EmailConfirmationTokenHash);
             e.Property(u => u.PasswordResetTokenHash).HasMaxLength(64);

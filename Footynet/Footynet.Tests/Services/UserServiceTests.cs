@@ -185,6 +185,17 @@ public class UserServiceTests
         Assert.Equal(unknown.Message, wrong.Message);
     }
 
+    [Theory]
+    [InlineData("Ivan.Horvat@Example.com")]
+    [InlineData("  ivan.horvat@example.com ")]
+    public async Task Register_StoresEmailInNormalizedForm(string typed)
+    {
+        await _service.RegisterAsync(new RegisterDto { Email = typed, Password = "Lozinka123", Role = RoleType.Player, FirstName = "Ivan", AcceptTerms = true });
+
+        var created = (User)_userRepository.Invocations.Single(i => i.Method.Name == nameof(IUserRepository.CreateAsync)).Arguments[0];
+        Assert.Equal("ivan.horvat@example.com", created.Email);
+    }
+
     [Fact]
     public async Task Register_RecordsTermsAcceptance()
     {

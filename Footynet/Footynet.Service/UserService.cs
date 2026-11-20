@@ -43,7 +43,7 @@ public class UserService : IUserService
             RoleType.Player => new Player
             {
                 Id = Guid.NewGuid(),
-                Email = dto.Email,
+                Email = User.NormalizeEmail(dto.Email),
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 FirstName = dto.FirstName ?? string.Empty,
                 LastName = dto.LastName ?? string.Empty,
@@ -56,7 +56,7 @@ public class UserService : IUserService
             RoleType.Club => new Club
             {
                 Id = Guid.NewGuid(),
-                Email = dto.Email,
+                Email = User.NormalizeEmail(dto.Email),
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Name = dto.Name ?? string.Empty,
                 Description = dto.Description ?? string.Empty,

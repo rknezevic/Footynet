@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { HubConnection, HubConnectionState } from '@microsoft/signalr';
 import { useAuth } from '@/contexts/AuthContext';
-import { createChatConnection, CHAT_EVENTS } from '@/lib/chat';
+import { createChatConnection, CHAT_EVENTS, retryDelay } from '@/lib/chat';
 import { messageService } from '@/lib/message';
 import { Message, RoleType } from '@/types';
 
@@ -42,15 +42,28 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       listeners.current.forEach(l => l(message));
     });
     connection.on(CHAT_EVENTS.messagesRead, () => refreshUnread());
+    // Automatic reconnect only covers drops after a successful start; the first start can fail too
+    // (the backend may still be waking up), so starting is retried here with the same pauses
+    let disposed = false;
+    let attempt = 0;
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
+    const scheduleStart = () => {
+      if (!disposed) retryTimer = setTimeout(start, retryDelay(attempt++));
+    };
+    const start = () => {
+      connection.start()
+        .then(() => { attempt = 0; setConnected(true); refreshUnread(); })
+        .catch(err => { console.warn('Chat connection failed, retrying', err); scheduleStart(); });
+    };
+
     connection.onreconnecting(() => setConnected(false));
     connection.onreconnected(() => { setConnected(true); refreshUnread(); });
-    connection.onclose(() => setConnected(false));
-
-    connection.start()
-      .then(() => { setConnected(true); refreshUnread(); })
-      .catch(err => console.warn('Chat connection failed', err));
+    connection.onclose(() => { setConnected(false); scheduleStart(); });
+    start();
 
     return () => {
+      disposed = true;
+      clearTimeout(retryTimer);
       connectionRef.current = null;
       setConnected(false);
       if (connection.state !== HubConnectionState.Disconnected) connection.stop();

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Footynet.Data;
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
+using Footynet.Localization;
 
 namespace Footynet.Repository;
 
@@ -16,9 +17,10 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByEmailAsync(string email)
     {
+        var normalized = User.NormalizeEmail(email);
         return await _context.Users
             .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(u => u.Email == email);
+            .FirstOrDefaultAsync(u => u.Email == normalized);
     }
 
     public async Task<User?> GetByIdAsync(Guid id)
@@ -31,7 +33,15 @@ public class UserRepository : IUserRepository
     {
         user.Id = Guid.NewGuid();
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (ex.IsUniqueViolation())
+        {
+            // Two registrations with the same email at the same moment: the unique index catches the second
+            throw new InvalidOperationException(AppMessages.Auth.EmailTaken);
+        }
         return user;
     }
 

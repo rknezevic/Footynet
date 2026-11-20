@@ -15,7 +15,9 @@ using Footynet.Hubs;
 using Footynet.Service.Email;
 using Footynet.Localization;
 using Footynet.Model;
+using Footynet.Filters;
 using Footynet.Security;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -116,7 +118,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         .AddSupportedUICultures(supportedCultures);
 });
 
-builder.Services.AddControllers()
+builder.Services.AddControllers(options => options.Filters.Add<PagingLimits>())
     .ConfigureApiBehaviorOptions(options =>
     {
         // Return validation errors as { status, message, errors } with translated messages,
@@ -139,6 +141,7 @@ builder.Services.AddControllers()
         };
     });
 builder.Services.AddHttpClient();
+builder.Services.AddHealthChecks().AddDbContextCheck<FootynetDbContext>("database");
 builder.Services.AddFootynetRateLimits();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginDtoValidator>();
@@ -222,7 +225,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
     app.UseHttpsRedirection();
 }
-app.UseSerilogRequestLogging();
+// Health pings arrive every minute or so; keep them out of the log unless they fail
+app.UseSerilogRequestLogging(options => options.GetLevel = (context, _, exception) =>
+    exception != null || context.Response.StatusCode >= 500 ? Serilog.Events.LogEventLevel.Error
+    : context.Request.Path.StartsWithSegments("/health") ? Serilog.Events.LogEventLevel.Verbose
+    : Serilog.Events.LogEventLevel.Information);
 // Must run before ExceptionMiddleware so error messages are translated into the request's culture
 app.UseRequestLocalization();
 app.UseMiddleware<Footynet.Middleware.ExceptionMiddleware>();
@@ -233,6 +240,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+// /health/live: the process answers (for the host's restart checks)
+// /health: the database is reachable too (for uptime monitoring)
+app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
+app.MapHealthChecks("/health");
 app.MapHub<ChatHub>(ChatHub.Path);
 
 // Apply migrations and seed admin
@@ -253,7 +264,7 @@ using (var scope = app.Services.CreateScope())
         var admin = new Admin
         {
             Id = Guid.NewGuid(),
-            Email = adminEmail!,
+            Email = User.NormalizeEmail(adminEmail!),
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword),
             EmailConfirmed = true
         };

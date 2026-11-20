@@ -8,7 +8,7 @@ public interface IClubService
     Task<PaginatedResult<ClubApplicationDto>> GetJobApplicationsAsync(Guid clubId, Guid jobAdId, StatusType? status = null, bool orderByDateDesc = true, int page = 1, int pageSize = 10);
     Task AcceptApplicationAsync(Guid applicationId, Guid clubId);
     Task RejectApplicationAsync(Guid applicationId, Guid clubId);
-    Task<int> GetApplicationCountAsync(Guid jobAdId);
+    Task<int> GetApplicationCountAsync(Guid jobAdId, Guid clubId);
     Task<ClubProfileDto?> GetClubProfileAsync(Guid clubId);
     Task UpdateClubProfileAsync(Guid clubId, UpdateClubProfileDto dto);
     Task DeactivateAccountAsync(Guid clubId);

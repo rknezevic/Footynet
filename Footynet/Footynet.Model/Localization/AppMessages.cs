@@ -54,6 +54,7 @@ public static class AppMessages
     public static class Application
     {
         public const string NotFound = "Application.NotFound";
+        public const string AlreadyApplied = "Application.AlreadyApplied";
     }
 
     public static class User

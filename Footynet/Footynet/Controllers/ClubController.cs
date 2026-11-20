@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Footynet.DTOs;
+using Footynet.Exceptions;
 using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Footynet.Service.Interfaces;
@@ -31,7 +32,7 @@ public class ClubController : ControllerBase
     {
         var club = await _clubRepository.GetByIdAsync(GetUserId());
         if (club is not null && !club.IsApproved)
-            throw new UnauthorizedAccessException(AppMessages.Club.PendingApproval);
+            throw new ForbiddenException(AppMessages.Club.PendingApproval);
     }
 
     [HttpPost("job-ads")]
@@ -106,7 +107,7 @@ public class ClubController : ControllerBase
     public async Task<ActionResult<int>> GetApplicationCount(Guid jobAdId)
     {
         await EnsureClubApproved();
-        var count = await _clubService.GetApplicationCountAsync(jobAdId);
+        var count = await _clubService.GetApplicationCountAsync(jobAdId, GetUserId());
         return Ok(count);
     }
 

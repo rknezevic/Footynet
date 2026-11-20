@@ -68,6 +68,7 @@ public class JobAdRepository : IJobAdRepository
             JOIN ""Users"" c ON ja.""ClubId"" = c.""Id""
             JOIN ""Leagues"" l ON c.""LeagueId"" = l.""Id""
             LEFT JOIN ""JobApplications"" app ON ja.""Id"" = app.""JobAdId"" AND app.""PlayerId"" = @excludePlayerId
+                AND app.""Status"" <> @cancelled
             WHERE ja.""AdStatus"" = 0
             AND c.""IsActive"" = true
             AND (@excludePlayerId IS NULL OR app.""Id"" IS NULL)
@@ -77,7 +78,7 @@ public class JobAdRepository : IJobAdRepository
             ORDER BY ja.""CreatedAt"" {orderBy}
             OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY";
 
-        return await _connection.QueryAsync<JobAdDto>(sql, new { offset, pageSize, position, leagueId, searchTerm, excludePlayerId });
+        return await _connection.QueryAsync<JobAdDto>(sql, new { offset, pageSize, position, leagueId, searchTerm, excludePlayerId, cancelled = StatusType.Cancelled });
     }
 
     public async Task<IEnumerable<JobAdDto>> GetAdsByPlayerAsync(Guid playerId)

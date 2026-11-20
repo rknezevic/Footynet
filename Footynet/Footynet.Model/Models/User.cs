@@ -30,6 +30,9 @@ public abstract class User
     // Set when the user has a profile picture (see UserPhoto)
     public DateTime? PhotoUpdatedAt { get; set; }
     public abstract RoleType Role { get; }
+
+    // Emails are stored and looked up in one form, so "Ivan@x.hr" and "ivan@x.hr" are the same account
+    public static string NormalizeEmail(string email) => email.Trim().ToLowerInvariant();
 }
 
 public enum RoleType

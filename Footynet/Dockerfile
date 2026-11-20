@@ -1,7 +1,7 @@
 # Build context: the Footynet/ solution folder
 #   docker build -t footynet-api .
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Restore first so the dependency layer is cached between builds
@@ -16,7 +16,7 @@ RUN dotnet restore Footynet/Footynet.WebApi.csproj
 COPY . .
 RUN dotnet publish Footynet/Footynet.WebApi.csproj -c Release -o /app/publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 

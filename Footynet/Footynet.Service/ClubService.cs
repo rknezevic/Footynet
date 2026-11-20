@@ -84,10 +84,10 @@ public class ClubService : IClubService
         await _applicationRepository.UpdateStatusAsync(applicationId, StatusType.Rejected);
     }
 
-    public async Task<int> GetApplicationCountAsync(Guid jobAdId)
+    public async Task<int> GetApplicationCountAsync(Guid jobAdId, Guid clubId)
     {
-        var applications = await _applicationRepository.GetApplicationsByJobAdAsync(jobAdId);
-        return applications.Count();
+        // Counted in SQL and limited to the club's own ads
+        return await _applicationRepository.GetApplicationsCountAsync(jobAdId, clubId: clubId);
     }
 
     public async Task<ClubProfileDto?> GetClubProfileAsync(Guid clubId)

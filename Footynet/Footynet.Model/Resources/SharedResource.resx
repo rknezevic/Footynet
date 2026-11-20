@@ -87,6 +87,9 @@
   <data name="Application.NotFound" xml:space="preserve">
     <value>Application not found</value>
   </data>
+  <data name="Application.AlreadyApplied" xml:space="preserve">
+    <value>You have already applied to this job ad</value>
+  </data>
   <data name="User.NotFound" xml:space="preserve">
     <value>User not found</value>
   </data>

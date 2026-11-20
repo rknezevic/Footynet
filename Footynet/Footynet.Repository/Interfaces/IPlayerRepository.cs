@@ -9,6 +9,8 @@ public interface IPlayerRepository
     Task<Player> UpdateAsync(Player player);
     Task<JobApplication> CreateApplicationAsync(JobApplication application);
     Task<JobApplication?> GetApplicationAsync(Guid playerId, Guid applicationId);
+    Task<JobApplication?> GetApplicationForJobAdAsync(Guid playerId, Guid jobAdId);
+    Task UpdateApplicationAsync(JobApplication application);
     Task<IEnumerable<JobAdDto>> GetPlayerApplicationsAsync(Guid playerId, StatusType? statusType = null, int page = 1, int pageSize = 10);
     Task<int> GetPlayerApplicationsCountAsync(Guid playerId, StatusType? statusType = null);
     Task CancelApplicationAsync(JobApplication application);

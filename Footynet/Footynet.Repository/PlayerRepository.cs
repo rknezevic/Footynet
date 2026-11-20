@@ -5,6 +5,7 @@ using Footynet.Models;
 using Footynet.DTOs;
 using Dapper;
 using Footynet.Repository.Interfaces;
+using Footynet.Localization;
 
 namespace Footynet.Repository;
 
@@ -37,15 +38,33 @@ public class PlayerRepository : IPlayerRepository
     public async Task<JobApplication> CreateApplicationAsync(JobApplication application)
     {
         _context.JobApplications.Add(application);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (ex.IsUniqueViolation())
+        {
+            // The (PlayerId, JobAdId) unique index: the same application sent twice at once (e.g. a double click)
+            throw new InvalidOperationException(AppMessages.Application.AlreadyApplied);
+        }
         return application;
     }
 
-    //not that complicated to use dapper
     public async Task<JobApplication?> GetApplicationAsync(Guid playerId, Guid applicationId)
     {
         return await _context.JobApplications
             .FirstOrDefaultAsync(a => a.PlayerId == playerId && a.Id == applicationId);
+    }
+
+    public async Task<JobApplication?> GetApplicationForJobAdAsync(Guid playerId, Guid jobAdId)
+    {
+        return await _context.JobApplications
+            .FirstOrDefaultAsync(a => a.PlayerId == playerId && a.JobAdId == jobAdId);
+    }
+
+    public async Task UpdateApplicationAsync(JobApplication application)
+    {
+        await _context.SaveChangesAsync();
     }
 
     public async Task CancelApplicationAsync(JobApplication application)
