@@ -60,8 +60,8 @@ public class JobAdRepository : IJobAdRepository
         var offset = (page - 1) * pageSize;
         var orderBy = sortDescending ? "DESC" : "ASC";
         var sql = $@"
-            SELECT ja.""Id"", ja.""Title"", ja.""Description"", 
-                   c.""Name"" as ClubName, c.""PhotoUpdatedAt"" as ClubPhotoUpdatedAt, l.""Name"" as LeagueName, 
+            SELECT ja.""Id"", ja.""Title"", ja.""Description"",
+                   ja.""ClubId"", c.""Name"" as ClubName, c.""PhotoUpdatedAt"" as ClubPhotoUpdatedAt, l.""Name"" as LeagueName,
                    ja.""RequiredPosition"",
                    ja.""CreatedAt""
             FROM ""JobAds"" ja
@@ -69,51 +69,20 @@ public class JobAdRepository : IJobAdRepository
             JOIN ""Leagues"" l ON c.""LeagueId"" = l.""Id""
             LEFT JOIN ""JobApplications"" app ON ja.""Id"" = app.""JobAdId"" AND app.""PlayerId"" = @excludePlayerId
                 AND app.""Status"" <> @cancelled
-            WHERE ja.""AdStatus"" = 0
+            WHERE ja.""AdStatus"" = @open
             AND c.""IsActive"" = true
             AND (@excludePlayerId IS NULL OR app.""Id"" IS NULL)
             AND (@position IS NULL OR ja.""RequiredPosition"" = @position)
             AND (@leagueId IS NULL OR l.""Id"" = @leagueId)
-            AND (@searchTerm IS NULL OR ja.""Title"" LIKE '%' || @searchTerm || '%' OR ja.""Description"" LIKE '%' || @searchTerm || '%')
+            AND (@searchTerm IS NULL OR ja.""Title"" ILIKE '%' || @searchTerm || '%' OR ja.""Description"" ILIKE '%' || @searchTerm || '%')
             ORDER BY ja.""CreatedAt"" {orderBy}
             OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY";
 
-        return await _connection.QueryAsync<JobAdDto>(sql, new { offset, pageSize, position, leagueId, searchTerm, excludePlayerId, cancelled = StatusType.Cancelled });
+        return await _connection.QueryAsync<JobAdDto>(sql, new
+        {
+            offset, pageSize, position, leagueId, searchTerm, excludePlayerId,
+            open = AdStatusType.Open,
+            cancelled = StatusType.Cancelled
+        });
     }
-
-    public async Task<IEnumerable<JobAdDto>> GetAdsByPlayerAsync(Guid playerId)
-    {
-        var sql = @"
-            SELECT ja.""Id"", ja.""Title"", ja.""Description"",
-                   c.""Name"" as ClubName, c.""PhotoUpdatedAt"" as ClubPhotoUpdatedAt, l.""Name"" as LeagueName,
-                   ja.""RequiredPosition"",
-                   a.""Status"" as ApplicationStatus
-            FROM ""JobAds"" ja
-            JOIN ""Users"" c ON ja.""ClubId"" = c.""Id""
-            JOIN ""Leagues"" l ON c.""LeagueId"" = l.""Id""
-            JOIN ""JobApplications"" a ON ja.""Id"" = a.""JobAdId""
-            WHERE a.""PlayerId"" = @playerId
-            ORDER BY ja.""CreatedAt"" DESC";
-
-        return await _connection.QueryAsync<JobAdDto>(sql, new { playerId });
-    }
-
-    public async Task<IEnumerable<JobAdDto>> FilterAppliedAdsAsync(Guid playerId, StatusType statusType)
-    {
-        var sql = @"
-            SELECT ja.""Id"", ja.""Title"", ja.""Description"",
-                   c.""Name"" as ClubName, c.""PhotoUpdatedAt"" as ClubPhotoUpdatedAt, l.""Name"" as LeagueName,
-                   ja.""RequiredPosition"",
-                   a.""Status"" as ApplicationStatus
-            FROM ""JobAds"" ja
-            JOIN ""Users"" c ON ja.""ClubId"" = c.""Id""
-            JOIN ""Leagues"" l ON c.""LeagueId"" = l.""Id""
-            JOIN ""JobApplications"" a ON ja.""Id"" = a.""JobAdId""
-            WHERE a.""PlayerId"" = @playerId
-            AND (@statusType IS NULL OR a.""Status"" = @statusType)
-            ORDER BY ja.""CreatedAt"" DESC";
-
-        return await _connection.QueryAsync<JobAdDto>(sql, new { playerId, statusType });
-    }
-
 }
