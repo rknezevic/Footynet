@@ -163,7 +163,11 @@
     "coverLetterPlaceholder": "Tell the club why you're a great fit...",
     "submit": "Submit Application",
     "back": "All jobs",
-    "aboutRole": "About the position"
+    "aboutRole": "About the position",
+    "alreadyApplied": "You've already applied to this ad",
+    "viewApplications": "View my applications",
+    "aboutClub": "About the club",
+    "posted": "Posted {date}"
   },
   "playerApplications": {
     "title": "My Applications",
@@ -208,7 +212,9 @@
     "updateFailed": "Failed to update job ad",
     "openAds": "Open ads",
     "closedAds": "Closed ads",
-    "phone": "Phone"
+    "phone": "Phone",
+    "applicationCount": "{count, plural, =0 {No applications} one {# application} other {# applications}}",
+    "pendingCount": "{count} new"
   },
   "clubApplications": {
     "title": "Applications",
@@ -682,5 +688,66 @@
     "successTitle": "Password changed",
     "successText": "You can now sign in with your new password.",
     "signIn": "Sign in"
+  },
+  "notificationSettings": {
+    "title": "Notifications",
+    "messageEmails": "Email me about unread messages",
+    "messageEmailsHint": "If you don't read a new message within a few minutes, we'll email you. At most one email every 15 minutes.",
+    "loadFailed": "Could not load notification settings",
+    "saveFailed": "Could not save the change"
+  },
+  "pageTitles": {
+    "login": "Sign in",
+    "register": "Sign up",
+    "forgotPassword": "Forgot password",
+    "resetPassword": "New password",
+    "verifyEmail": "Email confirmation",
+    "checkEmail": "Check your email",
+    "pendingApproval": "Awaiting approval",
+    "completeProfile": "Complete your profile",
+    "messages": "Messages",
+    "dashboard": "Home",
+    "jobs": "Job ads",
+    "jobDetail": "Job ad",
+    "myApplications": "My applications",
+    "applications": "Applications",
+    "profile": "Profile",
+    "clubProfile": "Club profile",
+    "createJobAd": "New job ad",
+    "adminDashboard": "Administration",
+    "adminClubs": "Clubs",
+    "adminUsers": "Users",
+    "adminJobAds": "Job ads"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "The page you are looking for doesn't exist or has moved.",
+    "home": "Back to home"
+  },
+  "confirm": {
+    "closeAdTitle": "Close this job ad?",
+    "closeAdText": "\"{title}\" will no longer be visible to players and nobody can apply. You can reopen it later.",
+    "closeAdConfirm": "Close ad",
+    "rejectApplicationTitle": "Reject this application?",
+    "rejectApplicationText": "{name} will see that the application was rejected. This can't be undone.",
+    "rejectApplicationConfirm": "Reject application",
+    "rejectClubTitle": "Reject this club?",
+    "rejectClubText": "{name} will get an email saying the registration was not approved and won't be able to sign in.",
+    "rejectClubConfirm": "Reject club",
+    "deactivateUserTitle": "Deactivate this user?",
+    "deactivateUserText": "{email} will no longer be able to sign in, and their profile and job ads will be hidden. You can reactivate them later.",
+    "deactivateUserConfirm": "Deactivate",
+    "deleteJobAdTitle": "Delete this job ad?",
+    "deleteJobAdText": "\"{title}\" and all its applications will be deleted permanently. This can't be undone.",
+    "deleteJobAdConfirm": "Delete ad"
+  },
+  "deactivateAccount": {
+    "title": "Deactivate account",
+    "text": "Your profile and job ads stop being visible straight away and you can no longer sign in. To have all your data deleted permanently, write to the contact in the Privacy Policy.",
+    "button": "Deactivate account",
+    "confirmTitle": "Deactivate your account?",
+    "confirmText": "You will be signed out straight away. Only an administrator can turn the account back on.",
+    "confirm": "Yes, deactivate",
+    "failed": "Deactivating the account failed"
   }
 }

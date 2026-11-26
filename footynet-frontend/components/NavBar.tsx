@@ -52,13 +52,39 @@ export default function NavBar({ links, homeHref, onLogout }: NavBarProps) {
         </div>
       </div>
 
-      {/* Mobile: links in a horizontally scrollable row under the logo */}
-      <div className="flex gap-1 overflow-x-auto border-t border-ink-100 px-3 py-2 md:hidden">
+      {/* Mobile: one equal-width column per link (icon above a short label), so all fit on a phone */}
+      <div className={`grid border-t border-ink-100 md:hidden ${MOBILE_COLUMNS[links.length] ?? 'grid-cols-5'}`}>
         {links.map(link => (
-          <NavItem key={link.href} link={link} active={isActive(link.href)} />
+          <MobileNavItem key={link.href} link={link} active={isActive(link.href)} />
         ))}
       </div>
     </nav>
+  );
+}
+
+const MOBILE_COLUMNS: Record<number, string> = { 3: 'grid-cols-3', 4: 'grid-cols-4', 5: 'grid-cols-5' };
+
+function MobileNavItem({ link, active }: { link: NavLink; active: boolean }) {
+  const Icon = link.icon;
+  return (
+    <Link
+      href={link.href}
+      aria-current={active ? 'page' : undefined}
+      className={`relative flex flex-col items-center gap-1 py-2 text-[11px] font-medium transition-colors ${
+        active ? 'text-pitch-700' : 'text-ink-500 hover:text-ink-900'
+      }`}
+    >
+      {active && <span className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-pitch-600" aria-hidden="true" />}
+      <span className="relative">
+        <Icon className="h-5 w-5" />
+        {!!link.badge && (
+          <span className="absolute -right-2.5 -top-1.5 min-w-[1.1rem] rounded-full bg-pitch-600 px-1 py-0.5 text-center text-[10px] font-bold leading-none text-white">
+            {link.badge > 99 ? '99+' : link.badge}
+          </span>
+        )}
+      </span>
+      <span className="max-w-full truncate px-1">{link.label}</span>
+    </Link>
   );
 }
 

@@ -57,6 +57,11 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.PasswordResetTokenHash == tokenHash);
     }
 
+    public async Task<List<Admin>> GetActiveAdminsAsync()
+    {
+        return await _context.Users.OfType<Admin>().ToListAsync();
+    }
+
     public async Task UpdateAsync(User user)
     {
         await _context.SaveChangesAsync();

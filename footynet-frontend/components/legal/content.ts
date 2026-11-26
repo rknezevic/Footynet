@@ -1,15 +1,14 @@
 import type { Locale } from '@/i18n/config';
 
-// Who runs FootyNet, shown in the Privacy Policy and Terms of Use.
-// TODO before going live: fill in the real operator name and a contact email you read.
+// Who runs FootyNet, shown in the Privacy Policy and Terms of Use
 export const OPERATOR = {
-  name: '[Robert Knežević]',
-  email: '[knezevic3112@gmail.com]',
+  name: 'Robert Knežević',
+  email: 'knezevic3112@gmail.com',
 };
 
 export const LAST_UPDATED: Record<Locale, string> = {
-  hr: '26. listopada 2026.',
-  en: '26 October 2026',
+  hr: '26. studenoga 2026.',
+  en: '26 November 2026',
 };
 
 export interface LegalSection {
@@ -50,7 +49,7 @@ export const PRIVACY: Record<Locale, LegalDocument> = {
         items: [
           'Pružanje usluge (čl. 6. st. 1. t. b GDPR-a): vođenje računa, prikaz profila, oglasi, prijave i poruke.',
           'Legitimni interes (čl. 6. st. 1. t. f GDPR-a): zaštita platforme od zlouporabe, npr. ograničavanje broja pokušaja prijave.',
-          'Email obavijesti: potvrda adrese, promjena lozinke i obavijesti o novim porukama dio su usluge. Ne šaljemo reklamne poruke.',
+          'Email obavijesti: potvrda adrese i promjena lozinke dio su usluge. Ako poruku ne pročitate nekoliko minuta, pošaljemo vam obavijest emailom; to možete isključiti na svom profilu. Ne šaljemo reklamne poruke.',
         ],
       },
       {
@@ -71,7 +70,7 @@ export const PRIVACY: Record<Locale, LegalDocument> = {
           'Render: poslužitelj aplikacije (API).',
           'Vercel: isporuka web stranice.',
           'Brevo: slanje emailova.',
-          'Mapbox: prijedlozi mjesta dok upisujete grad (primaju upisani tekst i IP adresu).',
+          'Mapbox: prijedlozi mjesta dok upisujete grad. Upit ide preko našeg poslužitelja, pa Mapbox prima samo upisani tekst, ne i vašu IP adresu.',
         ],
       },
       {
@@ -134,7 +133,7 @@ export const PRIVACY: Record<Locale, LegalDocument> = {
         items: [
           'Providing the service (Art. 6(1)(b) GDPR): running your account, showing profiles, job ads, applications and messages.',
           'Legitimate interest (Art. 6(1)(f) GDPR): protecting the platform from abuse, e.g. limiting sign-in attempts.',
-          'Emails: address confirmation, password reset and new-message notifications are part of the service. We do not send marketing emails.',
+          'Emails: address confirmation and password reset are part of the service. If you leave a message unread for a few minutes, we email you about it; you can turn this off on your profile. We do not send marketing emails.',
         ],
       },
       {
@@ -155,7 +154,7 @@ export const PRIVACY: Record<Locale, LegalDocument> = {
           'Render: application server (API).',
           'Vercel: website delivery.',
           'Brevo: sending emails.',
-          'Mapbox: city suggestions while you type (receives the typed text and your IP address).',
+          'Mapbox: city suggestions while you type. Requests go through our server, so Mapbox receives only the typed text, not your IP address.',
         ],
       },
       {

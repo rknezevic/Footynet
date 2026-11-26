@@ -9,5 +9,6 @@ public interface IUserRepository
     Task<User> CreateAsync(User user);
     Task<User?> GetByEmailConfirmationTokenHashAsync(string tokenHash);
     Task<User?> GetByPasswordResetTokenHashAsync(string tokenHash);
+    Task<List<Admin>> GetActiveAdminsAsync();
     Task UpdateAsync(User user);
 }

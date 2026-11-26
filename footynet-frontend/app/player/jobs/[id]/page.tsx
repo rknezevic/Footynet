@@ -3,8 +3,8 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { ArrowLeft, CheckCircle2, Send } from 'lucide-react';
+import { useFormatter, useTranslations } from 'next-intl';
+import { ArrowLeft, CheckCircle2, MapPin, Send, Trophy } from 'lucide-react';
 import { jobAdService } from '@/lib/jobAds';
 import { playerService } from '@/lib/player';
 import { useEnumLabels } from '@/i18n/useEnumLabels';
@@ -12,7 +12,7 @@ import PageShell from '@/components/PageShell';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import Avatar from '@/components/Avatar';
-import Badge from '@/components/Badge';
+import Badge, { statusTone } from '@/components/Badge';
 import Button from '@/components/Button';
 import ErrorMessage from '@/components/ErrorMessage';
 import FormTextarea from '@/components/FormTextarea';
@@ -28,6 +28,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
   const router = useRouter();
   const t = useTranslations('jobDetail');
   const labels = useEnumLabels();
+  const format = useFormatter();
 
   useEffect(() => {
     jobAdService.getById(id).then(setJob);
@@ -68,10 +69,18 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             <Badge>{job.leagueName}</Badge>
           </div>
           <p className="whitespace-pre-line text-sm leading-relaxed text-ink-700">{job.description}</p>
+          <p className="mt-5 text-xs text-ink-400">{t('posted', { date: format.dateTime(new Date(job.createdAt), { dateStyle: 'medium' }) })}</p>
         </Card>
 
         <Card className="lg:col-span-2" title={t('applyTitle')}>
-          {success ? (
+          {job.myApplicationStatus != null ? (
+            <div className="flex flex-col items-center py-6 text-center">
+              <CheckCircle2 className="mb-3 h-12 w-12 text-pitch-500" />
+              <p className="font-semibold text-ink-900">{t('alreadyApplied')}</p>
+              <div className="mt-2"><Badge tone={statusTone(job.myApplicationStatus)} dot>{labels.status(job.myApplicationStatus)}</Badge></div>
+              <Link href="/player/applications" className="mt-4 text-sm font-semibold text-pitch-700 hover:underline">{t('viewApplications')}</Link>
+            </div>
+          ) : success ? (
             <div className="flex flex-col items-center py-6 text-center">
               <CheckCircle2 className="mb-3 h-12 w-12 text-pitch-500" />
               <p className="font-semibold text-ink-900">{t('success')}</p>
@@ -91,6 +100,20 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
               </Button>
             </form>
           )}
+        </Card>
+
+        <Card className="lg:col-span-3" title={t('aboutClub')}>
+          <div className="flex items-start gap-4">
+            <Avatar name={job.clubName} photo={job.clubPhotoUrl} size="lg" />
+            <div className="min-w-0">
+              <p className="font-semibold text-ink-900">{job.clubName}</p>
+              <p className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-500">
+                {job.clubCity && <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{job.clubCity}</span>}
+                {job.leagueName && <span className="inline-flex items-center gap-1"><Trophy className="h-3.5 w-3.5" />{job.leagueName}</span>}
+              </p>
+              {job.clubDescription && <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink-700">{job.clubDescription}</p>}
+            </div>
+          </div>
         </Card>
       </div>
     </PageShell>

@@ -144,17 +144,17 @@ public class AdminRepository : IAdminRepository
         return (items, totalCount);
     }
 
-    public async Task DeleteJobAdAsync(Guid jobAdId)
+    public async Task<bool> DeleteJobAdAsync(Guid jobAdId)
     {
         var jobAd = await _context.JobAds
             .Include(j => j.Applications)
             .FirstOrDefaultAsync(j => j.Id == jobAdId);
+        if (jobAd == null)
+            return false;
 
-        if (jobAd != null)
-        {
-            _context.JobApplications.RemoveRange(jobAd.Applications);
-            _context.JobAds.Remove(jobAd);
-            await _context.SaveChangesAsync();
-        }
+        _context.JobApplications.RemoveRange(jobAd.Applications);
+        _context.JobAds.Remove(jobAd);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

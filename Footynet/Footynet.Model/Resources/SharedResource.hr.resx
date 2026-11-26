@@ -268,6 +268,45 @@
     <value>Otvori razgovor</value>
   </data>
   <data name="Email.NewMessage.Footer" xml:space="preserve">
-    <value>Ovaj email dobivate jer niste bili u aplikaciji kad je poruka stigla. Ovakvu obavijest šaljemo najviše jednom u 30 minuta.</value>
+    <value>Ovaj email dobivate jer poruku niste pročitali nekoliko minuta. Obavijesti o porukama možete isključiti na svom profilu.</value>
+  </data>
+  <data name="Email.Unread.Subject" xml:space="preserve">
+    <value>Nepročitane poruke na FootyNetu ({0})</value>
+  </data>
+  <data name="Email.Unread.Intro" xml:space="preserve">
+    <value>Ove poruke još niste pročitali:</value>
+  </data>
+  <data name="Email.Unread.Button" xml:space="preserve">
+    <value>Otvori poruke</value>
+  </data>
+  <data name="Email.AdminNewClub.Subject" xml:space="preserve">
+    <value>Novi klub čeka odobrenje: {0}</value>
+  </data>
+  <data name="Email.AdminNewClub.Intro" xml:space="preserve">
+    <value>Klub {0} ({1}) se registrirao i potvrdio email adresu. Pregledajte registraciju i odobrite je ili odbijte.</value>
+  </data>
+  <data name="Email.AdminNewClub.Button" xml:space="preserve">
+    <value>Pregledaj klubove</value>
+  </data>
+  <data name="Email.AdminNewClub.Footer" xml:space="preserve">
+    <value>Ovaj email dobivate jer ste administrator FootyNeta.</value>
+  </data>
+  <data name="Email.ClubApproved.Subject" xml:space="preserve">
+    <value>Vaš klub je odobren</value>
+  </data>
+  <data name="Email.ClubApproved.Intro" xml:space="preserve">
+    <value>Registracija kluba {0} je odobrena. Sada možete objavljivati oglase i pregledavati prijave igrača.</value>
+  </data>
+  <data name="Email.ClubApproved.Button" xml:space="preserve">
+    <value>Prijavi se</value>
+  </data>
+  <data name="Email.ClubRejected.Subject" xml:space="preserve">
+    <value>Registracija kluba nije odobrena</value>
+  </data>
+  <data name="Email.ClubRejected.Intro" xml:space="preserve">
+    <value>Nažalost, registracija kluba {0} nije odobrena. Ako mislite da je riječ o pogrešci, javite nam se putem kontakta navedenog u Uvjetima korištenja.</value>
+  </data>
+  <data name="Email.ClubDecision.Footer" xml:space="preserve">
+    <value>Ovaj email dobivate jer ste registrirali klub na FootyNetu.</value>
   </data>
 </root>

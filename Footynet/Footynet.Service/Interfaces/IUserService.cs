@@ -11,6 +11,8 @@ public interface IUserService
     Task ResendConfirmationAsync(string email);
     Task ForgotPasswordAsync(string email);
     Task ResetPasswordAsync(ResetPasswordDto dto);
+    Task<NotificationSettingsDto> GetNotificationSettingsAsync(Guid userId);
+    Task UpdateNotificationSettingsAsync(Guid userId, NotificationSettingsDto dto);
     Task<User?> GetUserByIdAsync(Guid id);
     Task<User?> GetUserByEmailAsync(string email);
 }

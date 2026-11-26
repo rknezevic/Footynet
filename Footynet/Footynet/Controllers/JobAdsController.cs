@@ -39,20 +39,29 @@ public class JobAdsController : ControllerBase
         var ad = await _jobAdService.GetByIdAsync(id);
         if (ad == null)
             return NotFound();
+
+        // A signed-in player sees their own (not cancelled) application instead of the apply form
+        var myApplication = User.IsInRole("Player")
+            ? ad.Applications.FirstOrDefault(a =>
+                a.PlayerId == Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value) && a.Status != StatusType.Cancelled)
+            : null;
+
         return Ok(new
         {
             ad.Id,
             ad.Title,
             ad.Description,
             ad.ClubId,
-            RequiredPosition = ad.RequiredPosition.ToString(),
             RequiredPositionName = ad.RequiredPosition.ToString(),
             ad.CreatedAt,
             ad.UpdatedAt,
             AdStatus = ad.AdStatus.ToString(),
             ClubName = ad.Club?.Name,
+            ClubCity = ad.Club?.City,
+            ClubDescription = ad.Club?.Description,
             LeagueName = ad.Club?.League?.Name,
-            ClubPhotoUrl = ad.Club == null ? null : PhotoUrls.For(ad.ClubId, ad.Club.PhotoUpdatedAt)
+            ClubPhotoUrl = ad.Club == null ? null : PhotoUrls.For(ad.ClubId, ad.Club.PhotoUpdatedAt),
+            MyApplicationStatus = myApplication?.Status
         });
     }
 }

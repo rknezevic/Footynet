@@ -19,6 +19,7 @@ import EmptyState from '@/components/EmptyState';
 import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import Modal from '@/components/Modal';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 export default function ClubDashboard() {
   const [profile, setProfile] = useState<ClubProfileDto | null>(null);
@@ -33,6 +34,8 @@ export default function ClubDashboard() {
   const router = useRouter();
   const t = useTranslations('clubDashboard');
   const tCommon = useTranslations('common');
+  const tConfirm = useTranslations('confirm');
+  const { confirm, dialog } = useConfirm();
   const labels = useEnumLabels();
 
   useEffect(() => {
@@ -83,7 +86,12 @@ export default function ClubDashboard() {
     } finally { setSaving(false); }
   };
 
-  const handleCloseAd = async (adId: string) => {
+  const handleCloseAd = async (adId: string, title: string) => {
+    if (!(await confirm({
+      title: tConfirm('closeAdTitle'),
+      message: tConfirm('closeAdText', { title }),
+      confirmLabel: tConfirm('closeAdConfirm'),
+    }))) return;
     await clubService.closeJobAd(adId);
     setAds(await clubService.getMyAds());
   };
@@ -150,18 +158,20 @@ export default function ClubDashboard() {
                       <h4 className={`font-semibold ${closed ? 'text-ink-400' : 'text-ink-900'}`}>{ad.title}</h4>
                       <Badge tone="green">{labels.position(ad.requiredPosition)}</Badge>
                       <Badge tone={closed ? 'gray' : 'green'} dot>{labels.adStatus(closed ? 'Closed' : 'Open')}</Badge>
+                      <Badge tone="blue">{t('applicationCount', { count: ad.applicationCount ?? 0 })}</Badge>
+                      {ad.pendingApplicationCount > 0 && <Badge tone="yellow" dot>{t('pendingCount', { count: ad.pendingApplicationCount })}</Badge>}
                     </div>
                     <p className="mb-3 line-clamp-2 text-sm text-ink-500">{ad.description}</p>
                     <div className="flex flex-wrap gap-2">
                       {!closed ? (
                         <>
                           <Button variant="secondary" size="sm" onClick={() => openEditModal(ad)}><Pencil className="h-3.5 w-3.5" />{tCommon('edit')}</Button>
-                          <Button variant="danger" size="sm" onClick={() => handleCloseAd(ad.id)}><Lock className="h-3.5 w-3.5" />{t('closeAd')}</Button>
+                          <Button variant="danger" size="sm" onClick={() => handleCloseAd(ad.id, ad.title)}><Lock className="h-3.5 w-3.5" />{t('closeAd')}</Button>
                         </>
                       ) : (
                         <Button variant="secondary" size="sm" onClick={() => handleReopenAd(ad.id)}><RotateCcw className="h-3.5 w-3.5" />{t('reopenAd')}</Button>
                       )}
-                      <Link href="/club/applications"><Button variant="ghost" size="sm"><FileText className="h-3.5 w-3.5" />{t('viewApplications')}</Button></Link>
+                      <Link href={`/club/applications?jobAdId=${ad.id}`}><Button variant="ghost" size="sm"><FileText className="h-3.5 w-3.5" />{t('viewApplications')}</Button></Link>
                     </div>
                   </li>
                 );
@@ -200,6 +210,7 @@ export default function ClubDashboard() {
           </div>
         </Modal>
       )}
+      {dialog}
     </PageShell>
   );
 }

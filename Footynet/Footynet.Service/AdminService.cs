@@ -3,17 +3,27 @@ using Footynet.Models;
 using Footynet.Repository.Interfaces;
 using Footynet.Service.Interfaces;
 using Footynet.Localization;
+using Footynet.Service.Email;
+using Microsoft.Extensions.Options;
 
 namespace Footynet.Service;
 
 public class AdminService : IAdminService
 {
     private readonly IAdminRepository _adminRepository;
+    private readonly IEmailQueue _emailQueue;
+    private readonly AppOptions _appOptions;
 
-    public AdminService(IAdminRepository adminRepository)
+    public AdminService(IAdminRepository adminRepository, IEmailQueue emailQueue, IOptions<AppOptions> appOptions)
     {
         _adminRepository = adminRepository;
+        _emailQueue = emailQueue;
+        _appOptions = appOptions.Value;
     }
+
+    private void SendClubDecision(Club club, bool approved) =>
+        _emailQueue.Enqueue(EmailTemplates.ClubDecision(club.Email, club.PreferredLanguage, club.Name, approved,
+            $"{_appOptions.FrontendUrl.TrimEnd('/')}/login"));
 
     public async Task<AdminDashboardDto> GetDashboardAsync()
     {
@@ -43,6 +53,7 @@ public class AdminService : IAdminService
 
         club.IsApproved = true;
         await _adminRepository.UpdateClubAsync(club);
+        SendClubDecision(club, approved: true);
     }
 
     public async Task RejectClubAsync(Guid clubId)
@@ -56,6 +67,7 @@ public class AdminService : IAdminService
 
         club.IsActive = false;
         await _adminRepository.UpdateClubAsync(club);
+        SendClubDecision(club, approved: false);
     }
 
     public async Task<PaginatedResult<AdminUserDto>> GetUsersAsync(string? search, RoleType? role, int page, int pageSize)
@@ -113,13 +125,7 @@ public class AdminService : IAdminService
 
     public async Task DeleteJobAdAsync(Guid jobAdId)
     {
-        // Repository's DeleteJobAdAsync silently no-ops if not found,
-        // but we need to throw per the error handling spec.
-        // Use GetJobAdsAsync to verify existence first.
-        var (items, _) = await _adminRepository.GetJobAdsAsync(null, 1, int.MaxValue);
-        if (!items.Any(j => j.Id == jobAdId))
+        if (!await _adminRepository.DeleteJobAdAsync(jobAdId))
             throw new KeyNotFoundException(AppMessages.JobAd.NotFound);
-
-        await _adminRepository.DeleteJobAdAsync(jobAdId);
     }
 }

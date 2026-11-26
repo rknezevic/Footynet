@@ -19,6 +19,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import Modal from '@/components/Modal';
 import Pagination from '@/components/Pagination';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 const PAGE_SIZE = 10;
 
@@ -32,6 +33,8 @@ export default function AdminJobAds() {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const router = useRouter();
   const t = useTranslations('adminJobAds');
+  const tConfirm = useTranslations('confirm');
+  const { confirm, dialog } = useConfirm();
   const tCommon = useTranslations('common');
   const labels = useEnumLabels();
   const format = useFormatter();
@@ -51,7 +54,8 @@ export default function AdminJobAds() {
     loadJobAds(page, search);
   }, [page, search, loadJobAds]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, title: string) => {
+    if (!(await confirm({ title: tConfirm('deleteJobAdTitle'), message: tConfirm('deleteJobAdText', { title }), confirmLabel: tConfirm('deleteJobAdConfirm') }))) return;
     setActioningId(id);
     try {
       await adminService.deleteJobAd(id);
@@ -123,7 +127,7 @@ export default function AdminJobAds() {
                     <td className="px-6 py-3">
                       <div className="flex justify-end gap-2">
                         <Button variant="secondary" size="sm" onClick={() => handleViewDetails(ad.id)} disabled={loadingDetail}><Eye className="h-3.5 w-3.5" />{t('view')}</Button>
-                        <Button variant="danger" size="sm" onClick={() => handleDelete(ad.id)} disabled={actioningId === ad.id}><Trash2 className="h-3.5 w-3.5" />{t('delete')}</Button>
+                        <Button variant="danger" size="sm" onClick={() => handleDelete(ad.id, ad.title)} disabled={actioningId === ad.id}><Trash2 className="h-3.5 w-3.5" />{t('delete')}</Button>
                       </div>
                     </td>
                   </tr>
@@ -152,6 +156,7 @@ export default function AdminJobAds() {
           <p className="text-xs text-ink-400">{t('posted', { date: formatDate(selectedJob.createdAt) })}</p>
         </Modal>
       )}
+      {dialog}
     </PageShell>
   );
 }

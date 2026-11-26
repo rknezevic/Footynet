@@ -163,7 +163,11 @@
     "coverLetterPlaceholder": "Recite klubu zašto ste pravi izbor...",
     "submit": "Pošalji prijavu",
     "back": "Svi oglasi",
-    "aboutRole": "O poziciji"
+    "aboutRole": "O poziciji",
+    "alreadyApplied": "Već ste se prijavili na ovaj oglas",
+    "viewApplications": "Pogledaj moje prijave",
+    "aboutClub": "O klubu",
+    "posted": "Objavljeno {date}"
   },
   "playerApplications": {
     "title": "Moje prijave",
@@ -208,7 +212,9 @@
     "updateFailed": "Ažuriranje oglasa nije uspjelo",
     "openAds": "Otvoreni oglasi",
     "closedAds": "Zatvoreni oglasi",
-    "phone": "Telefon"
+    "phone": "Telefon",
+    "applicationCount": "{count, plural, =0 {Nema prijava} one {# prijava} few {# prijave} other {# prijava}}",
+    "pendingCount": "{count, plural, one {# nova} few {# nove} other {# novih}}"
   },
   "clubApplications": {
     "title": "Prijave",
@@ -682,5 +688,66 @@
     "successTitle": "Lozinka je promijenjena",
     "successText": "Sada se možete prijaviti novom lozinkom.",
     "signIn": "Prijava"
+  },
+  "notificationSettings": {
+    "title": "Obavijesti",
+    "messageEmails": "Obavijest emailom o nepročitanim porukama",
+    "messageEmailsHint": "Ako novu poruku ne pročitate u nekoliko minuta, poslat ćemo vam email. Najviše jedan email u 15 minuta.",
+    "loadFailed": "Postavke obavijesti nije moguće učitati",
+    "saveFailed": "Promjenu nije moguće spremiti"
+  },
+  "pageTitles": {
+    "login": "Prijava",
+    "register": "Registracija",
+    "forgotPassword": "Zaboravljena lozinka",
+    "resetPassword": "Nova lozinka",
+    "verifyEmail": "Potvrda emaila",
+    "checkEmail": "Provjerite email",
+    "pendingApproval": "Čeka odobrenje",
+    "completeProfile": "Dovršite profil",
+    "messages": "Poruke",
+    "dashboard": "Početna",
+    "jobs": "Oglasi",
+    "jobDetail": "Oglas",
+    "myApplications": "Moje prijave",
+    "applications": "Prijave",
+    "profile": "Profil",
+    "clubProfile": "Profil kluba",
+    "createJobAd": "Novi oglas",
+    "adminDashboard": "Administracija",
+    "adminClubs": "Klubovi",
+    "adminUsers": "Korisnici",
+    "adminJobAds": "Oglasi"
+  },
+  "notFound": {
+    "title": "Stranica nije pronađena",
+    "text": "Stranica koju tražite ne postoji ili je premještena.",
+    "home": "Natrag na početnu"
+  },
+  "confirm": {
+    "closeAdTitle": "Zatvoriti oglas?",
+    "closeAdText": "Oglas „{title}” više neće biti vidljiv igračima i nove prijave neće biti moguće. Možete ga kasnije ponovno otvoriti.",
+    "closeAdConfirm": "Zatvori oglas",
+    "rejectApplicationTitle": "Odbiti prijavu?",
+    "rejectApplicationText": "{name} će vidjeti da je prijava odbijena. Ovo se ne može poništiti.",
+    "rejectApplicationConfirm": "Odbij prijavu",
+    "rejectClubTitle": "Odbiti registraciju kluba?",
+    "rejectClubText": "{name} dobit će email da registracija nije odobrena i neće se moći prijaviti.",
+    "rejectClubConfirm": "Odbij klub",
+    "deactivateUserTitle": "Deaktivirati korisnika?",
+    "deactivateUserText": "{email} se više neće moći prijaviti, a profil i oglasi bit će skriveni. Korisnika možete kasnije ponovno aktivirati.",
+    "deactivateUserConfirm": "Deaktiviraj",
+    "deleteJobAdTitle": "Obrisati oglas?",
+    "deleteJobAdText": "Oglas „{title}” i sve prijave na njega bit će trajno obrisani. Ovo se ne može poništiti.",
+    "deleteJobAdConfirm": "Obriši oglas"
+  },
+  "deactivateAccount": {
+    "title": "Deaktivacija računa",
+    "text": "Profil i oglasi odmah prestaju biti vidljivi i više se nećete moći prijaviti. Za trajno brisanje svih podataka pišite na kontakt iz Pravila privatnosti.",
+    "button": "Deaktiviraj račun",
+    "confirmTitle": "Deaktivirati račun?",
+    "confirmText": "Odmah ćete biti odjavljeni. Račun nakon toga može ponovno aktivirati samo administrator.",
+    "confirm": "Da, deaktiviraj",
+    "failed": "Deaktivacija računa nije uspjela"
   }
 }

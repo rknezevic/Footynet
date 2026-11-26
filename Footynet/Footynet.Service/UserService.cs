@@ -118,10 +118,15 @@ public class UserService : IUserService
         if (user == null || user.EmailConfirmationExpiresAt < DateTime.UtcNow)
             throw new InvalidOperationException(AppMessages.Auth.InvalidConfirmationLink);
 
+        var firstConfirmation = !user.EmailConfirmed;
         user.EmailConfirmed = true;
         user.EmailConfirmationTokenHash = null;
         user.EmailConfirmationExpiresAt = null;
         await _userRepository.UpdateAsync(user);
+
+        // A club is a real registration only once its email is confirmed: that is when admins hear about it
+        if (firstConfirmation && user is Club { IsApproved: false } club)
+            await NotifyAdminsAboutClubAsync(club);
 
         // Confirming the email also signs the user in
         return CreateAuthResponse(user);
@@ -183,6 +188,21 @@ public class UserService : IUserService
         await _userRepository.UpdateAsync(user);
     }
 
+    public async Task<NotificationSettingsDto> GetNotificationSettingsAsync(Guid userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId)
+            ?? throw new KeyNotFoundException(AppMessages.User.NotFound);
+        return new NotificationSettingsDto { MessageEmails = user.MessageEmailsEnabled };
+    }
+
+    public async Task UpdateNotificationSettingsAsync(Guid userId, NotificationSettingsDto dto)
+    {
+        var user = await _userRepository.GetByIdAsync(userId)
+            ?? throw new KeyNotFoundException(AppMessages.User.NotFound);
+        user.MessageEmailsEnabled = dto.MessageEmails;
+        await _userRepository.UpdateAsync(user);
+    }
+
     public async Task<User?> GetUserByIdAsync(Guid id)
     {
         return await _userRepository.GetByIdAsync(id);
@@ -191,6 +211,20 @@ public class UserService : IUserService
     public async Task<User?> GetUserByEmailAsync(string email)
     {
         return await _userRepository.GetByEmailAsync(email);
+    }
+
+    private async Task NotifyAdminsAboutClubAsync(Club club)
+    {
+        var link = $"{_appOptions.FrontendUrl.TrimEnd('/')}/admin/clubs";
+
+        // Configured addresses win: the seeded admin account may use an address nobody reads
+        var configured = _appOptions.AdminNotificationEmails.Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
+        var recipients = configured.Count > 0
+            ? configured.Select(email => (Email: email.Trim(), Language: (string?)"hr"))
+            : (await _userRepository.GetActiveAdminsAsync()).Select(a => (a.Email, a.PreferredLanguage));
+
+        foreach (var (email, language) in recipients)
+            _emailQueue.Enqueue(EmailTemplates.AdminNewClub(email, language, club.Name, club.Email, link));
     }
 
     private AuthResponseDto CreateAuthResponse(User user)

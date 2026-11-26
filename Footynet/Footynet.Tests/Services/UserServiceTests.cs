@@ -126,6 +126,54 @@ public class UserServiceTests
     }
 
     [Fact]
+    public async Task VerifyEmail_PendingClub_NotifiesAdmins()
+    {
+        Club? created = null;
+        _userRepository.Setup(r => r.CreateAsync(It.IsAny<User>())).ReturnsAsync((User u) => { created = (Club)u; return u; });
+        _userRepository.Setup(r => r.GetActiveAdminsAsync()).ReturnsAsync([new Admin { Email = "admin@footynet.test", PreferredLanguage = "hr" }]);
+        await _service.RegisterAsync(new RegisterDto { Email = "klub@example.com", Password = "Lozinka123", Role = RoleType.Club, Name = "NK Primjer", LeagueId = Guid.NewGuid() });
+        _userRepository.Setup(r => r.GetByEmailConfirmationTokenHashAsync(created!.EmailConfirmationTokenHash!)).ReturnsAsync(created);
+
+        await _service.VerifyEmailAsync(TokenFromLastEmail());
+
+        var adminEmail = Assert.Single(_sentEmails, e => e.To == "admin@footynet.test");
+        Assert.Equal("Novi klub čeka odobrenje: NK Primjer", adminEmail.Subject);
+        Assert.Contains("https://footynet.test/admin/clubs", adminEmail.TextBody);
+    }
+
+    [Fact]
+    public async Task VerifyEmail_PendingClub_UsesConfiguredNotificationAddress()
+    {
+        var emailQueue = new Mock<IEmailQueue>();
+        emailQueue.Setup(q => q.Enqueue(It.IsAny<EmailMessage>())).Callback<EmailMessage>(_sentEmails.Add);
+        var service = new UserService(_userRepository.Object, _jwtService.Object, emailQueue.Object,
+            Options.Create(new AppOptions { FrontendUrl = "https://footynet.test", AdminNotificationEmails = ["vlasnik@example.com"] }));
+        Club? created = null;
+        _userRepository.Setup(r => r.CreateAsync(It.IsAny<User>())).ReturnsAsync((User u) => { created = (Club)u; return u; });
+        await service.RegisterAsync(new RegisterDto { Email = "klub@example.com", Password = "Lozinka123", Role = RoleType.Club, Name = "NK Primjer", LeagueId = Guid.NewGuid() });
+        _userRepository.Setup(r => r.GetByEmailConfirmationTokenHashAsync(created!.EmailConfirmationTokenHash!)).ReturnsAsync(created);
+
+        await service.VerifyEmailAsync(TokenFromLastEmail());
+
+        Assert.Single(_sentEmails, e => e.To == "vlasnik@example.com" && e.Subject.Contains("NK Primjer"));
+        // The admin accounts aren't looked up when an address is configured
+        _userRepository.Verify(r => r.GetActiveAdminsAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task VerifyEmail_Player_DoesNotNotifyAdmins()
+    {
+        Player? created = null;
+        _userRepository.Setup(r => r.CreateAsync(It.IsAny<User>())).ReturnsAsync((User u) => { created = (Player)u; return u; });
+        await _service.RegisterAsync(new RegisterDto { Email = "igrac@example.com", Password = "Lozinka123", Role = RoleType.Player, FirstName = "Ivan" });
+        _userRepository.Setup(r => r.GetByEmailConfirmationTokenHashAsync(created!.EmailConfirmationTokenHash!)).ReturnsAsync(created);
+
+        await _service.VerifyEmailAsync(TokenFromLastEmail());
+
+        _userRepository.Verify(r => r.GetActiveAdminsAsync(), Times.Never);
+    }
+
+    [Fact]
     public async Task VerifyEmail_ExpiredToken_Throws()
     {
         var player = ConfirmedPlayer();

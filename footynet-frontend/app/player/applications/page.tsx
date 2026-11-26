@@ -14,10 +14,12 @@ import Avatar from '@/components/Avatar';
 import Badge, { statusTone } from '@/components/Badge';
 import Button from '@/components/Button';
 import EmptyState from '@/components/EmptyState';
+import Loading from '@/components/Loading';
 import Pagination from '@/components/Pagination';
 
 export default function PlayerApplicationsPage() {
-  const [applications, setApplications] = useState<JobAdDto[]>([]);
+  // null until the first response arrives
+  const [applications, setApplications] = useState<JobAdDto[] | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 10;
@@ -35,7 +37,9 @@ export default function PlayerApplicationsPage() {
     <PageShell>
       <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
-      {applications.length === 0 ? (
+      {applications === null ? (
+        <Loading />
+      ) : applications.length === 0 ? (
         <Card>
           <EmptyState
             icon={FileText}

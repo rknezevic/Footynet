@@ -17,6 +17,7 @@ import EmptyState from '@/components/EmptyState';
 import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import Pagination from '@/components/Pagination';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 const PAGE_SIZE = 10;
 
@@ -36,6 +37,8 @@ export default function AdminUsers() {
   const [actioningId, setActioningId] = useState<string | null>(null);
   const router = useRouter();
   const t = useTranslations('adminUsers');
+  const tConfirm = useTranslations('confirm');
+  const { confirm, dialog } = useConfirm();
   const labels = useEnumLabels();
 
   const loadUsers = useCallback(async (p: number, s: string, r: string) => {
@@ -127,7 +130,10 @@ export default function AdminUsers() {
                     <td className="px-6 py-3"><Badge tone={user.isActive ? 'green' : 'gray'} dot>{user.isActive ? t('active') : t('inactive')}</Badge></td>
                     <td className="px-6 py-3 text-right">
                       {user.isActive ? (
-                        <Button variant="danger" size="sm" onClick={() => runAction(user.id, adminService.deactivateUser, 'deactivateFailed')} disabled={actioningId === user.id}>
+                        <Button variant="danger" size="sm" onClick={async () => {
+                          if (await confirm({ title: tConfirm('deactivateUserTitle'), message: tConfirm('deactivateUserText', { email: user.email }), confirmLabel: tConfirm('deactivateUserConfirm') }))
+                            runAction(user.id, adminService.deactivateUser, 'deactivateFailed');
+                        }} disabled={actioningId === user.id}>
                           <UserX className="h-3.5 w-3.5" />{t('deactivate')}
                         </Button>
                       ) : (
@@ -145,6 +151,7 @@ export default function AdminUsers() {
       </Card>
 
       <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
+      {dialog}
     </PageShell>
   );
 }

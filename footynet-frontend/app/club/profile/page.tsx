@@ -19,6 +19,8 @@ import FormTextarea from '@/components/FormTextarea';
 import CityAutocomplete from '@/components/CityAutocomplete';
 import Loading from '@/components/Loading';
 import PhotoUploader from '@/components/PhotoUploader';
+import NotificationSettingsCard from '@/components/NotificationSettingsCard';
+import DeactivateAccountCard from '@/components/DeactivateAccountCard';
 
 export default function ClubProfilePage() {
   const [profile, setProfile] = useState<ClubProfileDto | null>(null);
@@ -130,6 +132,8 @@ export default function ClubProfilePage() {
           <p className="whitespace-pre-line text-sm leading-relaxed text-ink-700">{profile.description || '—'}</p>
         </Card>
       )}
+      <NotificationSettingsCard />
+      <DeactivateAccountCard onDeactivate={() => clubService.deactivateAccount()} />
     </PageShell>
   );
 }

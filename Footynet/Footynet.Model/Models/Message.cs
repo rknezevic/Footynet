@@ -8,6 +8,8 @@ public class Message
     public string Content { get; set; } = string.Empty;
     public DateTime SentAt { get; set; }
     public bool IsRead { get; set; }
+    // Set when the receiver was emailed about this message (see UnreadMessageEmailService)
+    public DateTime? EmailNotifiedAt { get; set; }
 
     public User Sender { get; set; } = null!;
     public User Receiver { get; set; } = null!;

@@ -25,7 +25,9 @@ public abstract class User
 
     // "hr" or "en"; used for emails, which are sent outside of any request
     public string? PreferredLanguage { get; set; }
-    // Throttles "new message" email notifications
+    // Email about unread messages; the user can turn it off on their profile
+    public bool MessageEmailsEnabled { get; set; } = true;
+    // When the last unread-messages email was sent; limits how often they arrive
     public DateTime? LastMessageEmailAt { get; set; }
     // Set when the user has a profile picture (see UserPhoto)
     public DateTime? PhotoUpdatedAt { get; set; }

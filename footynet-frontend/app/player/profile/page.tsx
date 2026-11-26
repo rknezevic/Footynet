@@ -21,6 +21,8 @@ import Loading from '@/components/Loading';
 import PlayerProfileDetails from '@/components/PlayerProfileDetails';
 import PlayerExtrasFields, { PlayerExtras } from '@/components/PlayerExtrasFields';
 import PhotoUploader from '@/components/PhotoUploader';
+import NotificationSettingsCard from '@/components/NotificationSettingsCard';
+import DeactivateAccountCard from '@/components/DeactivateAccountCard';
 
 export default function PlayerProfilePage() {
   const [profile, setProfile] = useState<PlayerProfileDto | null>(null);
@@ -132,6 +134,8 @@ export default function PlayerProfilePage() {
           <PlayerProfileDetails profile={profile} />
         </Card>
       )}
+      <NotificationSettingsCard />
+      <DeactivateAccountCard onDeactivate={() => playerService.deactivateAccount()} />
     </PageShell>
   );
 }

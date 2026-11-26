@@ -12,6 +12,7 @@ import PageShell from '@/components/PageShell';
 import Avatar from '@/components/Avatar';
 import EmptyState from '@/components/EmptyState';
 import ErrorMessage from '@/components/ErrorMessage';
+import Loading from '@/components/Loading';
 
 interface Conversation {
   userId: string;
@@ -41,7 +42,8 @@ function MessagesView() {
   const { userId: myId } = useAuth();
   const { connected, onMessage, refreshUnread } = useChat();
 
-  const [inbox, setInbox] = useState<InboxItem[]>([]);
+  // null until the inbox has loaded
+  const [inbox, setInbox] = useState<InboxItem[] | null>(null);
   const [selected, setSelected] = useState<Conversation | null>(null);
   const [conversation, setConversation] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -67,7 +69,7 @@ function MessagesView() {
     messageService.getConversation(selected.userId).then(setConversation);
     messageService.markConversationRead(selected.userId).then(() => {
       refreshUnread();
-      setInbox(prev => prev.map(i => i.otherUserId === selected.userId ? { ...i, unreadCount: 0 } : i));
+      setInbox(prev => prev?.map(i => i.otherUserId === selected.userId ? { ...i, unreadCount: 0 } : i) ?? prev);
     }).catch(() => {});
   }, [selected, refreshUnread]);
 
@@ -79,10 +81,12 @@ function MessagesView() {
     if (isOpen) {
       // Ignore duplicates: our own sent message is already added from the POST response
       setConversation(prev => prev.some(m => m.id === msg.id) ? prev : [...prev, msg]);
-      if (msg.senderId !== myId) messageService.markConversationRead(otherId).then(refreshUnread).catch(() => {});
+      if (msg.senderId !== myId && document.visibilityState === 'visible')
+        messageService.markConversationRead(otherId).then(refreshUnread).catch(() => {});
     }
 
     setInbox(prev => {
+      if (prev === null) return prev;
       const existing = prev.find(i => i.otherUserId === otherId);
       const updated: InboxItem = {
         ...msg,
@@ -93,6 +97,20 @@ function MessagesView() {
       return [updated, ...prev.filter(i => i.otherUserId !== otherId)];
     });
   }), [onMessage, myId, refreshUnread]);
+
+  // Coming back to a background tab with a conversation open: that conversation has now been seen
+  useEffect(() => {
+    const onVisible = () => {
+      const open = selectedRef.current;
+      if (document.visibilityState !== 'visible' || !open) return;
+      messageService.markConversationRead(open.userId).then(() => {
+        refreshUnread();
+        setInbox(prev => prev?.map(i => i.otherUserId === open.userId ? { ...i, unreadCount: 0 } : i) ?? prev);
+      }).catch(() => {});
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [refreshUnread]);
 
   useEffect(() => {
     // Scroll only the message list (scrollIntoView would also scroll the whole page). An instant jump
@@ -118,7 +136,7 @@ function MessagesView() {
     }
   };
 
-  const selectedItem = selected ? inbox.find(i => i.otherUserId === selected.userId) : undefined;
+  const selectedItem = selected ? inbox?.find(i => i.otherUserId === selected.userId) : undefined;
   const selectedName = selected ? selectedItem?.otherUserName || selected.name : '';
 
   return (
@@ -143,7 +161,9 @@ function MessagesView() {
         <aside className={`min-h-0 flex-col border-r border-ink-100 ${selected ? 'hidden md:flex' : 'flex'}`}>
           <h2 className="eyebrow border-b border-ink-100 px-5 py-4">{t('inbox')}</h2>
           <div className="min-h-0 flex-1 overflow-y-auto p-2">
-            {inbox.length === 0 ? (
+            {inbox === null ? (
+              <Loading />
+            ) : inbox.length === 0 ? (
               <EmptyState icon={MessageCircle} title={t('empty')} description={t('emptyHint')} />
             ) : inbox.map(item => {
               const active = selected?.userId === item.otherUserId;

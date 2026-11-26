@@ -268,6 +268,45 @@
     <value>Open conversation</value>
   </data>
   <data name="Email.NewMessage.Footer" xml:space="preserve">
-    <value>You get this email because you weren't online when the message arrived. We send at most one such email every 30 minutes.</value>
+    <value>You get this email because you haven't read the message for a few minutes. You can turn message emails off on your profile.</value>
+  </data>
+  <data name="Email.Unread.Subject" xml:space="preserve">
+    <value>Unread messages on FootyNet ({0})</value>
+  </data>
+  <data name="Email.Unread.Intro" xml:space="preserve">
+    <value>You haven't read these messages yet:</value>
+  </data>
+  <data name="Email.Unread.Button" xml:space="preserve">
+    <value>Open messages</value>
+  </data>
+  <data name="Email.AdminNewClub.Subject" xml:space="preserve">
+    <value>New club awaiting approval: {0}</value>
+  </data>
+  <data name="Email.AdminNewClub.Intro" xml:space="preserve">
+    <value>The club {0} ({1}) has registered and confirmed its email address. Review the registration and approve or reject it.</value>
+  </data>
+  <data name="Email.AdminNewClub.Button" xml:space="preserve">
+    <value>Review clubs</value>
+  </data>
+  <data name="Email.AdminNewClub.Footer" xml:space="preserve">
+    <value>You get this email because you are a FootyNet administrator.</value>
+  </data>
+  <data name="Email.ClubApproved.Subject" xml:space="preserve">
+    <value>Your club has been approved</value>
+  </data>
+  <data name="Email.ClubApproved.Intro" xml:space="preserve">
+    <value>The registration of {0} has been approved. You can now post job ads and review player applications.</value>
+  </data>
+  <data name="Email.ClubApproved.Button" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Email.ClubRejected.Subject" xml:space="preserve">
+    <value>Your club registration was not approved</value>
+  </data>
+  <data name="Email.ClubRejected.Intro" xml:space="preserve">
+    <value>Unfortunately, the registration of {0} was not approved. If you think this is a mistake, contact us through the details in the Terms of Use.</value>
+  </data>
+  <data name="Email.ClubDecision.Footer" xml:space="preserve">
+    <value>You get this email because you registered a club on FootyNet.</value>
   </data>
 </root>

@@ -12,4 +12,7 @@ public class AppOptions
 {
     // Base URL of the Next.js frontend, used to build links in emails (no trailing slash)
     public string FrontendUrl { get; set; } = "http://localhost:3000";
+    // Who is emailed when a new club waits for approval (App:AdminNotificationEmails:0, :1, ...).
+    // Empty: the email addresses of the admin accounts are used instead.
+    public string[] AdminNotificationEmails { get; set; } = [];
 }

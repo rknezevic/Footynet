@@ -13,5 +13,6 @@ public interface IAdminRepository
     Task<User?> GetUserByIdAsync(Guid userId);
     Task UpdateUserAsync(User user);
     Task<(IEnumerable<AdminJobAdDto> Items, int TotalCount)> GetJobAdsAsync(string? search, int page, int pageSize);
-    Task DeleteJobAdAsync(Guid jobAdId);
+    // False when there is no such job ad
+    Task<bool> DeleteJobAdAsync(Guid jobAdId);
 }

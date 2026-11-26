@@ -23,8 +23,8 @@ public class JobAdRepository : IJobAdRepository
     public async Task<IEnumerable<JobAd>> GetAdsByClubAsync(Guid clubId)
     {
         return await _context.JobAds
+            .AsNoTracking()
             .Include(p => p.Applications)
-            .ThenInclude(a => a.Player)
             .Where(p => p.ClubId == clubId)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();

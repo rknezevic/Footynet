@@ -19,23 +19,33 @@ import Loading from '@/components/Loading';
 import Modal from '@/components/Modal';
 import Pagination from '@/components/Pagination';
 import PlayerProfileDetails from '@/components/PlayerProfileDetails';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 export default function ClubApplications() {
   const [jobAds, setJobAds] = useState<any[]>([]);
   const [selectedAdId, setSelectedAdId] = useState<string>('all');
   const [allApplications, setAllApplications] = useState<JobApplication[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [viewingPlayer, setViewingPlayer] = useState<PlayerProfileDto | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 10;
   const t = useTranslations('clubApplications');
   const tCommon = useTranslations('common');
+  const tConfirm = useTranslations('confirm');
   const labels = useEnumLabels();
   const format = useFormatter();
 
+  const { confirm, dialog } = useConfirm();
+
   useEffect(() => {
-    clubService.getMyAds().then(setJobAds).catch(console.error);
+    // The dashboard links here with ?jobAdId=... to show one ad's applications
+    const fromUrl = new URLSearchParams(window.location.search).get('jobAdId');
+    clubService.getMyAds().then(ads => {
+      setJobAds(ads);
+      if (fromUrl && ads.some((a: { id: string }) => a.id === fromUrl)) setSelectedAdId(fromUrl);
+      if (ads.length === 0) setLoading(false);
+    }).catch(err => { console.error(err); setLoading(false); });
   }, []);
 
   useEffect(() => {
@@ -72,7 +82,12 @@ export default function ClubApplications() {
     setStatus(appId, StatusType.Accepted);
   };
 
-  const handleReject = async (appId: string) => {
+  const handleReject = async (appId: string, playerName: string) => {
+    if (!(await confirm({
+      title: tConfirm('rejectApplicationTitle'),
+      message: tConfirm('rejectApplicationText', { name: playerName }),
+      confirmLabel: tConfirm('rejectApplicationConfirm'),
+    }))) return;
     await clubService.rejectApplication(appId);
     setStatus(appId, StatusType.Rejected);
   };
@@ -134,7 +149,7 @@ export default function ClubApplications() {
                 {app.status === StatusType.Pending && (
                   <div className="flex gap-2 sm:flex-col">
                     <Button size="sm" onClick={() => handleAccept(app.id)}><Check className="h-4 w-4" />{t('accept')}</Button>
-                    <Button variant="danger" size="sm" onClick={() => handleReject(app.id)}><X className="h-4 w-4" />{t('reject')}</Button>
+                    <Button variant="danger" size="sm" onClick={() => handleReject(app.id, fullName(app.player))}><X className="h-4 w-4" />{t('reject')}</Button>
                   </div>
                 )}
               </div>
@@ -159,6 +174,7 @@ export default function ClubApplications() {
           <PlayerProfileDetails profile={viewingPlayer} />
         </Modal>
       )}
+      {dialog}
     </PageShell>
   );
 }

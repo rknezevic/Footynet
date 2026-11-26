@@ -22,14 +22,12 @@ public class MessageController : ControllerBase
     private readonly IMessageRepository _messageRepository;
     private readonly FootynetDbContext _context;
     private readonly IHubContext<ChatHub> _hub;
-    private readonly MessageEmailNotifier _emailNotifier;
 
-    public MessageController(IMessageRepository messageRepository, FootynetDbContext context, IHubContext<ChatHub> hub, MessageEmailNotifier emailNotifier)
+    public MessageController(IMessageRepository messageRepository, FootynetDbContext context, IHubContext<ChatHub> hub)
     {
         _messageRepository = messageRepository;
         _context = context;
         _hub = hub;
-        _emailNotifier = emailNotifier;
     }
 
     private Guid GetUserId() => Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -53,11 +51,10 @@ public class MessageController : ControllerBase
         var created = await _messageRepository.CreateAsync(message);
         var result = MessageDto.From(created, await GetDisplayNameAsync(senderId));
 
-        // Push to the receiver and to the sender's other open tabs, no polling needed
+        // Push to the receiver and to the sender's other open tabs, no polling needed.
+        // If the receiver doesn't read it within a few minutes, UnreadMessageEmailService emails them.
         await _hub.Clients.Users(dto.ReceiverId.ToString(), senderId.ToString())
             .SendAsync(ChatHub.ReceiveMessage, result);
-        // If the receiver isn't in the app right now, let them know by email (throttled)
-        await _emailNotifier.NotifyAsync(dto.ReceiverId, senderId, result.SenderName ?? "", created.Content);
 
         return Ok(result);
     }

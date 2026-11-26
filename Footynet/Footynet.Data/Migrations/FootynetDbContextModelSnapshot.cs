@@ -838,6 +838,9 @@ namespace Footynet.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("EmailNotifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");
 
@@ -936,6 +939,9 @@ namespace Footynet.Data.Migrations
 
                     b.Property<DateTime?>("LastMessageEmailAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("MessageEmailsEnabled")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()

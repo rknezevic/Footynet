@@ -13,8 +13,11 @@ const outfit = Outfit({ subsets: ['latin', 'latin-ext'], variable: '--font-outfi
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('metadata');
   return {
-    title: 'FootyNet',
+    // Pages with their own title (the 404 page) render as "Title · FootyNet"
+    title: { default: 'FootyNet', template: '%s · FootyNet' },
     description: t('description'),
+    // Preview when a link is shared on WhatsApp, Facebook, Slack...
+    openGraph: { title: 'FootyNet', description: t('description'), type: 'website', siteName: 'FootyNet' },
   };
 }
 

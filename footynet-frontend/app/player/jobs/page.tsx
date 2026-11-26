@@ -16,9 +16,11 @@ import Avatar from '@/components/Avatar';
 import Badge from '@/components/Badge';
 import Button from '@/components/Button';
 import EmptyState from '@/components/EmptyState';
+import Loading from '@/components/Loading';
 
 export default function PlayerJobsPage() {
-  const [jobs, setJobs] = useState<JobAdDto[]>([]);
+  // null until the first response arrives
+  const [jobs, setJobs] = useState<JobAdDto[] | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [positionId, setPositionId] = useState('');
   const [leagueId, setLeagueId] = useState('');
@@ -86,11 +88,13 @@ export default function PlayerJobsPage() {
         </form>
       </Card>
 
-      <p className="mb-4 text-sm text-ink-500">{t('resultCount', { count: jobs.length })}</p>
-
-      {jobs.length === 0 ? (
+      {jobs === null ? (
+        <Loading />
+      ) : jobs.length === 0 ? (
         <Card><EmptyState icon={SearchX} title={t('noJobs')} /></Card>
       ) : (
+        <>
+        <p className="mb-4 text-sm text-ink-500">{t('resultCount', { count: jobs.length })}</p>
         <div className="grid gap-4 md:grid-cols-2">
           {jobs.map((job) => (
             <Link key={job.id} href={`/player/jobs/${job.id}`} className="group">
@@ -114,6 +118,7 @@ export default function PlayerJobsPage() {
             </Link>
           ))}
         </div>
+        </>
       )}
     </PageShell>
   );

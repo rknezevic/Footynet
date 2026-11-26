@@ -5,6 +5,7 @@ import { Check, X } from 'lucide-react';
 import { PendingClubDto } from '@/types';
 import Avatar from '@/components/Avatar';
 import Button from '@/components/Button';
+import { useConfirm } from '@/components/ConfirmDialog';
 
 interface PendingClubsTableProps {
   clubs: PendingClubDto[];
@@ -16,8 +17,19 @@ interface PendingClubsTableProps {
 // Shared by the admin dashboard and the pending clubs page
 export default function PendingClubsTable({ clubs, actioningId, onApprove, onReject }: PendingClubsTableProps) {
   const t = useTranslations('adminClubs');
+  const tConfirm = useTranslations('confirm');
+  const { confirm, dialog } = useConfirm();
+
+  const reject = async (club: PendingClubDto) => {
+    if (await confirm({
+      title: tConfirm('rejectClubTitle'),
+      message: tConfirm('rejectClubText', { name: club.name }),
+      confirmLabel: tConfirm('rejectClubConfirm'),
+    })) onReject(club.id);
+  };
 
   return (
+    <>
     <div className="-mx-6 overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead>
@@ -45,7 +57,7 @@ export default function PendingClubsTable({ clubs, actioningId, onApprove, onRej
               <td className="px-6 py-3">
                 <div className="flex justify-end gap-2">
                   <Button size="sm" onClick={() => onApprove(club.id)} disabled={actioningId === club.id}><Check className="h-3.5 w-3.5" />{t('approve')}</Button>
-                  <Button size="sm" variant="danger" onClick={() => onReject(club.id)} disabled={actioningId === club.id}><X className="h-3.5 w-3.5" />{t('reject')}</Button>
+                  <Button size="sm" variant="danger" onClick={() => reject(club)} disabled={actioningId === club.id}><X className="h-3.5 w-3.5" />{t('reject')}</Button>
                 </div>
               </td>
             </tr>
@@ -53,5 +65,7 @@ export default function PendingClubsTable({ clubs, actioningId, onApprove, onRej
         </tbody>
       </table>
     </div>
+      {dialog}
+    </>
   );
 }

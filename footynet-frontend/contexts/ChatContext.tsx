@@ -53,7 +53,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     const start = () => {
       connection.start()
         .then(() => { attempt = 0; setConnected(true); refreshUnread(); })
-        .catch(err => { console.warn('Chat connection failed, retrying', err); scheduleStart(); });
+        .catch(err => {
+          // An invalid or expired token won't start working by retrying; the next API call signs the user out
+          if (/401/.test(String(err))) return;
+          console.warn('Chat connection failed, retrying', err);
+          scheduleStart();
+        });
     };
 
     connection.onreconnecting(() => setConnected(false));

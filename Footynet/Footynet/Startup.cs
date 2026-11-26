@@ -93,8 +93,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<PresenceTracker>();
-builder.Services.AddScoped<MessageEmailNotifier>();
 
 // Email: SMTP when Email:Host is configured, otherwise emails are only logged (local development)
 builder.Services.Configure<AppOptions>(builder.Configuration.GetSection("App"));
@@ -106,6 +104,8 @@ if (string.IsNullOrWhiteSpace(builder.Configuration["Email:Host"]))
 else
     builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
 builder.Services.AddHostedService<EmailBackgroundService>();
+builder.Services.Configure<MessageEmailOptions>(builder.Configuration.GetSection("MessageEmails"));
+builder.Services.AddHostedService<UnreadMessageEmailService>();
 
 // Localization: the frontend sends Accept-Language (hr/en). Code uses AppMessages keys; texts are in
 // Footynet.Model/Resources/SharedResource.resx (English) and SharedResource.hr.resx (Croatian)

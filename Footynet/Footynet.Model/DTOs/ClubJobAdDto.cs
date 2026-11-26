@@ -9,4 +9,7 @@ public class ClubJobAdDto
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public string AdStatus { get; set; } = string.Empty;
+    // Applications that were not cancelled, and how many of them still wait for an answer
+    public int ApplicationCount { get; set; }
+    public int PendingApplicationCount { get; set; }
 }

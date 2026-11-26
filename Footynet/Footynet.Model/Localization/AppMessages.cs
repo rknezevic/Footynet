@@ -138,5 +138,21 @@ public static class AppMessages
         public const string NewMessageIntro = "Email.NewMessage.Intro";
         public const string NewMessageButton = "Email.NewMessage.Button";
         public const string NewMessageFooter = "Email.NewMessage.Footer";
+        // {0} = number of unread messages
+        public const string UnreadSubject = "Email.Unread.Subject";
+        public const string UnreadIntro = "Email.Unread.Intro";
+        public const string UnreadButton = "Email.Unread.Button";
+        // {0} = club name, {1} = club email
+        public const string AdminNewClubSubject = "Email.AdminNewClub.Subject";
+        public const string AdminNewClubIntro = "Email.AdminNewClub.Intro";
+        public const string AdminNewClubButton = "Email.AdminNewClub.Button";
+        public const string AdminNewClubFooter = "Email.AdminNewClub.Footer";
+        // {0} = club name
+        public const string ClubApprovedSubject = "Email.ClubApproved.Subject";
+        public const string ClubApprovedIntro = "Email.ClubApproved.Intro";
+        public const string ClubApprovedButton = "Email.ClubApproved.Button";
+        public const string ClubRejectedSubject = "Email.ClubRejected.Subject";
+        public const string ClubRejectedIntro = "Email.ClubRejected.Intro";
+        public const string ClubDecisionFooter = "Email.ClubDecision.Footer";
     }
 }

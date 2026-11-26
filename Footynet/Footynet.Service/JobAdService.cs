@@ -95,7 +95,9 @@ namespace Footynet.Service
             RequiredPosition = ad.RequiredPosition.ToString(),
             CreatedAt = ad.CreatedAt,
             UpdatedAt = ad.UpdatedAt,
-            AdStatus = ad.AdStatus.ToString()
+            AdStatus = ad.AdStatus.ToString(),
+            ApplicationCount = ad.Applications.Count(a => a.Status != StatusType.Cancelled),
+            PendingApplicationCount = ad.Applications.Count(a => a.Status == StatusType.Pending)
         };
     }
 }

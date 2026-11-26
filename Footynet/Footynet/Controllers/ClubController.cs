@@ -132,7 +132,7 @@ public class ClubController : ControllerBase
     [HttpDelete("account")]
     public async Task<IActionResult> DeactivateAccount()
     {
-        await EnsureClubApproved();
+        // No approval check: a club waiting for approval can still leave
         await _clubService.DeactivateAccountAsync(GetUserId());
         return Ok();
     }
