@@ -64,7 +64,8 @@ export interface RegisterDto {
   acceptTerms: boolean;
   firstName?: string;
   lastName?: string;
-  age?: number;
+  // "YYYY-MM-DD"
+  dateOfBirth?: string;
   description?: string;
   city?: string;
   county?: string;
@@ -92,7 +93,9 @@ export interface PlayerProfileDto {
   id: string;
   firstName: string;
   lastName: string;
+  // Calculated from dateOfBirth; profiles from before the date of birth existed only have the age
   age: number;
+  dateOfBirth?: string | null;
   city: string;
   county: string;
   description: string;
@@ -107,7 +110,8 @@ export interface PlayerProfileDto {
 export interface UpdatePlayerProfileDto {
   firstName: string;
   lastName: string;
-  age: number;
+  // "YYYY-MM-DD"; null keeps what is stored
+  dateOfBirth: string | null;
   description: string;
   prefeeredFootType: PreferredFootType;
   city: string;

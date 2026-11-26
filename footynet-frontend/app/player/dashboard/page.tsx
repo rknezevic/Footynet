@@ -8,6 +8,7 @@ import { ArrowRight, Briefcase, MapPin, Pencil } from 'lucide-react';
 import { playerService } from '@/lib/player';
 import { jobAdService } from '@/lib/jobAds';
 import { useEnumLabels } from '@/i18n/useEnumLabels';
+import { useAgeLabel } from '@/i18n/useAgeLabel';
 import { PlayerProfileDto, JobAdDto } from '@/types';
 import PageShell from '@/components/PageShell';
 import PageHeader from '@/components/PageHeader';
@@ -24,6 +25,7 @@ export default function PlayerDashboard() {
   const router = useRouter();
   const t = useTranslations('playerDashboard');
   const labels = useEnumLabels();
+  const ageLabel = useAgeLabel();
 
   useEffect(() => {
     const loadData = async () => {
@@ -72,6 +74,7 @@ export default function PlayerDashboard() {
             <div className="rounded-xl bg-ink-50 p-3">
               <dt className="text-xs text-ink-500">{t('age')}</dt>
               <dd className="font-display text-2xl font-bold text-ink-900">{profile.age}</dd>
+              {profile.dateOfBirth && <dd className="mt-0.5 text-xs text-ink-500">{ageLabel.birthDate(profile.dateOfBirth)}</dd>}
             </div>
             <div className="rounded-xl bg-ink-50 p-3">
               <dt className="text-xs text-ink-500">{t('clubs')}</dt>

@@ -94,7 +94,7 @@ public static class AppMessages
         public const string FirstNameTooLong = "Validation.FirstNameTooLong";
         public const string LastNameRequired = "Validation.LastNameRequired";
         public const string LastNameTooLong = "Validation.LastNameTooLong";
-        public const string AgeRequired = "Validation.AgeRequired";
+        public const string DateOfBirthRequired = "Validation.DateOfBirthRequired";
         public const string AgeOutOfRange = "Validation.AgeOutOfRange";
         public const string CityRequired = "Validation.CityRequired";
         public const string CityTooLong = "Validation.CityTooLong";

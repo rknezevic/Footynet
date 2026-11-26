@@ -6,6 +6,7 @@ import { useTranslations, useFormatter } from 'next-intl';
 import { Check, FileText, MessageCircle, UserRound, X } from 'lucide-react';
 import { clubService } from '@/lib/club';
 import { useEnumLabels } from '@/i18n/useEnumLabels';
+import { useAgeLabel } from '@/i18n/useAgeLabel';
 import { JobApplication, StatusType, PlayerProfileDto } from '@/types';
 import PageShell from '@/components/PageShell';
 import PageHeader from '@/components/PageHeader';
@@ -34,6 +35,7 @@ export default function ClubApplications() {
   const tCommon = useTranslations('common');
   const tConfirm = useTranslations('confirm');
   const labels = useEnumLabels();
+  const ageLabel = useAgeLabel();
   const format = useFormatter();
 
   const { confirm, dialog } = useConfirm();
@@ -169,7 +171,7 @@ export default function ClubApplications() {
         >
           <div className="mb-5 flex flex-wrap items-center gap-2">
             <AvailabilityBadge status={viewingPlayer.availability} />
-            <Badge>{t('ageYears', { age: viewingPlayer.age })}</Badge>
+            <Badge>{ageLabel.full(viewingPlayer.age, viewingPlayer.dateOfBirth)}</Badge>
           </div>
           <PlayerProfileDetails profile={viewingPlayer} />
         </Modal>

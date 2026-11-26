@@ -20,7 +20,7 @@ public class RegisterDto
     // Player fields
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    public int? Age { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
     public string? Description { get; set; }
     public string? City { get; set; }
     public string? County { get; set; }

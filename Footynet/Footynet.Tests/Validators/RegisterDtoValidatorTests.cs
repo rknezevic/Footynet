@@ -9,6 +9,9 @@ public class RegisterDtoValidatorTests
 {
     private readonly RegisterDtoValidator _validator = new();
 
+    private static DateOnly YearsAgo(int years, int extraDays = 0) =>
+        DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-years).AddDays(extraDays);
+
     private static RegisterDto ValidPlayer() => new()
     {
         Email = "igrac@example.com",
@@ -18,7 +21,7 @@ public class RegisterDtoValidatorTests
         AcceptTerms = true,
         FirstName = "Ivan",
         LastName = "Horvat",
-        Age = 22,
+        DateOfBirth = YearsAgo(22),
         City = "Split"
     };
 
@@ -99,14 +102,33 @@ public class RegisterDtoValidatorTests
     }
 
     [Theory]
-    [InlineData(15)]
-    [InlineData(51)]
-    public void PlayerAgeOutOfRange_Fails(int age)
+    [InlineData(15, 0)]
+    [InlineData(16, 1)]     // turns 16 tomorrow: still 15
+    [InlineData(51, 0)]
+    public void PlayerAgeOutOfRange_Fails(int years, int extraDays)
     {
         var dto = ValidPlayer();
-        dto.Age = age;
+        dto.DateOfBirth = YearsAgo(years, extraDays);
 
-        _validator.TestValidate(dto).ShouldHaveValidationErrorFor(x => x.Age);
+        _validator.TestValidate(dto).ShouldHaveValidationErrorFor(x => x.DateOfBirth);
+    }
+
+    [Fact]
+    public void PlayerTurningSixteenToday_Passes()
+    {
+        var dto = ValidPlayer();
+        dto.DateOfBirth = YearsAgo(16);
+
+        _validator.TestValidate(dto).ShouldNotHaveValidationErrorFor(x => x.DateOfBirth);
+    }
+
+    [Fact]
+    public void PlayerWithoutDateOfBirth_Fails()
+    {
+        var dto = ValidPlayer();
+        dto.DateOfBirth = null;
+
+        _validator.TestValidate(dto).ShouldHaveValidationErrorFor(x => x.DateOfBirth);
     }
 
     [Fact]
@@ -124,6 +146,6 @@ public class RegisterDtoValidatorTests
         var result = _validator.TestValidate(ValidClub());
 
         result.ShouldNotHaveValidationErrorFor(x => x.FirstName);
-        result.ShouldNotHaveValidationErrorFor(x => x.Age);
+        result.ShouldNotHaveValidationErrorFor(x => x.DateOfBirth);
     }
 }

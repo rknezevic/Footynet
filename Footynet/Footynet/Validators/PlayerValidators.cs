@@ -17,8 +17,9 @@ public class UpdatePlayerProfileDtoValidator : AbstractValidator<UpdatePlayerPro
             .NotEmpty().WithMessage(AppMessages.Validation.LastNameRequired)
             .MaximumLength(50).WithMessage(AppMessages.Validation.LastNameTooLong);
 
-        RuleFor(x => x.Age)
-            .InclusiveBetween(16, 50).WithMessage(AppMessages.Validation.AgeOutOfRange);
+        RuleFor(x => x.DateOfBirth)
+            .Must(PlayerAge.IsAllowed).WithMessage(AppMessages.Validation.AgeOutOfRange)
+            .When(x => x.DateOfBirth != null);
 
         RuleFor(x => x.City)
             .NotEmpty().WithMessage(AppMessages.Validation.CityRequired)
@@ -80,4 +81,14 @@ public class CreateApplicationDtoValidator : AbstractValidator<CreateApplication
             .MaximumLength(2000).WithMessage(AppMessages.Validation.CoverLetterTooLong)
             .When(x => x.CoverLetter != null);
     }
+}
+
+// Players must be 16 to 50 years old (the Terms of Use set 16 as the minimum age)
+public static class PlayerAge
+{
+    public const int Min = 16;
+    public const int Max = 50;
+
+    public static bool IsAllowed(DateOnly? born) =>
+        born is { } date && Player.YearsBetween(date, DateOnly.FromDateTime(DateTime.UtcNow)) is >= Min and <= Max;
 }

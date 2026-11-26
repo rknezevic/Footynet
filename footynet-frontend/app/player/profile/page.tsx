@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { Pencil } from 'lucide-react';
 import { playerService } from '@/lib/player';
 import { useEnumLabels } from '@/i18n/useEnumLabels';
+import { useAgeLabel } from '@/i18n/useAgeLabel';
+import { birthDateLimits } from '@/lib/birthDate';
 import { PlayerProfileDto, PreferredFootType } from '@/types';
 import PageShell from '@/components/PageShell';
 import PageHeader from '@/components/PageHeader';
@@ -29,7 +31,8 @@ export default function PlayerProfilePage() {
   const [editing, setEditing] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [age, setAge] = useState(18);
+  // Empty for players who registered before the date of birth existed
+  const [dateOfBirth, setDateOfBirth] = useState('');
   const [city, setCity] = useState('');
   const [county, setCounty] = useState('');
   const [description, setDescription] = useState('');
@@ -40,6 +43,8 @@ export default function PlayerProfilePage() {
   const t = useTranslations('playerProfile');
   const tCommon = useTranslations('common');
   const labels = useEnumLabels();
+  const ageLabel = useAgeLabel();
+  const birthLimits = birthDateLimits();
 
   useEffect(() => { loadProfile(); }, []);
 
@@ -48,7 +53,7 @@ export default function PlayerProfilePage() {
     setProfile(data);
     setFirstName(data.firstName);
     setLastName(data.lastName);
-    setAge(data.age);
+    setDateOfBirth(data.dateOfBirth ?? '');
     setCity(data.city);
     setCounty(data.county);
     setDescription(data.description);
@@ -63,7 +68,8 @@ export default function PlayerProfilePage() {
     setSaving(true);
     try {
       await playerService.updateProfile({
-        firstName, lastName, age, city, county, description,
+        firstName, lastName, city, county, description,
+        dateOfBirth: dateOfBirth || null,
         prefeeredFootType: preferredFootType,
         ...extras,
         career: extras.career.filter(c => c.clubName.trim() !== ''),
@@ -88,7 +94,7 @@ export default function PlayerProfilePage() {
       <PageHeader
         leading={<Avatar name={fullName} photo={profile.photoUrl} size="xl" tone="light" />}
         title={fullName}
-        subtitle={t('subtitle', { age: profile.age })}
+        subtitle={t('subtitle', { age: ageLabel.full(profile.age, profile.dateOfBirth) })}
         actions={!editing && (
           <Button variant="secondary" onClick={() => setEditing(true)}><Pencil className="h-4 w-4" />{t('edit')}</Button>
         )}
@@ -108,7 +114,7 @@ export default function PlayerProfilePage() {
                 <FormInput label={t('lastName')} type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <FormInput label={t('age')} type="number" min={16} max={50} value={age} onChange={(e) => setAge(parseInt(e.target.value))} required />
+                <FormInput label={t('dateOfBirth')} type="date" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} min={birthLimits.min} max={birthLimits.max} required={!!profile.dateOfBirth} />
                 <FormSelect label={t('preferredFoot')} value={preferredFootType} onChange={(e) => setPreferredFootType(parseInt(e.target.value) as PreferredFootType)}>
                   <option value={PreferredFootType.Right}>{labels.foot('Right')}</option>
                   <option value={PreferredFootType.Left}>{labels.foot('Left')}</option>

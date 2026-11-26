@@ -1076,6 +1076,9 @@ namespace Footynet.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("County");
 
+                    b.Property<DateOnly?>("DateOfBirth")
+                        .HasColumnType("date");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");

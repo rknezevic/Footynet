@@ -19,6 +19,7 @@ import FormTextarea from '@/components/FormTextarea';
 import CityAutocomplete from '@/components/CityAutocomplete';
 import PasswordFields from '@/components/PasswordFields';
 import { isPasswordValid } from '@/lib/password';
+import { birthDateLimits } from '@/lib/birthDate';
 
 export default function RegisterPage() {
   const t = useTranslations('register');
@@ -32,6 +33,7 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const router = useRouter();
+  const birthLimits = birthDateLimits();
 
   // Shared
   const [city, setCity] = useState('');
@@ -41,7 +43,7 @@ export default function RegisterPage() {
   // Player fields
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [age, setAge] = useState(18);
+  const [dateOfBirth, setDateOfBirth] = useState('');
   const [preferredFootType, setPreferredFootType] = useState<PreferredFootType>(PreferredFootType.Right);
 
   // Club fields
@@ -87,7 +89,7 @@ export default function RegisterPage() {
         email, password, confirmPassword, role: role!, acceptTerms,
         city, county, description,
         ...(role === RoleType.Player
-          ? { firstName, lastName, age, prefeeredFootType: preferredFootType }
+          ? { firstName, lastName, dateOfBirth, prefeeredFootType: preferredFootType }
           : { name, leagueId })
       };
       await authService.register(registerData);
@@ -165,7 +167,7 @@ export default function RegisterPage() {
                 <FormInput label={t('lastName')} type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <FormInput label={t('age')} type="number" value={age} onChange={(e) => setAge(parseInt(e.target.value))} min={16} max={50} required />
+                <FormInput label={t('dateOfBirth')} type="date" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} min={birthLimits.min} max={birthLimits.max} required />
                 <FormSelect label={t('preferredFoot')} value={preferredFootType} onChange={(e) => setPreferredFootType(parseInt(e.target.value) as PreferredFootType)}>
                   <option value={PreferredFootType.Right}>{tEnums('foot.Right')}</option>
                   <option value={PreferredFootType.Left}>{tEnums('foot.Left')}</option>

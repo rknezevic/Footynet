@@ -40,7 +40,7 @@ export default function CompleteProfilePage() {
       await playerService.updateProfile({
         firstName: profile.firstName,
         lastName: profile.lastName,
-        age: profile.age,
+        dateOfBirth: profile.dateOfBirth ?? null,
         description: profile.description,
         prefeeredFootType: profile.prefeeredFootType,
         city: profile.city,

@@ -156,11 +156,11 @@
   <data name="Validation.LastNameTooLong" xml:space="preserve">
     <value>Prezime mora imati manje od 50 znakova</value>
   </data>
-  <data name="Validation.AgeRequired" xml:space="preserve">
-    <value>Dob je obavezna</value>
+  <data name="Validation.DateOfBirthRequired" xml:space="preserve">
+    <value>Datum rođenja je obavezan</value>
   </data>
   <data name="Validation.AgeOutOfRange" xml:space="preserve">
-    <value>Dob mora biti između 16 i 50</value>
+    <value>Morate imati između 16 i 50 godina</value>
   </data>
   <data name="Validation.CityRequired" xml:space="preserve">
     <value>Mjesto je obavezno</value>

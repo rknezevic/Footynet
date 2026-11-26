@@ -156,11 +156,11 @@
   <data name="Validation.LastNameTooLong" xml:space="preserve">
     <value>Last name must be under 50 characters</value>
   </data>
-  <data name="Validation.AgeRequired" xml:space="preserve">
-    <value>Age is required</value>
+  <data name="Validation.DateOfBirthRequired" xml:space="preserve">
+    <value>Date of birth is required</value>
   </data>
   <data name="Validation.AgeOutOfRange" xml:space="preserve">
-    <value>Age must be between 16 and 50</value>
+    <value>You must be between 16 and 50 years old</value>
   </data>
   <data name="Validation.CityRequired" xml:space="preserve">
     <value>City is required</value>

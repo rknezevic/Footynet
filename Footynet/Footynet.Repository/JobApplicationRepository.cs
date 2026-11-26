@@ -26,7 +26,7 @@ public class JobApplicationRepository : IJobApplicationRepository
         
         var sql = $@"
             SELECT ja.*, 
-                   p.""Id"", p.""FirstName"", p.""LastName"", p.""Age"", p.""City"", p.""County"" AS CountyName, p.""Description"", p.""PrefeeredFootType"",
+                   p.""Id"", p.""FirstName"", p.""LastName"", p.""Age"", p.""DateOfBirth"", p.""City"", p.""County"" AS CountyName, p.""Description"", p.""PrefeeredFootType"",
                    p.""Availability"", p.""PhotoUpdatedAt""
             FROM ""JobApplications"" ja
             JOIN ""Users"" p ON ja.""PlayerId"" = p.""Id""

@@ -11,12 +11,41 @@ public class ProfileValidatorTests
     {
         FirstName = "Ivan",
         LastName = "Horvat",
-        Age = 22,
+        DateOfBirth = DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-22),
         City = "Split",
         Positions = [PositionType.CentralMidfielder, PositionType.AttackingMidfielder],
         Availability = AvailabilityStatus.LookingForClub,
         Career = [new CareerEntryDto { ClubName = "NK Primjer", FromYear = 2018, ToYear = 2021 }]
     };
+
+
+    [Fact]
+    public void ProfileWithoutDateOfBirth_IsValid()
+    {
+        // Players who registered before the date of birth existed may keep saving their profile
+        var dto = ValidPlayer();
+        dto.DateOfBirth = null;
+
+        new UpdatePlayerProfileDtoValidator().TestValidate(dto).ShouldNotHaveValidationErrorFor(x => x.DateOfBirth);
+    }
+
+    [Theory]
+    [InlineData("2002-03-15", "2026-03-14", 23)]   // day before the birthday
+    [InlineData("2002-03-15", "2026-03-15", 24)]   // on the birthday
+    [InlineData("2004-02-29", "2026-02-27", 21)]   // born on 29 February: in a non-leap year
+    [InlineData("2004-02-29", "2026-02-28", 22)]   // the birthday counts as 28 February
+    public void AgeIsCountedInFullYears(string born, string today, int expected)
+    {
+        Assert.Equal(expected, Player.YearsBetween(DateOnly.Parse(born), DateOnly.Parse(today)));
+    }
+
+    [Fact]
+    public void OlderProfileWithoutDateOfBirth_UsesStoredAge()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        Assert.Equal(27, new Player { Age = 27 }.AgeOn(today));
+        Assert.Equal(20, new Player { Age = 27, DateOfBirth = today.AddYears(-20) }.AgeOn(today));
+    }
 
     [Fact]
     public void ValidPlayerProfile_Passes()

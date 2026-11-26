@@ -13,7 +13,9 @@ public class PlayerProfileDto
     public Guid Id { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
+    // Calculated from DateOfBirth; older profiles without a date of birth show the age they entered
     public int Age { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
     public string City { get; set; } = string.Empty;
     public string County { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -30,7 +32,8 @@ public class PlayerProfileDto
         PhotoUrl = PhotoUrls.For(player.Id, player.PhotoUpdatedAt),
         FirstName = player.FirstName,
         LastName = player.LastName,
-        Age = player.Age,
+        Age = player.AgeOn(DateOnly.FromDateTime(DateTime.UtcNow)),
+        DateOfBirth = player.DateOfBirth,
         Description = player.Description ?? "",
         PrefeeredFootType = player.PrefeeredFootType,
         City = player.City,
@@ -55,7 +58,8 @@ public class UpdatePlayerProfileDto
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public int Age { get; set; }
+    // Null keeps the stored value (players who registered before the date of birth existed may leave it empty)
+    public DateOnly? DateOfBirth { get; set; }
     public string Description { get; set; } = string.Empty;
     public PrefeeredFootType PrefeeredFootType { get; set; }
     public string City { get; set; } = string.Empty;

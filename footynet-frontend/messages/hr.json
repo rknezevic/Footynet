@@ -102,7 +102,6 @@
     "emailExists": "Račun s ovom email adresom već postoji.",
     "firstName": "Ime",
     "lastName": "Prezime",
-    "age": "Dob",
     "city": "Mjesto",
     "preferredFoot": "Jača noga",
     "description": "Opis",
@@ -119,7 +118,8 @@
     "playerDescriptionPlaceholder": "Nekoliko riječi o vama kao igraču...",
     "passwordInvalid": "Lozinka ne ispunjava sve uvjete navedene ispod.",
     "passwordMismatch": "Lozinke se ne podudaraju",
-    "acceptTerms": "Pročitao/la sam i prihvaćam <terms>Uvjete korištenja</terms> i <privacy>Pravila privatnosti</privacy>. Imam najmanje 16 godina."
+    "acceptTerms": "Pročitao/la sam i prihvaćam <terms>Uvjete korištenja</terms> i <privacy>Pravila privatnosti</privacy>. Imam najmanje 16 godina.",
+    "dateOfBirth": "Datum rođenja"
   },
   "pendingApproval": {
     "subtitle": "Status računa kluba",
@@ -178,11 +178,10 @@
   },
   "playerProfile": {
     "title": "Moj profil",
-    "subtitle": "Igrač · {age} godina",
+    "subtitle": "Igrač · {age}",
     "details": "Podaci profila",
     "firstName": "Ime",
     "lastName": "Prezime",
-    "age": "Dob",
     "city": "Mjesto",
     "county": "Županija",
     "preferredFoot": "Jača noga",
@@ -191,7 +190,8 @@
     "about": "O meni",
     "edit": "Uredi profil",
     "basicInfo": "Osnovni podaci",
-    "footballInfo": "Nogometni profil"
+    "footballInfo": "Nogometni profil",
+    "dateOfBirth": "Datum rođenja"
   },
   "clubDashboard": {
     "subtitle": "Početna stranica kluba",
@@ -233,8 +233,7 @@
     "city": "Mjesto",
     "preferredFoot": "Jača noga",
     "about": "O igraču",
-    "message": "Pošalji poruku",
-    "ageYears": "{age} godina"
+    "message": "Pošalji poruku"
   },
   "clubProfile": {
     "title": "Profil kluba",
@@ -749,5 +748,9 @@
     "confirmText": "Odmah ćete biti odjavljeni. Račun nakon toga može ponovno aktivirati samo administrator.",
     "confirm": "Da, deaktiviraj",
     "failed": "Deaktivacija računa nije uspjela"
+  },
+  "age": {
+    "years": "{age, plural, one {# godina} few {# godine} other {# godina}}",
+    "withBirthDate": "{years} ({date})"
   }
 }

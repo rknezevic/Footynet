@@ -47,9 +47,9 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
                 .NotEmpty().WithMessage(AppMessages.Validation.LastNameRequired)
                 .MaximumLength(50).WithMessage(AppMessages.Validation.LastNameTooLong);
 
-            RuleFor(x => x.Age)
-                .NotNull().WithMessage(AppMessages.Validation.AgeRequired)
-                .InclusiveBetween(16, 50).WithMessage(AppMessages.Validation.AgeOutOfRange);
+            RuleFor(x => x.DateOfBirth)
+                .NotNull().WithMessage(AppMessages.Validation.DateOfBirthRequired)
+                .Must(PlayerAge.IsAllowed).WithMessage(AppMessages.Validation.AgeOutOfRange);
 
             RuleFor(x => x.City)
                 .NotEmpty().WithMessage(AppMessages.Validation.CityRequired);

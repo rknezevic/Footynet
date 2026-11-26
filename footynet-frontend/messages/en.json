@@ -102,7 +102,6 @@
     "emailExists": "An account with this email already exists.",
     "firstName": "First Name",
     "lastName": "Last Name",
-    "age": "Age",
     "city": "City",
     "preferredFoot": "Preferred Foot",
     "description": "Description",
@@ -119,7 +118,8 @@
     "playerDescriptionPlaceholder": "A few words about you as a player...",
     "passwordInvalid": "The password doesn't meet all the requirements below.",
     "passwordMismatch": "Passwords do not match",
-    "acceptTerms": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>. I am at least 16 years old."
+    "acceptTerms": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>. I am at least 16 years old.",
+    "dateOfBirth": "Date of birth"
   },
   "pendingApproval": {
     "subtitle": "Club Account Status",
@@ -178,11 +178,10 @@
   },
   "playerProfile": {
     "title": "My Profile",
-    "subtitle": "Player · {age} years",
+    "subtitle": "Player · {age}",
     "details": "Profile Details",
     "firstName": "First Name",
     "lastName": "Last Name",
-    "age": "Age",
     "city": "City",
     "county": "County",
     "preferredFoot": "Preferred Foot",
@@ -191,7 +190,8 @@
     "about": "About",
     "edit": "Edit profile",
     "basicInfo": "Basic information",
-    "footballInfo": "Football profile"
+    "footballInfo": "Football profile",
+    "dateOfBirth": "Date of birth"
   },
   "clubDashboard": {
     "subtitle": "Club Dashboard",
@@ -233,8 +233,7 @@
     "city": "City",
     "preferredFoot": "Preferred Foot",
     "about": "About",
-    "message": "Send message",
-    "ageYears": "{age} years"
+    "message": "Send message"
   },
   "clubProfile": {
     "title": "Club Profile",
@@ -749,5 +748,9 @@
     "confirmText": "You will be signed out straight away. Only an administrator can turn the account back on.",
     "confirm": "Yes, deactivate",
     "failed": "Deactivating the account failed"
+  },
+  "age": {
+    "years": "{age, plural, one {# year} other {# years}}",
+    "withBirthDate": "{years} ({date})"
   }
 }

@@ -79,7 +79,11 @@ public class PlayerService : IPlayerService
 
         player.FirstName = dto.FirstName;
         player.LastName = dto.LastName;
-        player.Age = dto.Age;
+        if (dto.DateOfBirth is { } born)
+        {
+            player.DateOfBirth = born;
+            player.Age = Player.YearsBetween(born, DateOnly.FromDateTime(DateTime.UtcNow));
+        }
         player.Description = dto.Description;
         player.PrefeeredFootType = dto.PrefeeredFootType;
         player.City = dto.City;
